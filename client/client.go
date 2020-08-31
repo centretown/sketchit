@@ -1,9 +1,11 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/centretown/sketchit/api"
+	"github.com/golang/glog"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -29,31 +31,34 @@ func (a *Authentication) RequireTransportSecurity() bool {
 }
 
 func main() {
-	// var conn *grpc.ClientConn
+	// for glog
+	flag.Parse()
 	// Create the client TLS credentials
-	creds, err := credentials.NewClientTLSFromFile("cert/ssl-cert-snakeoil.pem", "")
+	creds, err := credentials.NewClientTLSFromFile("cert/snakeoil/server.pem", "")
 	if err != nil {
 		log.Fatalf("could not load tls cert: %s", err)
 	}
 	// Setup the login/pass
-	auth := Authentication{
+	auth := &Authentication{
 		Login:    "john",
 		Password: "doe",
 	}
+
+	var conn *grpc.ClientConn
 	// connect to server
-	conn, err := grpc.Dial("dragon:7777",
+	conn, err = grpc.Dial("dragon:7777",
 		grpc.WithTransportCredentials(creds),
-		grpc.WithPerRPCCredentials(&auth))
-	// conn, err := grpc.Dial("localhost:7777", grpc.WithInsecure())
+		grpc.WithPerRPCCredentials(auth))
+
 	if err != nil {
-		log.Fatalf("did not connect: %s", err)
+		glog.Fatalf("did not connect: %s", err)
 	}
 	defer conn.Close()
 	c := api.NewDevicesClient(conn)
 
 	response, err := c.SayHello(context.Background(), &api.PingMessage{Greeting: "foo"})
 	if err != nil {
-		log.Fatalf("Error when calling SayHello: %s", err)
+		glog.Fatalf("Error when calling SayHello: %s", err)
 	}
-	log.Printf("Response from server: %s", response.Greeting)
+	glog.Infof("Response from server: %s", response.Greeting)
 }

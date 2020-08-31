@@ -2,3 +2,4 @@ foreign
 protos/google
 cert
 bin
+vendor

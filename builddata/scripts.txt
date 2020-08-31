@@ -1,0 +1,24 @@
+use admin
+db.createUser(
+  {
+    user: "dave",
+    pwd: passwordPrompt(), // or cleartext password
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+  }
+)
+
+use sketchit-test
+db.createUser(
+  {
+    user: "testing",
+    pwd:  passwordPrompt(),   // or cleartext password
+    roles: [ { role: "readWrite", db: "sketchit-test" },
+             { role: "read", db: "sketchit" } ]
+  }
+)
+
+db.getCollectionNames().forEach(function(collection) {
+    indexes = db[collection].getIndexes();
+    print("Indexes for " + collection + ":");
+    printjson(indexes);
+ });

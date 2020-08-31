@@ -1,8 +1,7 @@
 package api
 
 import (
-	"log"
-
+	"github.com/golang/glog"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/net/context"
 )
@@ -69,6 +68,6 @@ func (h *StorageHandler) Delete(ctx context.Context, req *DeleteDeviceRequest) (
 
 // SayHello -
 func (h *StorageHandler) SayHello(ctx context.Context, in *PingMessage) (*PingMessage, error) {
-	log.Printf("Receive message %s", in.Greeting)
+	glog.Infof("Receive message %s", in.Greeting)
 	return &PingMessage{Greeting: "bar"}, nil
 }

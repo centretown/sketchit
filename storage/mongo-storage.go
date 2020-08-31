@@ -23,26 +23,44 @@ type MongoStorageProvider struct {
 
 var (
 	// ErrMongoClient identifies an error creating mongo client
-	ErrMongoClient error = errors.New("from NewClient, ApplyURI")
+	ErrMongoClient = errors.New("failed to create client")
+	// ErrMongoConnect identifies an error creating mongo client
+	ErrMongoConnect = errors.New("failed to connect")
+	// ErrDisconnect indentifies a disconnection error
+	ErrDisconnect = errors.New("failed to disconnect")
 )
 
 // MongoStorageProviderNew creates and returns an instance of MongoStorageProvider
-func MongoStorageProviderNew(uri, name string) (provider api.StorageProvider, err error) {
-	mdp := &MongoStorageProvider{}
+func MongoStorageProviderNew(uri, databaseName string) (mdp *MongoStorageProvider, err error) {
+	mdp = &MongoStorageProvider{}
 	mdp.client, err = mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
-		err = info.Inform(err, ErrMongoClient,
-			fmt.Sprintf("%v", uri))
+		err = info.Inform(err, ErrMongoClient, fmt.Sprintf("%v", uri))
 		return
 	}
-	mdp.collection = mdp.client.Database(name).Collection("devices")
-	provider = mdp
+
+	ctx := context.Background()
+	err = mdp.client.Connect(ctx)
+	if err != nil {
+		err = info.Inform(err, ErrMongoConnect, fmt.Sprintf("%v", uri))
+		return
+	}
+	defer mdp.disconnect(ctx)
+	mdp.collection = mdp.client.Database(databaseName).Collection("devices")
 	return
+}
+
+func (mdp *MongoStorageProvider) disconnect(ctx context.Context) {
+	if err := mdp.client.Disconnect(ctx); err != nil {
+		panic(err)
+	}
 }
 
 var (
 	// ErrMongoInsert identifies an error inserting record
-	ErrMongoInsert error = errors.New("from InsertOne")
+	ErrMongoInsert = errors.New("InsertOne")
+	// ErrBsonMarshall -
+	ErrBsonMarshall = errors.New("json.Marshal")
 )
 
 // CreateDevice implements api.StorageProvider.CreateDevice
@@ -50,11 +68,17 @@ func (mdp *MongoStorageProvider) CreateDevice(parent, label string, newDevice *a
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	res, err := mdp.collection.InsertOne(ctx, bson.M{"name": "pi", "value": 3.14159})
+	// encode api.Device to JSON
+	newDevice.Domain = parent
+	newDevice.Label = label
+	b, err := bson.Marshal(newDevice)
 	if err != nil {
-		err = info.Inform(err, ErrMongoClient,
-			fmt.Sprintf("%v", label))
-		return
+		err = info.Inform(err, ErrBsonMarshall, newDevice.Label)
+	}
+
+	res, err := mdp.collection.InsertOne(ctx, b)
+	if err != nil {
+		err = info.Inform(err, ErrMongoClient, fmt.Sprintf("%v", newDevice.Label))
 	}
 	id := res.InsertedID
 	fmt.Println(id)
@@ -63,7 +87,22 @@ func (mdp *MongoStorageProvider) CreateDevice(parent, label string, newDevice *a
 
 // DeleteDevice implements api.StorageProvider.DeleteDevice
 func (mdp *MongoStorageProvider) DeleteDevice(parent, label string) (err error) {
-	return err
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer cancel()
+
+	// mdp.collection.DeleteOne(ctx, filter interface{})
+	// cursor, err := mdp.collection.Find(ctx, bson.D{})
+	// if err != nil {
+	// 	err = info.Inform(err, ErrFind, "collection.Find")
+	// 	return
+	// }
+
+	// devices = make([]*api.Device, 0)
+	// err = cursor.All(ctx, &devices)
+	// if err != nil {
+	// 	err = info.Inform(err, ErrDecode, "cursor.All")
+	// }
+	return
 }
 
 // GetDevice implements api.StorageProvider.GetDevice
@@ -71,12 +110,38 @@ func (mdp *MongoStorageProvider) GetDevice(name string) (device *api.Device, err
 	return
 }
 
+// ErrFind -
+var ErrFind = errors.New("failed to find")
+
+// ErrDecode -
+var ErrDecode = errors.New("failed to decode")
+
 // ListDevices implements api.StorageProvider.ListDevices
 func (mdp *MongoStorageProvider) ListDevices(parent string) (devices []*api.Device, err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	cursor, err := mdp.collection.Find(ctx, bson.D{})
+	if err != nil {
+		err = info.Inform(err, ErrFind, "collection.Find")
+		return
+	}
+
+	devices = make([]*api.Device, 0)
+	err = cursor.All(ctx, &devices)
+	if err != nil {
+		err = info.Inform(err, ErrDecode, "cursor.All")
+	}
 	return
 }
 
 // UpdateDevice implements api.StorageProvider.UpdateDevice
 func (mdp *MongoStorageProvider) UpdateDevice(parent string, patch *api.Device) (device *api.Device, err error) {
+	return
+}
+
+// Authenticate against database
+func (mdp *MongoStorageProvider) Authenticate(user, pass, name string, patch *api.Device) (err error) {
+	// err = mdp.collection.FindOne(context.TODO(), bson.D{{"username", user}}).Decode(&result)
 	return
 }

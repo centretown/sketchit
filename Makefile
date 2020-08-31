@@ -11,7 +11,7 @@ PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 
 .PHONY: all api build_server build_client
 
-all: build_server build_client
+all: test build_server build_client
 
 api/device.pb.go: protos/device.proto
 	@protoc -I $(GOSOURCE)/protos \
@@ -24,6 +24,8 @@ api/device.pb.go: protos/device.proto
 	# create Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api device.proto
 
+test: ## run unit tests
+	@go test ./...
 
 api: api/device.pb.go ## Auto-generate grpc go sources
 

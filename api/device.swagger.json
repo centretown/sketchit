@@ -63,7 +63,7 @@
         "parameters": [
           {
             "name": "device.label",
-            "description": "The label uniquely identifies the device within a domain or\ngroup of connected devices",
+            "description": "The unique label identifies the device within a domain",
             "in": "path",
             "required": true,
             "type": "string"
@@ -305,9 +305,13 @@
     "v1Device": {
       "type": "object",
       "properties": {
+        "domain": {
+          "type": "string",
+          "title": "collection of connected devices"
+        },
         "label": {
           "type": "string",
-          "title": "The label uniquely identifies the device within a domain or\ngroup of connected devices"
+          "title": "The unique label identifies the device within a domain"
         },
         "model": {
           "type": "string",

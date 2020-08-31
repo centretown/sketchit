@@ -3,22 +3,21 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
-	"log"
 	"net"
 	"net/http"
-	"strings"
 
 	"github.com/centretown/sketchit/api"
 	"github.com/centretown/sketchit/info"
 	"github.com/centretown/sketchit/storage"
+	"github.com/golang/glog"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/metadata"
 )
 
-var testURI = "mongodb://testing:test@localhost:27017/?authSource=sketchit-test"
+var testURI = "mongodb://dave:football@localhost:27017/?authSource=sketchit-test"
 
 // private type for Context keys
 type contextKey int
@@ -34,37 +33,6 @@ func credMatcher(headerName string) (mdName string, ok bool) {
 	return "", false
 }
 
-// authenticateAgent check the client credentials
-func authenticateClient(ctx context.Context, s *api.StorageHandler) (string, error) {
-	if md, ok := metadata.FromIncomingContext(ctx); ok {
-		clientLogin := strings.Join(md["login"], "")
-		clientPassword := strings.Join(md["password"], "")
-		if clientLogin != "john" {
-			return "", fmt.Errorf("unknown user %s", clientLogin)
-		}
-		if clientPassword != "doe" {
-			return "", fmt.Errorf("bad password %s", clientPassword)
-		}
-		log.Printf("authenticated client: %s", clientLogin)
-		return "42", nil
-	}
-	return "", fmt.Errorf("missing credentials")
-}
-
-// unaryInterceptor calls authenticateClient with current context
-func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	s, ok := info.Server.(*api.StorageHandler)
-	if !ok {
-		return nil, fmt.Errorf("unable to cast server")
-	}
-	clientID, err := authenticateClient(ctx, s)
-	if err != nil {
-		return nil, err
-	}
-	ctx = context.WithValue(ctx, clientIDKey, clientID)
-	return handler(ctx, req)
-}
-
 // ErrListen -
 var ErrListen = errors.New("failed to listen")
 
@@ -78,8 +46,6 @@ var ErrLoadKeys = errors.New("could not load TLS keys")
 var ErrServe = errors.New("failed to serve")
 
 func startGRPCServer(address, certFile, keyFile string) error {
-	// create a listener on TCP port 7777
-	// address := fmt.Sprintf("%s:%d", "dragon", 7777)
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		return info.Inform(err, ErrListen, address)
@@ -95,8 +61,6 @@ func startGRPCServer(address, certFile, keyFile string) error {
 	storageHandler := api.StorageHandlerNew(storageProvider)
 
 	// Create the TLS credentials
-	// creds, err := credentials.NewServerTLSFromFile("cert/ssl-cert-snakeoil.pem",
-	// 	"cert/ssl-cert-snakeoil.key")
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
 	if err != nil {
 		return info.Inform(err, ErrLoadKeys, "credentials")
@@ -106,19 +70,27 @@ func startGRPCServer(address, certFile, keyFile string) error {
 	opts := []grpc.ServerOption{grpc.Creds(creds),
 		grpc.UnaryInterceptor(unaryInterceptor)}
 
-	//create a gRPC server object
+	// create a gRPC server object
 	grpcServer := grpc.NewServer(opts...)
 
-	// grpcServer := grpc.NewServer()
 	// attach the StorageHandler service to the server
 	api.RegisterDevicesServer(grpcServer, storageHandler)
-	// start the server
-	log.Printf("starting HTTP/2 gRPC server on %s", address)
+
+	glog.Infof("starting HTTP/2 gRPC server on %s", address)
 	if err := grpcServer.Serve(lis); err != nil {
 		return info.Inform(err, ErrServe, "grpcServer")
 	}
 	return nil
 }
+
+// ErrLoadCert -
+var ErrLoadCert = errors.New("could not load TLS certificate")
+
+// ErrRegisterDevices -
+var ErrRegisterDevices = errors.New("could not register service")
+
+// ErrServeRest =
+var ErrServeRest = errors.New("failed to serve rest")
 
 func startRESTServer(address, grpcAddress, certFile string) error {
 	ctx := context.Background()
@@ -127,32 +99,39 @@ func startRESTServer(address, grpcAddress, certFile string) error {
 	mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(credMatcher))
 	creds, err := credentials.NewClientTLSFromFile(certFile, "")
 	if err != nil {
-		return fmt.Errorf("could not load TLS certificate: %s", err)
+		return info.Inform(err, ErrLoadCert, "credentials")
 	}
 	// Setup the client gRPC options
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
 	// Register ping
 	err = api.RegisterDevicesHandlerFromEndpoint(ctx, mux, grpcAddress, opts)
 	if err != nil {
-		return fmt.Errorf("could not register service Ping: %s", err)
+		return info.Inform(err, ErrRegisterDevices, "Devices")
 	}
-	log.Printf("starting HTTP/1.1 REST server on %s", address)
-	http.ListenAndServe(address, mux)
+
+	glog.Infof("starting HTTP/1.1 REST server on %s", address)
+	err = http.ListenAndServe(address, mux)
+	if err != nil {
+		return info.Inform(err, ErrServeRest, address)
+	}
 	return nil
 }
 
 // main start a gRPC server and waits for connection
 func main() {
+	// for glog
+	flag.Parse()
+
 	grpcAddress := fmt.Sprintf("%s:%d", "dragon", 7777)
 	restAddress := fmt.Sprintf("%s:%d", "dragon", 7778)
-	certFile := "cert/ssl-cert-snakeoil.pem"
-	keyFile := "cert/ssl-cert-snakeoil.key"
+	certFile := "cert/snakeoil/server.pem"
+	keyFile := "cert/snakeoil/server.key"
 
 	// fire the gRPC server in a goroutine
 	go func() {
 		err := startGRPCServer(grpcAddress, certFile, keyFile)
 		if err != nil {
-			log.Fatalf("failed to start gRPC server: %s", err)
+			glog.Fatalf("failed to start gRPC server: %s", err)
 		}
 	}()
 
@@ -160,11 +139,11 @@ func main() {
 	go func() {
 		err := startRESTServer(restAddress, grpcAddress, certFile)
 		if err != nil {
-			log.Fatalf("failed to start gRPC server: %s", err)
+			glog.Fatalf("failed to start gRPC server: %s", err)
 		}
 	}()
 
-	// infinite loop
-	log.Printf("Entering infinite loop")
+	glog.Infof("started OK. waiting for requests...")
+	// forever
 	select {}
 }

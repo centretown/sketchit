@@ -19,8 +19,9 @@ message PingMessage {
 
 // defines a micro controller device for sketchit
 message Device {
-    // The label uniquely identifies the device within a domain or
-    // group of connected devices
+    // collection of connected devices
+    string domain = 6;
+    // The unique label identifies the device within a domain
     string label = 1;
     // The model name
     string model = 2;
@@ -49,6 +50,8 @@ service Devices {
             body: "*"
         };
     }
+
+    // rpc Register()
 
     rpc List(ListDevicesRequest) returns (ListDevicesResponse) {
         // List method maps to HTTP GET.
