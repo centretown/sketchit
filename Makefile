@@ -2,6 +2,7 @@ PKG := "github.com/centretown/sketchit"
 GOSOURCE := ${GOPATH}/src/$(PKG)
 SERVER_OUT := $(GOSOURCE)"/bin/server"
 CLIENT_OUT := $(GOSOURCE)"/bin/client"
+BUILDDATA_OUT := $(GOSOURCE)"/bin/initialize-database"
 API_OUT := $(GOSOURCE)"/api/device.pb.go"
 GW_OUT := $(GOSOURCE)"/api/device.pb.gw.go"
 SWAG_OUT := $(GOSOURCE)"/api/device.swagger.json"
@@ -9,9 +10,9 @@ SERVER_PKG_BUILD := "${PKG}/server"
 CLIENT_PKG_BUILD := "${PKG}/client"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 
-.PHONY: all api build_server build_client
+.PHONY: all api build_server build_client build_initialize-database
 
-all: test build_server build_client
+all: build_server build_client build_initialize-database
 
 api/device.pb.go: protos/device.proto
 	@protoc -I $(GOSOURCE)/protos \
@@ -37,6 +38,9 @@ build_server: dep api ## Build the binary file for server
 
 build_client: dep api ## Build the binary file for client
 	@go build -i -v -o $(CLIENT_OUT) $(CLIENT_PKG_BUILD)
+
+build_initialize-database: dep api ##
+	@go build -i -v -o $(BUILDDATA_OUT) $(CLIENT_PKG_BUILD)
 
 clean: ## Remove previous builds
 	@rm $(SERVER_OUT) $(CLIENT_OUT) $(API_OUT) $(GW_OUT) $(SWAG_OUT)
