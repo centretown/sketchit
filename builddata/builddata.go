@@ -164,7 +164,6 @@ func build(dbName, dbURI string) (err error) {
 	}
 	glog.Info(names)
 
-	// liopts := options.ListIndexesOptions{}
 	cur, err := collection.Indexes().List(ctx)
 	var results = make([]string, 0)
 	cur.All(ctx, results)

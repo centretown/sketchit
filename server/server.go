@@ -57,8 +57,8 @@ func startGRPCServer(address, certFile, keyFile string) error {
 		return info.Inform(err, ErrStorageConnect, testURI)
 	}
 
-	// create a server instance
-	storageHandler := api.StorageHandlerNew(storageProvider)
+	// create a rpc handler for our api
+	RequestHandler := api.RequestHandlerNew(storageProvider)
 
 	// Create the TLS credentials
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
@@ -73,8 +73,8 @@ func startGRPCServer(address, certFile, keyFile string) error {
 	// create a gRPC server object
 	grpcServer := grpc.NewServer(opts...)
 
-	// attach the StorageHandler service to the server
-	api.RegisterDevicesServer(grpcServer, storageHandler)
+	// attach the RequestHandler service to the server
+	api.RegisterDevicesServer(grpcServer, RequestHandler)
 
 	glog.Infof("starting HTTP/2 gRPC server on %s", address)
 	if err := grpcServer.Serve(lis); err != nil {
@@ -93,6 +93,12 @@ var ErrRegisterDevices = errors.New("could not register service")
 var ErrServeRest = errors.New("failed to serve rest")
 
 func startRESTServer(address, grpcAddress, certFile string) error {
+
+	// var forwardResponse = func(ctx context.Context, w http.ResponseWriter, msg protoiface.MessageV1) error {
+	// 	glog.Infof("%v", msg)
+	// 	return nil
+	// }
+
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -103,7 +109,7 @@ func startRESTServer(address, grpcAddress, certFile string) error {
 	}
 	// Setup the client gRPC options
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}
-	// Register ping
+	// Register Devices
 	err = api.RegisterDevicesHandlerFromEndpoint(ctx, mux, grpcAddress, opts)
 	if err != nil {
 		return info.Inform(err, ErrRegisterDevices, "Devices")

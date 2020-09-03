@@ -1,0 +1,24 @@
+{
+    "domain": "cottage",
+    "label": "esp32-02",
+    "model": "ESP32",
+    "pins": [
+        {
+            "id": 2,
+            "label": "LED",
+            "purpose": "activity indicator"
+        },
+        {
+            "id": 5,
+            "label": "TX",
+            "purpose": "soft serial transmitter"
+        },
+        {
+            "id": 6,
+            "label": "RX",
+            "purpose": "soft serial receiver"
+        }
+    ],
+    "ip": "192.168.1.202:8080",
+    "port": "esp32-02"
+}

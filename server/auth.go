@@ -23,14 +23,14 @@ var ErrBadPassword = errors.New("bad password")
 var ErrMissingCredentials = errors.New("missing credentials")
 
 // authenticateAgent check the client credentials
-func authenticateClient(ctx context.Context, s *api.StorageHandler) (string, error) {
+func authenticateClient(ctx context.Context, s *api.RequestHandler) (string, error) {
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		clientLogin := strings.Join(md["login"], "")
 		clientPassword := strings.Join(md["password"], "")
-		if clientLogin != "john" {
+		if clientLogin != "testing" {
 			return "", info.Inform(nil, ErrUnknownUser, clientLogin)
 		}
-		if clientPassword != "doe" {
+		if clientPassword != "test" {
 			return "", info.Inform(nil, ErrBadPassword, clientPassword)
 		}
 		glog.Infof("authenticated client: %s", clientLogin)
@@ -47,7 +47,7 @@ var ErrAuth = errors.New("unable to cast server")
 
 // unaryInterceptor calls authenticateClient with current context
 func unaryInterceptor(ctx context.Context, req interface{}, serverInfo *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	s, ok := serverInfo.Server.(*api.StorageHandler)
+	s, ok := serverInfo.Server.(*api.RequestHandler)
 	if !ok {
 		return nil, info.Inform(nil, ErrCastServer, "unaryInterceptor")
 	}

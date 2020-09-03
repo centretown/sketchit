@@ -1,64 +1,72 @@
 package main
 
 import (
+	"errors"
 	"flag"
-	"log"
 
 	"github.com/centretown/sketchit/api"
+	"github.com/centretown/sketchit/info"
 	"github.com/golang/glog"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
-// Authentication holds the login/password
-type Authentication struct {
-	Login    string
-	Password string
-}
-
-// GetRequestMetadata gets the current request metadata
-func (a *Authentication) GetRequestMetadata(context.Context, ...string) (map[string]string, error) {
-	return map[string]string{
-		"login":    a.Login,
-		"password": a.Password,
-	}, nil
-}
-
-// RequireTransportSecurity indicates whether the credentials requires transport security
-func (a *Authentication) RequireTransportSecurity() bool {
-	return true
-}
-
 func main() {
 	// for glog
 	flag.Parse()
-	// Create the client TLS credentials
-	creds, err := credentials.NewClientTLSFromFile("cert/snakeoil/server.pem", "")
-	if err != nil {
-		log.Fatalf("could not load tls cert: %s", err)
-	}
-	// Setup the login/pass
+
 	auth := &Authentication{
-		Login:    "john",
-		Password: "doe",
+		Login:    "testing",
+		Password: "test",
 	}
 
-	var conn *grpc.ClientConn
+	// connect to self cert
+	conn, err := connect(SnakeOil, auth)
+	if err != nil {
+		glog.Errorf("did not connect: %s", err)
+		return
+	}
+	defer conn.Close()
+
+	client := api.NewDevicesClient(conn)
+	ctx := context.Background()
+	_, err = client.SayHello(ctx, &api.PingMessage{Greeting: ""})
+	if err != nil {
+		glog.Errorf("did not connect: %s", err)
+		return
+	}
+
+	cmdr := &Commander{ctx: ctx, client: client, conn: conn}
+	cmdr.init()
+	cmdr.run()
+}
+
+// connection errors
+var (
+	ErrNewClient = errors.New("failed to create client with credentials")
+	ErrDial      = errors.New("failed to connect to server")
+)
+
+// SnakeOil self signed cert
+var SnakeOil = "cert/snakeoil/server.pem"
+
+func connect(pem string, auth *Authentication) (conn *grpc.ClientConn, err error) {
+	// Create the client TLS credentials
+	creds, err := credentials.NewClientTLSFromFile(pem, "")
+	if err != nil {
+		info.Inform(err, ErrNewClient, "")
+		return
+	}
+
 	// connect to server
 	conn, err = grpc.Dial("dragon:7777",
 		grpc.WithTransportCredentials(creds),
 		grpc.WithPerRPCCredentials(auth))
-
 	if err != nil {
-		glog.Fatalf("did not connect: %s", err)
+		info.Inform(err, ErrDial, pem)
+		return
 	}
-	defer conn.Close()
-	c := api.NewDevicesClient(conn)
 
-	response, err := c.SayHello(context.Background(), &api.PingMessage{Greeting: "foo"})
-	if err != nil {
-		glog.Fatalf("Error when calling SayHello: %s", err)
-	}
-	glog.Infof("Response from server: %s", response.Greeting)
+	return
 }

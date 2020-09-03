@@ -43,54 +43,7 @@
         ]
       }
     },
-    "/v1/{device.label}": {
-      "patch": {
-        "operationId": "Devices_Update",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1Device"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "device.label",
-            "description": "The unique label identifies the device within a domain",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "description": "The replacement device",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1Device"
-            }
-          },
-          {
-            "name": "parent",
-            "description": "The parent domain name.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Devices"
-        ]
-      }
-    },
-    "/v1/{name=domain/*/devices/*}": {
+    "/v1/{name=domains/*/devices/*}": {
       "get": {
         "operationId": "Devices_Get",
         "responses": {
@@ -110,7 +63,7 @@
         "parameters": [
           {
             "name": "name",
-            "description": "eg: \"domain/home-iot/devices/esp32-01\"",
+            "description": "The device path name, eg: \"/home-iot/devices/esp32-01\"",
             "in": "path",
             "required": true,
             "type": "string"
@@ -139,17 +92,48 @@
         "parameters": [
           {
             "name": "name",
-            "description": "The device's assigned label",
+            "description": "The device path name, eg: \"/home-iot/devices/esp32-01\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Devices"
+        ]
+      },
+      "patch": {
+        "operationId": "Devices_Update",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Device"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "The path name to the device",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
-            "name": "parent",
-            "description": "The parent domain name.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "The replacement device",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1Device"
+            }
           }
         ],
         "tags": [
@@ -157,7 +141,7 @@
         ]
       }
     },
-    "/v1/{parent=domain/*}/devices": {
+    "/v1/{parent=domains/*}/devices": {
       "get": {
         "operationId": "Devices_List",
         "responses": {
@@ -177,7 +161,7 @@
         "parameters": [
           {
             "name": "parent",
-            "description": "The parent domain name, eg: \"domain/home-iot/devices\".",
+            "description": "The parent domain, eg: \"home-iot\".",
             "in": "path",
             "required": true,
             "type": "string"
@@ -234,13 +218,6 @@
             "schema": {
               "$ref": "#/definitions/v1Device"
             }
-          },
-          {
-            "name": "label",
-            "description": "The device's identifying label.",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [

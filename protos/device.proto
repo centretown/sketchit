@@ -3,9 +3,8 @@ package centretown.sketchit.v1;
 
 option go_package = "github.com/centretown/sketchit/api";
 
-// import "google/api/http.proto";
-
 import "google/protobuf/empty.proto";
+// import "google/protobuf/field_mask.proto";
 import "google/api/annotations.proto";
 
 // import "grpc.gateway.protoc_gen_swagger.options";
@@ -55,29 +54,26 @@ service Devices {
 
     rpc List(ListDevicesRequest) returns (ListDevicesResponse) {
         // List method maps to HTTP GET.
-        // eg: /domain/home-iot/devices/esp32-01
         option (google.api.http) = {
-            get: "/v1/{parent=domain/*}/devices"
+            // eg: /v1/home-iot/devices
+            get: "/v1/{parent=domains/*}/devices"
         };
     }
 
     rpc Get(GetDeviceRequest) returns (Device) {
         // Get maps to HTTP GET. Resource name is mapped to the URL. No body.
         option (google.api.http) = {
-          // Note the URL template variable which captures the multi-segment resource
-          // name of the requested book, such as "domain/home-iot/devices/esp32-01"
-          get: "/v1/{name=domain/*/devices/*}"
+            // the `name` of device resource, eg: `/v1/home-iot/devices/esp32-01`
+            get: "/v1/{name=domains/*/devices/*}"
         };
-      }
+    }
       
-
     rpc Create(CreateDeviceRequest) returns (Device) {
         // Create maps to HTTP POST. URL path as the collection name.
         // HTTP request body contains the resource.
-        // The `parent` captures the domain resource name, 
-        // such as "domain/home_iot".
         option (google.api.http) = {
-            post: "/v1/{parent=domain/*}/devices"
+            // The `parent` captures the domain resource name, eg: `domain/home_iot`.
+            post: "/v1/{parent=domains/*}/devices"
             body: "device"
         };
     }
@@ -86,7 +82,7 @@ service Devices {
         // Update maps to HTTP PATCH. Resource name is mapped to a URL path.
         // Resource is contained in the HTTP request body.
         option (google.api.http) = {
-            patch: "/v1/{device.label=domain/*/devices/*}"
+            patch: "/v1/{name=domains/*/devices/*}"
             body: "device"
         };       
     }
@@ -95,14 +91,14 @@ service Devices {
         // Delete maps to HTTP DELETE. Resource name maps to the URL path.
         // eg: "domain/home-iot/devices/esp32-01"
         option (google.api.http) = {
-            delete: "/v1/{name=domain/*/devices/*}"
+            delete:  "/v1/{name=domains/*/devices/*}"
         };
     }
 }
 
 // ListDevicesRequest defines the information required to retrieve a list of pins
 message ListDevicesRequest {
-    // The parent domain name, eg: "domain/home-iot/devices".
+    // The parent domain, eg: "home-iot".
     string parent = 1;
     // The maximum number of pins to return.
     int32 page_size = 2;
@@ -111,7 +107,7 @@ message ListDevicesRequest {
 }
 
 message GetDeviceRequest {
-    // eg: "domain/home-iot/devices/esp32-01"
+    // The device path name, eg: "/home-iot/devices/esp32-01"
     string name = 1;
 }
 
@@ -126,22 +122,21 @@ message ListDevicesResponse {
 message CreateDeviceRequest {
     // The parent domain name
     string parent = 1;
-    // The device's identifying label
-    string label = 2;
     // The device resource to create.
-    Device device = 3;
-}
-
-message UpdateDeviceRequest {
-    // The parent domain name
-    string parent = 1;
-    // The replacement device
     Device device = 2;
 }
 
+message UpdateDeviceRequest {
+    // The path name to the device
+    string name = 1;
+    // The replacement device
+    Device device = 2;
+    // The update mask app  lies to the resource. For the `FieldMask` definition,
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    // google.protobuf.FieldMask update_mask = 3;
+}
+
 message DeleteDeviceRequest {
-    // The parent domain name
-    string parent = 1;
-    // The device's assigned label
-    string name = 2;
+    // The device path name, eg: "/home-iot/devices/esp32-01"
+    string name = 1;
 }
