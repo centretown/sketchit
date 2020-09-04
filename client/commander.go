@@ -17,99 +17,7 @@ import (
 type Commander struct {
 	ctx    context.Context
 	conn   *grpc.ClientConn
-	client api.DevicesClient
-}
-
-func (cmdr *Commander) exit() {
-	cmdr.conn.Close()
-	os.Exit(0)
-}
-
-// Error messsages
-var (
-	ErrHello           = errors.New("failed to greet server")
-	ErrList            = errors.New("failed to list devices")
-	ErrGet             = errors.New("failed to get device")
-	ErrCommandNotFound = errors.New("command not found")
-	ErrNoPath          = errors.New("path required")
-	ErrNotEnoughArgs   = errors.New("not enough arguments")
-)
-
-var commands = make(map[string]func([]string) error)
-
-func (cmdr *Commander) init() {
-
-	commands["hello"] = func(args []string) (err error) {
-		message := "hello" + fmt.Sprintln(args)
-		response, err := cmdr.client.SayHello(cmdr.ctx, &api.PingMessage{Greeting: "hello"})
-		if err != nil {
-			info.Inform(err, ErrHello, message)
-			return
-		}
-		fmt.Printf("Hello: %v\n\n", response.Greeting)
-		return
-	}
-
-	commands["list"] = func(args []string) (err error) {
-		arg := "/"
-		if len(args) > 0 {
-			arg = args[0]
-		}
-		parent := fmt.Sprintf("domains/%s", arg)
-		req := &api.ListDevicesRequest{Parent: parent}
-		res, err := cmdr.client.List(cmdr.ctx, req)
-		if err != nil {
-			err = info.Inform(err, ErrList, args)
-			return
-		}
-
-		for _, device := range res.Devices {
-			showDevice(device)
-		}
-		return
-	}
-
-	commands["get"] = func(args []string) (err error) {
-		if len(args) < 2 {
-			err = info.Inform(err, ErrNotEnoughArgs, fmt.Sprint(args))
-			return
-		}
-		name := fmt.Sprintf("domains/%s/devices/%s", args[0], args[1])
-		dreq := &api.GetDeviceRequest{Name: name}
-		device, err := cmdr.client.Get(cmdr.ctx, dreq)
-		if err != nil {
-			err = info.Inform(err, ErrGet, args)
-			return
-		}
-
-		showDevice(device)
-		return
-	}
-}
-
-func showDevice(device *api.Device) {
-	fmt.Printf("Domain: %v\tLabel: %v\tModel: %v\n", device.Domain, device.Label, device.Model)
-	for _, p := range device.Pins {
-		fmt.Printf("\tId: %v\tLabel: %v\tPurpose: %v\n", p.Id, p.Label, p.Purpose)
-	}
-}
-
-func (cmdr *Commander) exec(input string) (err error) {
-	// Split the input separate the command and the arguments.
-	args := strings.Fields(input)
-	if len(args) < 1 {
-		return info.Inform(err, ErrNotEnoughArgs, input)
-	}
-	verb := args[0]
-	args = args[1:]
-
-	f, ok := commands[verb]
-	if ok == false {
-		err = info.Inform(err, ErrCommandNotFound, verb)
-	}
-
-	err = f(args)
-	return
+	client api.SketchitClient
 }
 
 var prompt = "> "
@@ -132,9 +40,120 @@ func (cmdr *Commander) run() {
 			continue
 		}
 
-		// Handle the execution of the input.
-		if err = cmdr.exec(input); err != nil {
+		args := strings.Fields(input)
+		verb := args[0]
+		args = args[1:]
+		f, ok := commands[verb]
+		if ok == false {
+			err = info.Inform(err, ErrCommandNotFound, verb)
+		} else {
+			err = f(args...)
+		}
+
+		if err != nil {
 			fmt.Println(err)
 		}
+	}
+}
+
+// Error messsages
+var (
+	ErrHello           = errors.New("failed to greet server")
+	ErrList            = errors.New("failed to list devices")
+	ErrGet             = errors.New("failed to get device")
+	ErrCommandNotFound = errors.New("command not found")
+	ErrNotEnoughArgs   = errors.New("not enough arguments")
+)
+
+var commands = make(map[string]func(...string) error)
+
+func (cmdr *Commander) init() {
+
+	// just say hello
+	commands["hello"] = func(args ...string) (err error) {
+		message := "hello" + fmt.Sprintln(args)
+		response, err := cmdr.client.SayHello(cmdr.ctx, &api.PingMessage{Greeting: "hello"})
+		if err != nil {
+			info.Inform(err, ErrHello, message)
+			return
+		}
+		fmt.Printf("Hello: %v\n\n", response.Greeting)
+		return
+	}
+
+	// list devices
+	commands["list"] = func(args ...string) (err error) {
+		arg := "/"
+		if len(args) > 0 {
+			arg = args[0]
+		}
+		parent := fmt.Sprintf("domains/%s", arg)
+		req := &api.ListDevicesRequest{Parent: parent}
+		res, err := cmdr.client.ListDevices(cmdr.ctx, req)
+		if err != nil {
+			err = info.Inform(err, ErrList, args)
+			return
+		}
+
+		if len(res.Devices) < 1 {
+			fmt.Printf("Nothing to list for %v\n", args)
+			return
+		}
+
+		for _, device := range res.Devices {
+			showDevice(device)
+		}
+		return
+	}
+
+	// get a device
+	commands["get"] = func(args ...string) (err error) {
+		if len(args) < 2 {
+			err = info.Inform(err, ErrNotEnoughArgs, fmt.Sprint(args))
+			return
+		}
+		name := fmt.Sprintf("domains/%s/devices/%s", args[0], args[1])
+		dreq := &api.GetDeviceRequest{Name: name}
+		device, err := cmdr.client.GetDevice(cmdr.ctx, dreq)
+		if err != nil {
+			err = info.Inform(err, ErrGet, args)
+			return
+		}
+
+		showDevice(device)
+		return
+	}
+
+	// delete a device
+	commands["delete"] = func(args ...string) (err error) {
+		if len(args) < 2 {
+			err = info.Inform(err, ErrNotEnoughArgs, fmt.Sprint(args))
+			return
+		}
+		name := fmt.Sprintf("domains/%s/devices/%s", args[0], args[1])
+		dreq := &api.DeleteDeviceRequest{Name: name}
+
+		_, err = cmdr.client.DeleteDevice(cmdr.ctx, dreq)
+		if err != nil {
+			err = info.Inform(err, ErrGet, args)
+			return
+		}
+
+		fmt.Printf("Deleted %v\n", args)
+		return
+	}
+
+	// exit the app
+	commands["exit"] = func(args ...string) (err error) {
+		cmdr.conn.Close()
+		os.Exit(0)
+		return
+	}
+}
+
+func showDevice(device *api.Device) {
+	fmt.Printf("Domain: %v\tLabel: %v\tModel: %v\n", device.Domain, device.Label, device.Model)
+	for _, p := range device.Pins {
+		fmt.Printf("\tId: %v\tLabel: %v\tPurpose: %v\n", p.Id, p.Label, p.Purpose)
 	}
 }

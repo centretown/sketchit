@@ -29,7 +29,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	client := api.NewDevicesClient(conn)
+	client := api.NewSketchitClient(conn)
 	ctx := context.Background()
 	_, err = client.SayHello(ctx, &api.PingMessage{Greeting: ""})
 	if err != nil {

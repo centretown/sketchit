@@ -13,16 +13,16 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-// ErrUnknownUser -
-var ErrUnknownUser = errors.New("unknown user")
+// authentication errors
+var (
+	ErrUnknownUser        = errors.New("unknown user")
+	ErrBadPassword        = errors.New("bad password")
+	ErrMissingCredentials = errors.New("missing credentials")
+	ErrCastServer         = errors.New("unable to cast server")
+	ErrAuth               = errors.New("unable to cast server")
+)
 
-// ErrBadPassword -
-var ErrBadPassword = errors.New("bad password")
-
-// ErrMissingCredentials -
-var ErrMissingCredentials = errors.New("missing credentials")
-
-// authenticateAgent check the client credentials
+// authenticateClient check the client credentials
 func authenticateClient(ctx context.Context, s *api.RequestHandler) (string, error) {
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		clientLogin := strings.Join(md["login"], "")
@@ -39,11 +39,19 @@ func authenticateClient(ctx context.Context, s *api.RequestHandler) (string, err
 	return "", fmt.Errorf("missing credentials")
 }
 
-// ErrCastServer -
-var ErrCastServer = errors.New("unable to cast server")
+// private type for Context keys
+type contextKey int
 
-// ErrAuth -
-var ErrAuth = errors.New("unable to cast server")
+const (
+	clientIDKey contextKey = iota
+)
+
+func credMatcher(headerName string) (mdName string, ok bool) {
+	if headerName == "Login" || headerName == "Password" {
+		return headerName, true
+	}
+	return "", false
+}
 
 // unaryInterceptor calls authenticateClient with current context
 func unaryInterceptor(ctx context.Context, req interface{}, serverInfo *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {

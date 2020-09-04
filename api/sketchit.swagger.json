@@ -1,0 +1,654 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "sketchit.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/1/ping": {
+      "post": {
+        "operationId": "Sketchit_SayHello",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1PingMessage"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1PingMessage"
+            }
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      }
+    },
+    "/v1/{name=domains/*/devices/*}": {
+      "get": {
+        "operationId": "Sketchit_GetDevice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Device"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "The device path name, \neg: \"/domains/home-iot/devices/esp32-01\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      },
+      "delete": {
+        "operationId": "Sketchit_DeleteDevice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "The device path name, \neg: \"/domains/home-iot/devices/esp32-01\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      },
+      "patch": {
+        "operationId": "Sketchit_UpdateDevice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Device"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "The device path name, \neg: \"/domains/home-iot/devices/esp32-01\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": "The replacement device",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1Device"
+            }
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      }
+    },
+    "/v1/{name=models/*/processes/*}": {
+      "get": {
+        "operationId": "Sketchit_GetProcess",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Process"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "The Process path name, \neg: \"/models/ESP32/processes/esp32-01\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      },
+      "delete": {
+        "operationId": "Sketchit_DeleteProcess",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "The Process path name, \neg: \"/models/ESP32/processes/esp32-01\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      },
+      "patch": {
+        "operationId": "Sketchit_UpdateProcess",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Process"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "The Process path name, \neg: \"/models/ESP32/processes/esp32-01\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": "The replacement Process",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1Process"
+            }
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      }
+    },
+    "/v1/{parent=domains/*}/devices": {
+      "get": {
+        "operationId": "Sketchit_ListDevices",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListDevicesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "parent",
+            "description": "The parent domain, eg: \"home-iot\".",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page_size",
+            "description": "The maximum number of devices to return.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "description": "The next_page_token value returned from a previous List request, if any.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      },
+      "post": {
+        "operationId": "Sketchit_CreateDevice",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Device"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "parent",
+            "description": "The parent domain name\neg: /domains/home-iot",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": "The device resource to create.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1Device"
+            }
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      }
+    },
+    "/v1/{parent=models/*}/processes": {
+      "get": {
+        "operationId": "Sketchit_ListProcesses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListProcessesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "parent",
+            "description": "The parent model, eg: \"ESP32\".",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page_size",
+            "description": "The maximum number of processes to return.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "description": "The next_page_token value returned from a previous List request, if any.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      },
+      "post": {
+        "operationId": "Sketchit_CreateProcess",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Process"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "parent",
+            "description": "The parent model name\neg: /models/ESP32",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": "The Process resource to create.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1Process"
+            }
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "DevicePin": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The pin number as designated by the device, eg: 2 for Pin #2"
+        },
+        "label": {
+          "type": "string",
+          "title": "The label assigned to this pin, eg: \"Internal-LED\""
+        },
+        "purpose": {
+          "type": "string",
+          "title": "The pins overall purpose in the sketch,  eg: \"blink on to indicate activity\""
+        }
+      },
+      "title": "Identifies a pin on a micro controller device"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "runtimeError": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Action": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The sequence defines the order of steps"
+        },
+        "type": {
+          "type": "string",
+          "title": "The type identifies the type of command to run"
+        },
+        "delay": {
+          "$ref": "#/definitions/v1DelayCommand"
+        },
+        "mode": {
+          "$ref": "#/definitions/v1ModeCommand"
+        },
+        "pin": {
+          "$ref": "#/definitions/v1PinCommand"
+        }
+      },
+      "title": "Action defines a process step or instruction"
+    },
+    "v1DelayCommand": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The duration of the delay in milliseconds"
+        }
+      },
+      "title": "DelayCommand defines the data to carry out this action"
+    },
+    "v1Device": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "title": "collection of connected devices"
+        },
+        "label": {
+          "type": "string",
+          "title": "The unique label identifies the device within a domain"
+        },
+        "model": {
+          "type": "string",
+          "title": "The model name"
+        },
+        "pins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DevicePin"
+          },
+          "title": "io pins if any"
+        },
+        "ip": {
+          "type": "string",
+          "title": "ip address if any"
+        },
+        "port": {
+          "type": "string",
+          "title": "serial port id if any"
+        }
+      },
+      "title": "defines a micro controller device for sketchit"
+    },
+    "v1ListDevicesResponse": {
+      "type": "object",
+      "properties": {
+        "devices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Device"
+          },
+          "title": "Devices listed"
+        },
+        "next_page_token": {
+          "type": "string",
+          "title": "next page"
+        }
+      },
+      "title": "ListDevicesResponse defines the return value to a ListDevicesRequest"
+    },
+    "v1ListProcessesResponse": {
+      "type": "object",
+      "properties": {
+        "processes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Process"
+          },
+          "title": "processes listed"
+        },
+        "next_page_token": {
+          "type": "string",
+          "title": "next page"
+        }
+      },
+      "title": "ListProcessesResponse defines the return value to a ListprocessesRequest"
+    },
+    "v1ModeCommand": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The pin id"
+        },
+        "signal": {
+          "type": "string",
+          "title": "The signal type analog/digita"
+        },
+        "mode": {
+          "type": "string",
+          "title": "The mode type output/input"
+        }
+      },
+      "description": "ModeCommand defines how a pin is acted on."
+    },
+    "v1PinCommand": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The pin id"
+        },
+        "signal": {
+          "type": "string",
+          "title": "The signal type analog/digita"
+        },
+        "mode": {
+          "type": "string",
+          "title": "The mode type output/input"
+        },
+        "value": {
+          "type": "integer",
+          "format": "int32",
+          "title": "The value to read from or write to"
+        }
+      },
+      "title": "PinCommand reads/writes analog/digital values"
+    },
+    "v1PingMessage": {
+      "type": "object",
+      "properties": {
+        "greeting": {
+          "type": "string"
+        }
+      }
+    },
+    "v1Process": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "title": "The model of the device this process is intended to run on\neg: ESP32, NANO, UNO"
+        },
+        "label": {
+          "type": "string",
+          "title": "The unique label assigned to this process \neg: \"blink\""
+        },
+        "devicekey": {
+          "type": "string",
+          "title": "The device activated by this process\neg: \"/home-iot/devices/esp32-01\""
+        },
+        "purpose": {
+          "type": "string",
+          "title": "The purpose or description of the actions take by this process\neg: \"Blink at prescribed intervals\""
+        },
+        "setup": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Action"
+          },
+          "title": "The setup stage defines the actions to take once\nbefore entering the process loop"
+        },
+        "loop": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Action"
+          },
+          "title": "The loop defines the actions that repeats forever"
+        }
+      },
+      "title": "Process defines how a device is programmed"
+    }
+  }
+}

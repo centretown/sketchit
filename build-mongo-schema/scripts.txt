@@ -7,12 +7,12 @@ db.createUser(
   }
 )
 
-use sketchit-test
+use sketchit-test-02
 db.createUser(
   {
     user: "testing",
-    pwd:  passwordPrompt(),   // or cleartext password
-    roles: [ { role: "readWrite", db: "sketchit-test" },
+    pwd:  "test",   // or cleartext password
+    roles: [ { role: "readWrite", db: "sketchit-test-02" },
              { role: "read", db: "sketchit" } ]
   }
 )
