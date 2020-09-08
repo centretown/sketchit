@@ -5,4 +5,5 @@ bin
 vendor
 client/curl_test.txt
 client/schema.txt
+client/server.pem
 scripts
