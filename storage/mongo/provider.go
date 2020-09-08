@@ -7,6 +7,7 @@ import (
 
 	"github.com/centretown/sketchit/api"
 	"github.com/centretown/sketchit/info"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -15,17 +16,21 @@ import (
 
 // MongoStorageProvider implements the StorageProvider interface
 type MongoStorageProvider struct {
-	client     *mongo.Client
-	Name       string
-	URI        string
-	collection *mongo.Collection
+	client      *mongo.Client
+	Name        string
+	URI         string
+	Collections map[string]*mongo.Collection
 }
+
+var deviceCollectionName = "devices"
+var processCollectionName = "processes"
 
 // MongoStorageProviderNew creates and returns an instance of MongoStorageProvider
 func MongoStorageProviderNew(uri, databaseName string) (mdp *MongoStorageProvider, err error) {
 	mdp = &MongoStorageProvider{}
 	mdp.Name = databaseName
 	mdp.URI = uri
+	mdp.Collections = make(map[string]*mongo.Collection)
 	mdp.client, err = mongo.NewClient(options.Client().ApplyURI(uri).SetAuth(options.Credential{
 		AuthSource: databaseName, Username: "testing", Password: "test"}))
 	if err != nil {
@@ -38,7 +43,45 @@ func MongoStorageProviderNew(uri, databaseName string) (mdp *MongoStorageProvide
 		err = info.Inform(err, ErrMongoConnect, "failed to connect client")
 		return
 	}
-	mdp.collection = mdp.client.Database(mdp.Name).Collection("devices")
+
+	// map supported collections
+	mdp.Collections[deviceCollectionName] = mdp.client.Database(mdp.Name).Collection(deviceCollectionName)
+	mdp.Collections[processCollectionName] = mdp.client.Database(mdp.Name).Collection(processCollectionName)
+	return
+}
+
+type result struct{}
+
+// ListCollections list the collections in the current database
+func (mdp *MongoStorageProvider) ListCollections(ctx context.Context, name string) (collections []*api.Collection, err error) {
+	db := mdp.client.Database(mdp.Name)
+	filter := bson.D{}
+	opts := &options.ListCollectionsOptions{}
+	cursor, err := db.ListCollections(ctx, filter, opts)
+	if err != nil {
+		err = info.Inform(err, ErrCollectionNames, "ListCollections")
+		return
+	}
+	// var colls = &MongoCollection{}
+	// err = cursor.All(ctx, colls)
+	// if err != nil {
+	// err = info.Inform(err, ErrCollectionNames, "ListCollections")
+	// return
+	// }
+	for cursor.Next(ctx) {
+		c := &MongoCollection{}
+		cursor.Decode(c)
+		collections = append(collections, c.makeCollection())
+		//
+		// fmt.Printf("Name: %s, Type: %s\n", coll.Name, coll.Type)
+		// sch := c.Options.Validator.JSONSchema
+		// level := indent(0)
+		// showMongoSchema(sch, c.Name, &level)
+		// showSchema(coll.Schema, &level)
+
+	}
+	// glog.Infof("ListCollections %+v", res)
+	//names = []string{deviceCollectionName, processCollectionName}
 	return
 }
 

@@ -9,7 +9,7 @@ GW_OUT := $(GOSOURCE)"/api/sketchit.pb.gw.go"
 SWAG_OUT := $(GOSOURCE)"/api/sketchit.swagger.json"
 SERVER_PKG_BUILD := "${PKG}/server"
 CLIENT_PKG_BUILD := "${PKG}/client"
-MONGO_SCHEMA_PKG_BUILD := "${PKG}/build-mongo-schema"
+MONGO_SCHEMA_PKG_BUILD := "${PKG}/db-schema/mongo"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 
 .PHONY: all api build_server build_client build_mongo_schema

@@ -17,7 +17,7 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-var testURI = "mongodb://dave:football@localhost:27017/?authSource=sketchit-test"
+var testURI = "mongodb://dave:football@localhost:27017/?authSource=sketchit-test-02"
 
 // GRPC errors
 var (
@@ -35,13 +35,13 @@ func startGRPCServer(address, certFile, keyFile string) error {
 	}
 
 	// create a storage provider
-	storageProvider, err := storage.MongoStorageProviderNew(testURI, "sketchit-test")
+	storageProvider, err := storage.MongoStorageProviderNew(testURI, "sketchit-test-02")
 	if err != nil {
 		return info.Inform(err, ErrStorageConnect, testURI)
 	}
 
 	// create a rpc handler for our api
-	RequestHandler := api.RequestHandlerNew(storageProvider)
+	RequestHandler := RequestHandlerNew(storageProvider)
 
 	// Create the TLS credentials
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)

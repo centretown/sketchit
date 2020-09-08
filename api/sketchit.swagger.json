@@ -43,6 +43,37 @@
         ]
       }
     },
+    "/v1/collections": {
+      "get": {
+        "operationId": "Sketchit_ListCollections",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCollectionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "ignored.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      }
+    },
     "/v1/{name=domains/*/devices/*}": {
       "get": {
         "operationId": "Sketchit_GetDevice",
@@ -415,15 +446,15 @@
         "id": {
           "type": "integer",
           "format": "int32",
-          "title": "The pin number as designated by the device, eg: 2 for Pin #2"
+          "title": "The pin number as designated by the device\neg: 2 for Pin #2"
         },
         "label": {
           "type": "string",
-          "title": "The label assigned to this pin, eg: \"Internal-LED\""
+          "title": "The label assigned to this pin\neg: \"Internal-LED\""
         },
         "purpose": {
           "type": "string",
-          "title": "The pins overall purpose in the sketch,  eg: \"blink on to indicate activity\""
+          "title": "The pins overall purpose in the sketch\neg: \"blink on to indicate activity\""
         }
       },
       "title": "Identifies a pin on a micro controller device"
@@ -485,6 +516,29 @@
       },
       "title": "Action defines a process step or instruction"
     },
+    "v1Collection": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "name of the collection"
+        },
+        "type": {
+          "type": "string",
+          "title": "collection type is always \"collection\""
+        },
+        "readOnly": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "readOnly indicates the updata status"
+        },
+        "schema": {
+          "$ref": "#/definitions/v1Schema",
+          "title": "schema define the structure of the document"
+        }
+      },
+      "title": "Collection defines a group of store documents"
+    },
     "v1DelayCommand": {
       "type": "object",
       "properties": {
@@ -528,6 +582,17 @@
         }
       },
       "title": "defines a micro controller device for sketchit"
+    },
+    "v1ListCollectionsResponse": {
+      "type": "object",
+      "properties": {
+        "collections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Collection"
+          }
+        }
+      }
     },
     "v1ListDevicesResponse": {
       "type": "object",
@@ -649,6 +714,65 @@
         }
       },
       "title": "Process defines how a device is programmed"
+    },
+    "v1Schema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "schema name used for keyed lookup"
+        },
+        "title": {
+          "type": "string",
+          "title": "schema title for presentation"
+        },
+        "type": {
+          "type": "string",
+          "title": "type of data represented"
+        },
+        "description": {
+          "type": "string",
+          "title": "description of the schema"
+        },
+        "uniqueItems": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "uniqueItems constrains items to be unique"
+        },
+        "items": {
+          "$ref": "#/definitions/v1Schema",
+          "title": "item list definition"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "required properties and order"
+        },
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "enum constrains schema to an array of choices"
+        },
+        "oneOf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Schema"
+          },
+          "title": "oneOf constrains schema to one of a selection of options"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Schema"
+          },
+          "title": "properties defines an ordered list of children\norder determined by required array"
+        }
+      },
+      "title": "Schema defines the structure of schemas within a document"
     }
   }
 }

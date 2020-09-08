@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var testURI = "mongodb://testing:test@localhost:27017/?authSource=sketchit-test"
+var testURI = "mongodb://testing:test@localhost:27017/?authSource=sketchit-test-02"
 
 // var dbname = "devices"
 

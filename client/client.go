@@ -38,7 +38,6 @@ func main() {
 	}
 
 	cmdr := &Commander{ctx: ctx, client: client, conn: conn}
-	cmdr.init()
 	cmdr.run()
 }
 

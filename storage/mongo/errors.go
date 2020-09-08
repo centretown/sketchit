@@ -4,14 +4,15 @@ import "errors"
 
 // api support
 var (
-	ErrMongoInsert  = errors.New("failed to insert")
-	ErrBsonMarshall = errors.New("failed to create json")
-	ErrCollection   = errors.New("failed to get collection")
-	ErrFind         = errors.New("failed to find")
-	ErrCreate       = errors.New("failed to create")
-	ErrDecode       = errors.New("failed to decode")
-	ErrNoMatch      = errors.New("No records matched")
-	ErrNotEnough    = errors.New("Not enough arguments")
+	ErrMongoInsert     = errors.New("failed to insert")
+	ErrBsonMarshall    = errors.New("failed to create json")
+	ErrCollection      = errors.New("failed to get collection")
+	ErrFind            = errors.New("failed to find")
+	ErrCreate          = errors.New("failed to create")
+	ErrDecode          = errors.New("failed to decode")
+	ErrNoMatch         = errors.New("No records matched")
+	ErrNotEnough       = errors.New("Not enough arguments")
+	ErrCollectionNames = errors.New("failed to get collection names")
 )
 
 // connection support

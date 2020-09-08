@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/centretown/sketchit/api"
 	"golang.org/x/net/context"
+	"gopkg.in/yaml.v2"
 )
 
 func TestCrud(t *testing.T) {
@@ -35,18 +37,24 @@ func TestCrud(t *testing.T) {
 	}
 	t.Logf("Response from server: %s\n\n", res.Devices)
 
-	dreq := &api.GetDeviceRequest{Name: "domains/work/devices/esp32-01"}
-	device, err := client.GetDevice(ctx, dreq)
+	creq := &api.ListCollectionsRequest{}
+	cres, err := client.ListCollections(ctx, creq)
 	if err != nil {
-		t.Fatalf("Error when calling Get: %s", err)
+		t.Fatalf("Error when calling ListCollections: %s", err)
 	}
-	t.Logf("Response from server: %s\n\n", device)
 
-	req = &api.ListDevicesRequest{Parent: "domains/"}
-	res, err = client.ListDevices(ctx, req)
-	if err != nil {
-		t.Fatalf("Error when calling List: %s", err)
-	}
-	t.Logf("Response from server: %s\n\n", res.Devices)
+	dict := api.DictionaryNew(cres.Collections)
+
+	sch := dict[".processes.setup.items.command"]
+	y, _ := yaml.Marshal(sch)
+	fmt.Println(string(y))
+
+	sch.SetReducer(api.ReduceSummary)
+	y, _ = yaml.Marshal(sch)
+	fmt.Println(string(y))
+
+	sch.SetReducer(api.ReduceName)
+	y, _ = yaml.Marshal(sch)
+	fmt.Println(string(y))
 
 }

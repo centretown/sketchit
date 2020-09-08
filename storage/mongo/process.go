@@ -30,7 +30,7 @@ func (mdp *MongoStorageProvider) CreateProcess(
 		return
 	}
 
-	_, err = mdp.collection.InsertOne(ctx, b)
+	_, err = mdp.Collections[processCollectionName].InsertOne(ctx, b)
 	if err != nil {
 		err = info.Inform(err, ErrMongoInsert,
 			fmt.Sprintf("CreateProcess: %v", newProcess.Label))
@@ -54,7 +54,7 @@ func (mdp *MongoStorageProvider) DeleteProcess(ctx context.Context, name string)
 		{Key: "model", Value: tokens[1]},
 		{Key: "label", Value: tokens[3]}}
 
-	mdp.collection.FindOneAndDelete(ctx, filter)
+	mdp.Collections[processCollectionName].FindOneAndDelete(ctx, filter)
 	return
 }
 
@@ -71,7 +71,7 @@ func (mdp *MongoStorageProvider) GetProcess(ctx context.Context, name string) (p
 		{Key: "label", Value: tokens[3]}}
 
 	process = &api.Process{}
-	err = mdp.collection.FindOne(ctx, filter).Decode(process)
+	err = mdp.Collections[processCollectionName].FindOne(ctx, filter).Decode(process)
 	if err != nil {
 		err = info.Inform(err, ErrDecode, fmt.Sprintf("GetProcess: %v", name))
 		return
@@ -90,7 +90,7 @@ func (mdp *MongoStorageProvider) ListProcesses(ctx context.Context, parent strin
 	}
 
 	processes = make([]*api.Process, 0)
-	cursor, err := mdp.collection.Find(ctx, filter)
+	cursor, err := mdp.Collections[processCollectionName].Find(ctx, filter)
 	if err != nil {
 		err = info.Inform(err, ErrFind, "ListProcesses")
 		return
@@ -117,7 +117,7 @@ func (mdp *MongoStorageProvider) UpdateProcess(ctx context.Context, name string,
 		{Key: "model", Value: tokens[1]},
 		{Key: "label", Value: tokens[3]}}
 
-	res, err := mdp.collection.ReplaceOne(ctx, filter, patch)
+	res, err := mdp.Collections[processCollectionName].ReplaceOne(ctx, filter, patch)
 	if err != nil {
 		err = info.Inform(err, ErrDecode,
 			fmt.Sprintf("UpdateProcess: %v", name))

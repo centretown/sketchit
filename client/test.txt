@@ -1,0 +1,2715 @@
+=== RUN   TestCrud
+    client_test.go:31: Response from server: bar
+    client_test.go:38: Response from server: []
+        
+
+ Name: devices
+ Type: object
+ Description: 
+ Required: [domain label model]
+  Pins
+   Name: pins
+   Type: array
+   Description: the active pins on this device
+    Pin
+     Name: items
+     Type: object
+     Description: the pin definition
+     Required: [id label purpose]
+      Id
+       Name: id
+       Type: number
+       Description: the pin number
+      Label
+       Name: label
+       Type: string
+       Description: the label assigned to the pin
+      Purpose
+       Name: purpose
+       Type: string
+       Description: the purpose for this pin
+  Domain
+   Name: domain
+   Type: string
+   Description: the name of the domain
+  Label
+   Name: label
+   Type: string
+   Description: the name of the device
+  Model
+   Name: model
+   Type: string
+   Description: the device model type
+
+ Name: processes
+ Type: object
+ Description: 
+ Required: [model label deviceKey purpose]
+  Setup
+   Name: setup
+   Type: array
+   Description: the actions taken during the setup stage
+    Action
+     Name: items
+     Type: object
+     Description: the action to take
+     Required: [sequence type]
+      Command
+       Name: command
+       Type: object
+       Description: the possible command parameters
+       One of:
+        Delay Command
+         Name: option-1
+         Type: object
+         Description: delays for <duration>
+          Duration
+           Name: duration
+           Type: number
+           Description: the time to do something (delay)
+        Mode Command
+         Name: option-2
+         Type: object
+         Description: prepares <signal> pin <id> for <mode>
+         Required: [id signal mode]
+          Signal
+           Name: signal
+           Type: string
+           Description: the Signal type analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode
+           Type: string
+           Description: the input/output Mode
+           Enum: [input output]
+          Id
+           Name: id
+           Type: number
+           Description: the pin Id number as defined by the device
+        Pin Command
+         Name: option-3
+         Type: object
+         Description: <inputs/outputs> from/to <analog/digital> pin <id>
+         Required: [id signal mode value]
+          Signal
+           Name: signal
+           Type: string
+           Description: the type of signal analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode
+           Type: string
+           Description: the read/write mode
+           Enum: [input output]
+          Value output or input
+           Name: value
+           Type: number
+           Description: the value to read or write
+          Id
+           Name: id
+           Type: number
+           Description: the pin number as defined on the device
+        Hall Command
+         Name: option-4
+         Type: object
+         Description: reads magnetic field to measurement
+          Measurement
+           Name: measurement
+           Type: number
+           Description: the measurement read
+      Sequence
+       Name: sequence
+       Type: number
+       Description: the action sequence number
+      Type
+       Name: type
+       Type: string
+       Description: the command type
+  Loop
+   Name: loop
+   Type: array
+   Description: the actions taken during the processing loop
+    Action
+     Name: items
+     Type: object
+     Description: the action to take
+     Required: [sequence type]
+      Command
+       Name: command
+       Type: object
+       Description: the possible command parameters
+       One of:
+        Delay Command
+         Name: option-1
+         Type: object
+         Description: delays for <duration>
+          Duration
+           Name: duration
+           Type: number
+           Description: the time to do something (delay)
+        Mode Command
+         Name: option-2
+         Type: object
+         Description: prepares <signal> pin <id> for <mode>
+         Required: [id signal mode]
+          Signal
+           Name: signal
+           Type: string
+           Description: the Signal type analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode
+           Type: string
+           Description: the input/output Mode
+           Enum: [input output]
+          Id
+           Name: id
+           Type: number
+           Description: the pin Id number as defined by the device
+        Pin Command
+         Name: option-3
+         Type: object
+         Description: <inputs/outputs> from/to <analog/digital> pin <id>
+         Required: [id signal mode value]
+          Mode
+           Name: mode
+           Type: string
+           Description: the read/write mode
+           Enum: [input output]
+          Value output or input
+           Name: value
+           Type: number
+           Description: the value to read or write
+          Id
+           Name: id
+           Type: number
+           Description: the pin number as defined on the device
+          Signal
+           Name: signal
+           Type: string
+           Description: the type of signal analog/digital
+           Enum: [analog digital]
+        Hall Command
+         Name: option-4
+         Type: object
+         Description: reads magnetic field to measurement
+          Measurement
+           Name: measurement
+           Type: number
+           Description: the measurement read
+      Sequence
+       Name: sequence
+       Type: number
+       Description: the action sequence number
+      Type
+       Name: type
+       Type: string
+       Description: the command type
+  Model
+   Name: model
+   Type: string
+   Description: the device model type
+  Label
+   Name: label
+   Type: string
+   Description: the name of the process
+  Device Key
+   Name: deviceKey
+   Type: string
+   Description: the key for the device
+  Purpose
+   Name: purpose
+   Type: string
+   Description: the purpose or intent
+
+ Name: devices
+ Type: object
+ Description: 
+ Required: [domain label model]
+  Domain
+   Name: domain
+   Type: string
+   Description: the name of the domain
+  Label
+   Name: label
+   Type: string
+   Description: the name of the device
+  Model
+   Name: model
+   Type: string
+   Description: the device model type
+  Pins
+   Name: pins
+   Type: array
+   Description: the active pins on this device
+    Pin
+     Name: items
+     Type: object
+     Description: the pin definition
+     Required: [id label purpose]
+      Id
+       Name: id
+       Type: number
+       Description: the pin number
+      Label
+       Name: label
+       Type: string
+       Description: the label assigned to the pin
+      Purpose
+       Name: purpose
+       Type: string
+       Description: the purpose for this pin
+
+ Name: processes
+ Type: object
+ Description: 
+ Required: [model label deviceKey purpose]
+  Model
+   Name: model
+   Type: string
+   Description: the device model type
+  Label
+   Name: label
+   Type: string
+   Description: the name of the process
+  Device Key
+   Name: deviceKey
+   Type: string
+   Description: the key for the device
+  Purpose
+   Name: purpose
+   Type: string
+   Description: the purpose or intent
+  Setup
+   Name: setup
+   Type: array
+   Description: the actions taken during the setup stage
+    Action
+     Name: items
+     Type: object
+     Description: the action to take
+     Required: [sequence type]
+      Sequence
+       Name: sequence
+       Type: number
+       Description: the action sequence number
+      Type
+       Name: type
+       Type: string
+       Description: the command type
+      Command
+       Name: command
+       Type: object
+       Description: the possible command parameters
+       One of:
+        Delay Command
+         Name: option-1
+         Type: object
+         Description: delays for <duration>
+          Duration
+           Name: duration
+           Type: number
+           Description: the time to do something (delay)
+        Mode Command
+         Name: option-2
+         Type: object
+         Description: prepares <signal> pin <id> for <mode>
+         Required: [id signal mode]
+          Id
+           Name: id
+           Type: number
+           Description: the pin Id number as defined by the device
+          Signal
+           Name: signal
+           Type: string
+           Description: the Signal type analog/digital
+          Mode
+           Name: mode
+           Type: string
+           Description: the input/output Mode
+        Pin Command
+         Name: option-3
+         Type: object
+         Description: <inputs/outputs> from/to <analog/digital> pin <id>
+         Required: [id signal mode value]
+          Id
+           Name: id
+           Type: number
+           Description: the pin number as defined on the device
+          Signal
+           Name: signal
+           Type: string
+           Description: the type of signal analog/digital
+          Mode
+           Name: mode
+           Type: string
+           Description: the read/write mode
+          Value output or input
+           Name: value
+           Type: number
+           Description: the value to read or write
+        Hall Command
+         Name: option-4
+         Type: object
+         Description: reads magnetic field to measurement
+          Measurement
+           Name: measurement
+           Type: number
+           Description: the measurement read
+  Loop
+   Name: loop
+   Type: array
+   Description: the actions taken during the processing loop
+    Action
+     Name: items
+     Type: object
+     Description: the action to take
+     Required: [sequence type]
+      Sequence
+       Name: sequence
+       Type: number
+       Description: the action sequence number
+      Type
+       Name: type
+       Type: string
+       Description: the command type
+      Command
+       Name: command
+       Type: object
+       Description: the possible command parameters
+       One of:
+        Delay Command
+         Name: option-1
+         Type: object
+         Description: delays for <duration>
+          Duration
+           Name: duration
+           Type: number
+           Description: the time to do something (delay)
+        Mode Command
+         Name: option-2
+         Type: object
+         Description: prepares <signal> pin <id> for <mode>
+         Required: [id signal mode]
+          Id
+           Name: id
+           Type: number
+           Description: the pin Id number as defined by the device
+          Signal
+           Name: signal
+           Type: string
+           Description: the Signal type analog/digital
+          Mode
+           Name: mode
+           Type: string
+           Description: the input/output Mode
+        Pin Command
+         Name: option-3
+         Type: object
+         Description: <inputs/outputs> from/to <analog/digital> pin <id>
+         Required: [id signal mode value]
+          Id
+           Name: id
+           Type: number
+           Description: the pin number as defined on the device
+          Signal
+           Name: signal
+           Type: string
+           Description: the type of signal analog/digital
+          Mode
+           Name: mode
+           Type: string
+           Description: the read/write mode
+          Value output or input
+           Name: value
+           Type: number
+           Description: the value to read or write
+        Hall Command
+         Name: option-4
+         Type: object
+         Description: reads magnetic field to measurement
+          Measurement
+           Name: measurement
+           Type: number
+           Description: the measurement read
+
+ Name: devices
+ Type: object
+ Description: 
+ Required: [domain label model]
+  Domain
+   Name: domain
+   Type: string
+   Description: the name of the domain
+  Label
+   Name: label
+   Type: string
+   Description: the name of the device
+  Model
+   Name: model
+   Type: string
+   Description: the device model type
+  Pins
+   Name: pins
+   Type: array
+   Description: the active pins on this device
+    Pin
+     Name: items
+     Type: object
+     Description: the pin definition
+     Required: [id label purpose]
+      Id
+       Name: id
+       Type: number
+       Description: the pin number
+      Label
+       Name: label
+       Type: string
+       Description: the label assigned to the pin
+      Purpose
+       Name: purpose
+       Type: string
+       Description: the purpose for this pin
+
+ Name: processes
+ Type: object
+ Description: 
+ Required: [model label deviceKey purpose]
+  Model
+   Name: model
+   Type: string
+   Description: the device model type
+  Label
+   Name: label
+   Type: string
+   Description: the name of the process
+  Device Key
+   Name: deviceKey
+   Type: string
+   Description: the key for the device
+  Purpose
+   Name: purpose
+   Type: string
+   Description: the purpose or intent
+  Setup
+   Name: setup
+   Type: array
+   Description: the actions taken during the setup stage
+    Action
+     Name: items
+     Type: object
+     Description: the action to take
+     Required: [sequence type]
+      Sequence
+       Name: sequence
+       Type: number
+       Description: the action sequence number
+      Type
+       Name: type
+       Type: string
+       Description: the command type
+      Command
+       Name: command
+       Type: object
+       Description: the possible command parameters
+       One of:
+        Delay Command
+         Name: option-1
+         Type: object
+         Description: delays for <duration>
+          Duration
+           Name: duration
+           Type: number
+           Description: the time to do something (delay)
+        Mode Command
+         Name: option-2
+         Type: object
+         Description: prepares <signal> pin <id> for <mode>
+         Required: [id signal mode]
+          Id
+           Name: id
+           Type: number
+           Description: the pin Id number as defined by the device
+          Signal
+           Name: signal
+           Type: string
+           Description: the Signal type analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode
+           Type: string
+           Description: the input/output Mode
+           Enum: [input output]
+        Pin Command
+         Name: option-3
+         Type: object
+         Description: <inputs/outputs> from/to <analog/digital> pin <id>
+         Required: [id signal mode value]
+          Id
+           Name: id
+           Type: number
+           Description: the pin number as defined on the device
+          Signal
+           Name: signal
+           Type: string
+           Description: the type of signal analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode
+           Type: string
+           Description: the read/write mode
+           Enum: [input output]
+          Value output or input
+           Name: value
+           Type: number
+           Description: the value to read or write
+        Hall Command
+         Name: option-4
+         Type: object
+         Description: reads magnetic field to measurement
+          Measurement
+           Name: measurement
+           Type: number
+           Description: the measurement read
+  Loop
+   Name: loop
+   Type: array
+   Description: the actions taken during the processing loop
+    Action
+     Name: items
+     Type: object
+     Description: the action to take
+     Required: [sequence type]
+      Sequence
+       Name: sequence
+       Type: number
+       Description: the action sequence number
+      Type
+       Name: type
+       Type: string
+       Description: the command type
+      Command
+       Name: command
+       Type: object
+       Description: the possible command parameters
+       One of:
+        Delay Command
+         Name: option-1
+         Type: object
+         Description: delays for <duration>
+          Duration
+           Name: duration
+           Type: number
+           Description: the time to do something (delay)
+        Mode Command
+         Name: option-2
+         Type: object
+         Description: prepares <signal> pin <id> for <mode>
+         Required: [id signal mode]
+          Id
+           Name: id
+           Type: number
+           Description: the pin Id number as defined by the device
+          Signal
+           Name: signal
+           Type: string
+           Description: the Signal type analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode
+           Type: string
+           Description: the input/output Mode
+           Enum: [input output]
+        Pin Command
+         Name: option-3
+         Type: object
+         Description: <inputs/outputs> from/to <analog/digital> pin <id>
+         Required: [id signal mode value]
+          Id
+           Name: id
+           Type: number
+           Description: the pin number as defined on the device
+          Signal
+           Name: signal
+           Type: string
+           Description: the type of signal analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode
+           Type: string
+           Description: the read/write mode
+           Enum: [input output]
+          Value output or input
+           Name: value
+           Type: number
+           Description: the value to read or write
+        Hall Command
+         Name: option-4
+         Type: object
+         Description: reads magnetic field to measurement
+          Measurement
+           Name: measurement
+           Type: number
+           Description: the measurement read
+{
+  "collections": [
+    {
+      "name": "devices",
+      "type": "collection",
+      "schema": {
+        "name": "devices",
+        "type": "object",
+        "required": [
+          "domain",
+          "label",
+          "model"
+        ],
+        "properties": {
+          "domain": {
+            "name": "domain",
+            "title": "Domain",
+            "type": "string",
+            "description": "the name of the domain"
+          },
+          "label": {
+            "name": "label",
+            "title": "Label",
+            "type": "string",
+            "description": "the name of the device"
+          },
+          "model": {
+            "name": "model",
+            "title": "Model",
+            "type": "string",
+            "description": "the device model type"
+          },
+          "pins": {
+            "name": "pins",
+            "title": "Pins",
+            "type": "array",
+            "description": "the active pins on this device",
+            "items": {
+              "name": "items",
+              "title": "Pin",
+              "type": "object",
+              "description": "the pin definition",
+              "uniqueItems": true,
+              "required": [
+                "id",
+                "label",
+                "purpose"
+              ],
+              "properties": {
+                "id": {
+                  "name": "id",
+                  "title": "Id",
+                  "type": "number",
+                  "description": "the pin number"
+                },
+                "label": {
+                  "name": "label",
+                  "title": "Label",
+                  "type": "string",
+                  "description": "the label assigned to the pin"
+                },
+                "purpose": {
+                  "name": "purpose",
+                  "title": "Purpose",
+                  "type": "string",
+                  "description": "the purpose for this pin"
+                }
+              },
+              "list": [
+                {
+                  "name": "id",
+                  "title": "Id",
+                  "type": "number",
+                  "description": "the pin number"
+                },
+                {
+                  "name": "label",
+                  "title": "Label",
+                  "type": "string",
+                  "description": "the label assigned to the pin"
+                },
+                {
+                  "name": "purpose",
+                  "title": "Purpose",
+                  "type": "string",
+                  "description": "the purpose for this pin"
+                }
+              ]
+            }
+          }
+        },
+        "list": [
+          {
+            "name": "domain",
+            "title": "Domain",
+            "type": "string",
+            "description": "the name of the domain"
+          },
+          {
+            "name": "label",
+            "title": "Label",
+            "type": "string",
+            "description": "the name of the device"
+          },
+          {
+            "name": "model",
+            "title": "Model",
+            "type": "string",
+            "description": "the device model type"
+          },
+          {
+            "name": "pins",
+            "title": "Pins",
+            "type": "array",
+            "description": "the active pins on this device",
+            "items": {
+              "name": "items",
+              "title": "Pin",
+              "type": "object",
+              "description": "the pin definition",
+              "uniqueItems": true,
+              "required": [
+                "id",
+                "label",
+                "purpose"
+              ],
+              "properties": {
+                "id": {
+                  "name": "id",
+                  "title": "Id",
+                  "type": "number",
+                  "description": "the pin number"
+                },
+                "label": {
+                  "name": "label",
+                  "title": "Label",
+                  "type": "string",
+                  "description": "the label assigned to the pin"
+                },
+                "purpose": {
+                  "name": "purpose",
+                  "title": "Purpose",
+                  "type": "string",
+                  "description": "the purpose for this pin"
+                }
+              },
+              "list": [
+                {
+                  "name": "id",
+                  "title": "Id",
+                  "type": "number",
+                  "description": "the pin number"
+                },
+                {
+                  "name": "label",
+                  "title": "Label",
+                  "type": "string",
+                  "description": "the label assigned to the pin"
+                },
+                {
+                  "name": "purpose",
+                  "title": "Purpose",
+                  "type": "string",
+                  "description": "the purpose for this pin"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "processes",
+      "type": "collection",
+      "schema": {
+        "name": "processes",
+        "type": "object",
+        "required": [
+          "model",
+          "label",
+          "deviceKey",
+          "purpose"
+        ],
+        "properties": {
+          "deviceKey": {
+            "name": "deviceKey",
+            "title": "Device Key",
+            "type": "string",
+            "description": "the key for the device"
+          },
+          "label": {
+            "name": "label",
+            "title": "Label",
+            "type": "string",
+            "description": "the name of the process"
+          },
+          "loop": {
+            "name": "loop",
+            "title": "Loop",
+            "type": "array",
+            "description": "the actions taken during the processing loop",
+            "items": {
+              "name": "items",
+              "title": "Action",
+              "type": "object",
+              "description": "the action to take",
+              "uniqueItems": true,
+              "required": [
+                "sequence",
+                "type"
+              ],
+              "properties": {
+                "command": {
+                  "name": "command",
+                  "title": "Command",
+                  "type": "object",
+                  "description": "the possible command parameters",
+                  "oneOf": [
+                    {
+                      "name": "option-1",
+                      "title": "Delay Command",
+                      "type": "object",
+                      "description": "delays for \u003cduration\u003e",
+                      "required": [
+                        "duration"
+                      ],
+                      "properties": {
+                        "duration": {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-2",
+                      "title": "Mode Command",
+                      "type": "object",
+                      "description": "prepares \u003csignal\u003e pin \u003cid\u003e for \u003cmode\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-3",
+                      "title": "Pin Command",
+                      "type": "object",
+                      "description": "\u003cinputs/outputs\u003e from/to \u003canalog/digital\u003e pin \u003cid\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode",
+                        "value"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        "value": {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-4",
+                      "title": "Hall Command",
+                      "type": "object",
+                      "description": "reads magnetic field to measurement",
+                      "required": [
+                        "measurement"
+                      ],
+                      "properties": {
+                        "measurement": {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "sequence": {
+                  "name": "sequence",
+                  "title": "Sequence",
+                  "type": "number",
+                  "description": "the action sequence number"
+                },
+                "type": {
+                  "name": "type",
+                  "title": "Type",
+                  "type": "string",
+                  "description": "the command type"
+                }
+              },
+              "list": [
+                {
+                  "name": "sequence",
+                  "title": "Sequence",
+                  "type": "number",
+                  "description": "the action sequence number"
+                },
+                {
+                  "name": "type",
+                  "title": "Type",
+                  "type": "string",
+                  "description": "the command type"
+                },
+                {
+                  "name": "command",
+                  "title": "Command",
+                  "type": "object",
+                  "description": "the possible command parameters",
+                  "oneOf": [
+                    {
+                      "name": "option-1",
+                      "title": "Delay Command",
+                      "type": "object",
+                      "description": "delays for \u003cduration\u003e",
+                      "required": [
+                        "duration"
+                      ],
+                      "properties": {
+                        "duration": {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-2",
+                      "title": "Mode Command",
+                      "type": "object",
+                      "description": "prepares \u003csignal\u003e pin \u003cid\u003e for \u003cmode\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-3",
+                      "title": "Pin Command",
+                      "type": "object",
+                      "description": "\u003cinputs/outputs\u003e from/to \u003canalog/digital\u003e pin \u003cid\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode",
+                        "value"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        "value": {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-4",
+                      "title": "Hall Command",
+                      "type": "object",
+                      "description": "reads magnetic field to measurement",
+                      "required": [
+                        "measurement"
+                      ],
+                      "properties": {
+                        "measurement": {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "model": {
+            "name": "model",
+            "title": "Model",
+            "type": "string",
+            "description": "the device model type"
+          },
+          "purpose": {
+            "name": "purpose",
+            "title": "Purpose",
+            "type": "string",
+            "description": "the purpose or intent"
+          },
+          "setup": {
+            "name": "setup",
+            "title": "Setup",
+            "type": "array",
+            "description": "the actions taken during the setup stage",
+            "items": {
+              "name": "items",
+              "title": "Action",
+              "type": "object",
+              "description": "the action to take",
+              "uniqueItems": true,
+              "required": [
+                "sequence",
+                "type"
+              ],
+              "properties": {
+                "command": {
+                  "name": "command",
+                  "title": "Command",
+                  "type": "object",
+                  "description": "the possible command parameters",
+                  "oneOf": [
+                    {
+                      "name": "option-1",
+                      "title": "Delay Command",
+                      "type": "object",
+                      "description": "delays for \u003cduration\u003e",
+                      "required": [
+                        "duration"
+                      ],
+                      "properties": {
+                        "duration": {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-2",
+                      "title": "Mode Command",
+                      "type": "object",
+                      "description": "prepares \u003csignal\u003e pin \u003cid\u003e for \u003cmode\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-3",
+                      "title": "Pin Command",
+                      "type": "object",
+                      "description": "\u003cinputs/outputs\u003e from/to \u003canalog/digital\u003e pin \u003cid\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode",
+                        "value"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        "value": {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-4",
+                      "title": "Hall Command",
+                      "type": "object",
+                      "description": "reads magnetic field to measurement",
+                      "required": [
+                        "measurement"
+                      ],
+                      "properties": {
+                        "measurement": {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "sequence": {
+                  "name": "sequence",
+                  "title": "Sequence",
+                  "type": "number",
+                  "description": "the action sequence number"
+                },
+                "type": {
+                  "name": "type",
+                  "title": "Type",
+                  "type": "string",
+                  "description": "the command type"
+                }
+              },
+              "list": [
+                {
+                  "name": "sequence",
+                  "title": "Sequence",
+                  "type": "number",
+                  "description": "the action sequence number"
+                },
+                {
+                  "name": "type",
+                  "title": "Type",
+                  "type": "string",
+                  "description": "the command type"
+                },
+                {
+                  "name": "command",
+                  "title": "Command",
+                  "type": "object",
+                  "description": "the possible command parameters",
+                  "oneOf": [
+                    {
+                      "name": "option-1",
+                      "title": "Delay Command",
+                      "type": "object",
+                      "description": "delays for \u003cduration\u003e",
+                      "required": [
+                        "duration"
+                      ],
+                      "properties": {
+                        "duration": {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-2",
+                      "title": "Mode Command",
+                      "type": "object",
+                      "description": "prepares \u003csignal\u003e pin \u003cid\u003e for \u003cmode\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-3",
+                      "title": "Pin Command",
+                      "type": "object",
+                      "description": "\u003cinputs/outputs\u003e from/to \u003canalog/digital\u003e pin \u003cid\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode",
+                        "value"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        "value": {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-4",
+                      "title": "Hall Command",
+                      "type": "object",
+                      "description": "reads magnetic field to measurement",
+                      "required": [
+                        "measurement"
+                      ],
+                      "properties": {
+                        "measurement": {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "list": [
+          {
+            "name": "model",
+            "title": "Model",
+            "type": "string",
+            "description": "the device model type"
+          },
+          {
+            "name": "label",
+            "title": "Label",
+            "type": "string",
+            "description": "the name of the process"
+          },
+          {
+            "name": "deviceKey",
+            "title": "Device Key",
+            "type": "string",
+            "description": "the key for the device"
+          },
+          {
+            "name": "purpose",
+            "title": "Purpose",
+            "type": "string",
+            "description": "the purpose or intent"
+          },
+          {
+            "name": "setup",
+            "title": "Setup",
+            "type": "array",
+            "description": "the actions taken during the setup stage",
+            "items": {
+              "name": "items",
+              "title": "Action",
+              "type": "object",
+              "description": "the action to take",
+              "uniqueItems": true,
+              "required": [
+                "sequence",
+                "type"
+              ],
+              "properties": {
+                "command": {
+                  "name": "command",
+                  "title": "Command",
+                  "type": "object",
+                  "description": "the possible command parameters",
+                  "oneOf": [
+                    {
+                      "name": "option-1",
+                      "title": "Delay Command",
+                      "type": "object",
+                      "description": "delays for \u003cduration\u003e",
+                      "required": [
+                        "duration"
+                      ],
+                      "properties": {
+                        "duration": {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-2",
+                      "title": "Mode Command",
+                      "type": "object",
+                      "description": "prepares \u003csignal\u003e pin \u003cid\u003e for \u003cmode\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-3",
+                      "title": "Pin Command",
+                      "type": "object",
+                      "description": "\u003cinputs/outputs\u003e from/to \u003canalog/digital\u003e pin \u003cid\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode",
+                        "value"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        "value": {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-4",
+                      "title": "Hall Command",
+                      "type": "object",
+                      "description": "reads magnetic field to measurement",
+                      "required": [
+                        "measurement"
+                      ],
+                      "properties": {
+                        "measurement": {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "sequence": {
+                  "name": "sequence",
+                  "title": "Sequence",
+                  "type": "number",
+                  "description": "the action sequence number"
+                },
+                "type": {
+                  "name": "type",
+                  "title": "Type",
+                  "type": "string",
+                  "description": "the command type"
+                }
+              },
+              "list": [
+                {
+                  "name": "sequence",
+                  "title": "Sequence",
+                  "type": "number",
+                  "description": "the action sequence number"
+                },
+                {
+                  "name": "type",
+                  "title": "Type",
+                  "type": "string",
+                  "description": "the command type"
+                },
+                {
+                  "name": "command",
+                  "title": "Command",
+                  "type": "object",
+                  "description": "the possible command parameters",
+                  "oneOf": [
+                    {
+                      "name": "option-1",
+                      "title": "Delay Command",
+                      "type": "object",
+                      "description": "delays for \u003cduration\u003e",
+                      "required": [
+                        "duration"
+                      ],
+                      "properties": {
+                        "duration": {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-2",
+                      "title": "Mode Command",
+                      "type": "object",
+                      "description": "prepares \u003csignal\u003e pin \u003cid\u003e for \u003cmode\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-3",
+                      "title": "Pin Command",
+                      "type": "object",
+                      "description": "\u003cinputs/outputs\u003e from/to \u003canalog/digital\u003e pin \u003cid\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode",
+                        "value"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        "value": {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-4",
+                      "title": "Hall Command",
+                      "type": "object",
+                      "description": "reads magnetic field to measurement",
+                      "required": [
+                        "measurement"
+                      ],
+                      "properties": {
+                        "measurement": {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "loop",
+            "title": "Loop",
+            "type": "array",
+            "description": "the actions taken during the processing loop",
+            "items": {
+              "name": "items",
+              "title": "Action",
+              "type": "object",
+              "description": "the action to take",
+              "uniqueItems": true,
+              "required": [
+                "sequence",
+                "type"
+              ],
+              "properties": {
+                "command": {
+                  "name": "command",
+                  "title": "Command",
+                  "type": "object",
+                  "description": "the possible command parameters",
+                  "oneOf": [
+                    {
+                      "name": "option-1",
+                      "title": "Delay Command",
+                      "type": "object",
+                      "description": "delays for \u003cduration\u003e",
+                      "required": [
+                        "duration"
+                      ],
+                      "properties": {
+                        "duration": {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-2",
+                      "title": "Mode Command",
+                      "type": "object",
+                      "description": "prepares \u003csignal\u003e pin \u003cid\u003e for \u003cmode\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-3",
+                      "title": "Pin Command",
+                      "type": "object",
+                      "description": "\u003cinputs/outputs\u003e from/to \u003canalog/digital\u003e pin \u003cid\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode",
+                        "value"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        "value": {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-4",
+                      "title": "Hall Command",
+                      "type": "object",
+                      "description": "reads magnetic field to measurement",
+                      "required": [
+                        "measurement"
+                      ],
+                      "properties": {
+                        "measurement": {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "sequence": {
+                  "name": "sequence",
+                  "title": "Sequence",
+                  "type": "number",
+                  "description": "the action sequence number"
+                },
+                "type": {
+                  "name": "type",
+                  "title": "Type",
+                  "type": "string",
+                  "description": "the command type"
+                }
+              },
+              "list": [
+                {
+                  "name": "sequence",
+                  "title": "Sequence",
+                  "type": "number",
+                  "description": "the action sequence number"
+                },
+                {
+                  "name": "type",
+                  "title": "Type",
+                  "type": "string",
+                  "description": "the command type"
+                },
+                {
+                  "name": "command",
+                  "title": "Command",
+                  "type": "object",
+                  "description": "the possible command parameters",
+                  "oneOf": [
+                    {
+                      "name": "option-1",
+                      "title": "Delay Command",
+                      "type": "object",
+                      "description": "delays for \u003cduration\u003e",
+                      "required": [
+                        "duration"
+                      ],
+                      "properties": {
+                        "duration": {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "duration",
+                          "title": "Duration",
+                          "type": "number",
+                          "description": "the time to do something (delay)"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-2",
+                      "title": "Mode Command",
+                      "type": "object",
+                      "description": "prepares \u003csignal\u003e pin \u003cid\u003e for \u003cmode\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin Id number as defined by the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the Signal type analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the input/output Mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-3",
+                      "title": "Pin Command",
+                      "type": "object",
+                      "description": "\u003cinputs/outputs\u003e from/to \u003canalog/digital\u003e pin \u003cid\u003e",
+                      "required": [
+                        "id",
+                        "signal",
+                        "mode",
+                        "value"
+                      ],
+                      "properties": {
+                        "id": {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        "mode": {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        "signal": {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        "value": {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "id",
+                          "title": "Id",
+                          "type": "number",
+                          "description": "the pin number as defined on the device"
+                        },
+                        {
+                          "name": "signal",
+                          "title": "Signal",
+                          "type": "string",
+                          "description": "the type of signal analog/digital",
+                          "enum": [
+                            "analog",
+                            "digital"
+                          ]
+                        },
+                        {
+                          "name": "mode",
+                          "title": "Mode",
+                          "type": "string",
+                          "description": "the read/write mode",
+                          "enum": [
+                            "input",
+                            "output"
+                          ]
+                        },
+                        {
+                          "name": "value",
+                          "title": "Value output or input",
+                          "type": "number",
+                          "description": "the value to read or write"
+                        }
+                      ]
+                    },
+                    {
+                      "name": "option-4",
+                      "title": "Hall Command",
+                      "type": "object",
+                      "description": "reads magnetic field to measurement",
+                      "required": [
+                        "measurement"
+                      ],
+                      "properties": {
+                        "measurement": {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      },
+                      "list": [
+                        {
+                          "name": "measurement",
+                          "title": "Measurement",
+                          "type": "number",
+                          "description": "the measurement read"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+--- PASS: TestCrud (0.03s)
+PASS
+ok  	github.com/centretown/sketchit/client	0.033s

@@ -1,0 +1,118 @@
+Name: processes, Type: object Description:
+ Required: [model label deviceKey purpose]
+  Model
+   Name: model, Type: string Description:the device model type
+  Label
+   Name: label, Type: string Description:the name of the process
+  Device Key
+   Name: deviceKey, Type: string Description:the key for the device
+  Purpose
+   Name: purpose, Type: string Description:the purpose or intent
+  Setup
+   Name: setup, Type: array Description:the actions taken during the setup stage
+    Action
+     Name: items, Type: object Description:the action to take
+     Required: [sequence type]
+      Sequence
+       Name: sequence, Type: number Description:the action sequence number
+      Type
+       Name: type, Type: string Description:the command type
+      Command
+       Name: command, Type: object Description:the possible command parameters
+       One of:
+        Delay Command
+         Name: option-1, Type: object Description:delays for <duration>
+          Duration
+           Name: duration, Type: number Description:the time to do something (delay)
+        Mode Command
+         Name: option-2, Type: object Description:prepares <signal> pin <id> for <mode>
+         Required: [id signal mode]
+          Id
+           Name: id, Type: number Description:the pin Id number as defined by the device
+          Signal
+           Name: signal, Type: string Description:the Signal type analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode, Type: string Description:the input/output Mode
+           Enum: [input output]
+        Pin Command
+         Name: option-3, Type: object Description:<inputs/outputs> from/to <analog/digital> pin <id>
+         Required: [id signal mode value]
+          Id
+           Name: id, Type: number Description:the pin number as defined on the device
+          Signal
+           Name: signal, Type: string Description:the type of signal analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode, Type: string Description:the read/write mode
+           Enum: [input output]
+          Value output or input
+           Name: value, Type: number Description:the value to read or write
+        Hall Command
+         Name: option-4, Type: object Description:reads magnetic field to measurement
+          Measurement
+           Name: measurement, Type: number Description:the measurement read
+  Loop
+   Name: loop, Type: array Description:the actions taken during the processing loop
+    Action
+     Name: items, Type: object Description:the action to take
+     Required: [sequence type]
+      Sequence
+       Name: sequence, Type: number Description:the action sequence number
+      Type
+       Name: type, Type: string Description:the command type
+      Command
+       Name: command, Type: object Description:the possible command parameters
+       One of:
+        Delay Command
+         Name: option-1, Type: object Description:delays for <duration>
+          Duration
+           Name: duration, Type: number Description:the time to do something (delay)
+        Mode Command
+         Name: option-2, Type: object Description:prepares <signal> pin <id> for <mode>
+         Required: [id signal mode]
+          Id
+           Name: id, Type: number Description:the pin Id number as defined by the device
+          Signal
+           Name: signal, Type: string Description:the Signal type analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode, Type: string Description:the input/output Mode
+           Enum: [input output]
+        Pin Command
+         Name: option-3, Type: object Description:<inputs/outputs> from/to <analog/digital> pin <id>
+         Required: [id signal mode value]
+          Id
+           Name: id, Type: number Description:the pin number as defined on the device
+          Signal
+           Name: signal, Type: string Description:the type of signal analog/digital
+           Enum: [analog digital]
+          Mode
+           Name: mode, Type: string Description:the read/write mode
+           Enum: [input output]
+          Value output or input
+           Name: value, Type: number Description:the value to read or write
+        Hall Command
+         Name: option-4, Type: object Description:reads magnetic field to measurement
+          Measurement
+           Name: measurement, Type: number Description:the measurement read
+
+ Name: devices, Type: object Description:
+ Required: [domain label model]
+  Domain
+   Name: domain, Type: string Description:the name of the domain
+  Label
+   Name: label, Type: string Description:the name of the device
+  Model
+   Name: model, Type: string Description:the device model type
+  Pins
+   Name: pins, Type: array Description:the active pins on this device
+    Pin
+     Name: items, Type: object Description:the pin definition
+     Required: [id label purpose]
+      Id
+       Name: id, Type: number Description:the pin number
+      Label
+       Name: label, Type: string Description:the label assigned to the pin
+      Purpose
+       Name: purpose, Type: string Description:the purpose for this pin

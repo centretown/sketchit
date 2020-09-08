@@ -31,7 +31,7 @@ func (mdp *MongoStorageProvider) CreateDevice(
 		return
 	}
 
-	_, err = mdp.collection.InsertOne(ctx, b)
+	_, err = mdp.Collections[deviceCollectionName].InsertOne(ctx, b)
 	if err != nil {
 		err = info.Inform(err, ErrMongoInsert,
 			fmt.Sprintf("CreateDevice: %v", newDevice.Label))
@@ -55,7 +55,7 @@ func (mdp *MongoStorageProvider) DeleteDevice(ctx context.Context, name string) 
 		{Key: "domain", Value: tokens[1]},
 		{Key: "label", Value: tokens[3]}}
 
-	mdp.collection.FindOneAndDelete(ctx, filter)
+	mdp.Collections[deviceCollectionName].FindOneAndDelete(ctx, filter)
 	return
 }
 
@@ -72,7 +72,7 @@ func (mdp *MongoStorageProvider) GetDevice(ctx context.Context, name string) (de
 		{Key: "label", Value: tokens[3]}}
 
 	device = &api.Device{}
-	err = mdp.collection.FindOne(ctx, filter).Decode(device)
+	err = mdp.Collections[deviceCollectionName].FindOne(ctx, filter).Decode(device)
 	if err != nil {
 		err = info.Inform(err, ErrDecode, "get device")
 		return
@@ -91,7 +91,7 @@ func (mdp *MongoStorageProvider) ListDevices(ctx context.Context, parent string)
 	}
 
 	devices = make([]*api.Device, 0)
-	cursor, err := mdp.collection.Find(ctx, filter)
+	cursor, err := mdp.Collections[deviceCollectionName].Find(ctx, filter)
 	if err != nil {
 		err = info.Inform(err, ErrFind, "ListDevices")
 		return
@@ -118,7 +118,7 @@ func (mdp *MongoStorageProvider) UpdateDevice(ctx context.Context, name string, 
 		{Key: "domain", Value: tokens[1]},
 		{Key: "label", Value: tokens[3]}}
 
-	res, err := mdp.collection.ReplaceOne(ctx, filter, patch)
+	res, err := mdp.Collections[deviceCollectionName].ReplaceOne(ctx, filter, patch)
 	if err != nil {
 		err = info.Inform(err, ErrDecode,
 			fmt.Sprintf("UpdateDevice: %v", name))

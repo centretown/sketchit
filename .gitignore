@@ -4,4 +4,4 @@ cert
 bin
 vendor
 curl_test.txt
-curl_test.sh
+scripts
