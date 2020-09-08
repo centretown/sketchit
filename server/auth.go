@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/centretown/sketchit/info"
+	"github.com/centretown/sketchit/server/request"
 	"github.com/golang/glog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -22,7 +23,7 @@ var (
 )
 
 // authenticateClient check the client credentials
-func authenticateClient(ctx context.Context, s *RequestHandler) (string, error) {
+func authenticateClient(ctx context.Context, s *request.RequestHandler) (string, error) {
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		clientLogin := strings.Join(md["login"], "")
 		clientPassword := strings.Join(md["password"], "")
@@ -53,8 +54,9 @@ func credMatcher(headerName string) (mdName string, ok bool) {
 }
 
 // unaryInterceptor calls authenticateClient with current context
-func unaryInterceptor(ctx context.Context, req interface{}, serverInfo *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	s, ok := serverInfo.Server.(*RequestHandler)
+func unaryInterceptor(ctx context.Context,
+	req interface{}, serverInfo *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	s, ok := serverInfo.Server.(*request.RequestHandler)
 	if !ok {
 		return nil, info.Inform(nil, ErrCastServer, "unaryInterceptor")
 	}

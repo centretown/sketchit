@@ -89,18 +89,6 @@ type Traveler interface {
 	String() string
 }
 
-func (i *indent) String() string {
-	return strings.Repeat("  ", int(*i))
-}
-
-func (i *indent) Pop() {
-	*i--
-}
-
-func (i *indent) Push(*Schema) {
-	*i++
-}
-
 // Travel the schema after performing supplied function
 func (sch *Schema) Travel(traveler Traveler,
 	f func(sch *Schema, traveler Traveler)) {
@@ -125,6 +113,18 @@ func (sch *Schema) Travel(traveler Traveler,
 		}
 	}
 	traveler.Pop()
+}
+
+func (i *indent) String() string {
+	return strings.Repeat("  ", int(*i))
+}
+
+func (i *indent) Pop() {
+	*i--
+}
+
+func (i *indent) Push(*Schema) {
+	*i++
 }
 
 func (sch *Schema) showSchema() {

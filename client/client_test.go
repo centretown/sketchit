@@ -45,15 +45,21 @@ func TestCrud(t *testing.T) {
 
 	dict := api.DictionaryNew(cres.Collections)
 
-	sch := dict[".processes.setup.items.command"]
+	sch := dict[".processes"]
+	sch.SetReducer(api.ReduceNone)
 	y, _ := yaml.Marshal(sch)
 	fmt.Println(string(y))
 
-	sch.SetReducer(api.ReduceSummary)
+	sch = dict[".devices"]
 	y, _ = yaml.Marshal(sch)
 	fmt.Println(string(y))
 
+	sch = dict[".processes"]
 	sch.SetReducer(api.ReduceName)
+	y, _ = yaml.Marshal(sch)
+	fmt.Println(string(y))
+
+	sch = dict[".devices"]
 	y, _ = yaml.Marshal(sch)
 	fmt.Println(string(y))
 

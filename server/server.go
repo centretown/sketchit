@@ -10,6 +10,7 @@ import (
 
 	"github.com/centretown/sketchit/api"
 	"github.com/centretown/sketchit/info"
+	"github.com/centretown/sketchit/server/request"
 	storage "github.com/centretown/sketchit/storage/mongo"
 	"github.com/golang/glog"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -41,7 +42,7 @@ func startGRPCServer(address, certFile, keyFile string) error {
 	}
 
 	// create a rpc handler for our api
-	RequestHandler := RequestHandlerNew(storageProvider)
+	RequestHandler := request.RequestHandlerNew(storageProvider)
 
 	// Create the TLS credentials
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)

@@ -3,5 +3,6 @@ protos/google
 cert
 bin
 vendor
-curl_test.txt
+client/curl_test.txt
+client/schema.txt
 scripts
