@@ -24,7 +24,7 @@ func (mdp *MongoStorageProvider) CreateDevice(
 		return
 	}
 
-	newDevice.Domain = tokens[1]
+	newDevice.Sector = tokens[1]
 	b, err := bson.Marshal(newDevice)
 	if err != nil {
 		err = info.Inform(err, ErrBsonMarshall, newDevice.Label)
@@ -52,7 +52,7 @@ func (mdp *MongoStorageProvider) DeleteDevice(ctx context.Context, name string) 
 		return
 	}
 	filter := bson.D{
-		{Key: "domain", Value: tokens[1]},
+		{Key: "sector", Value: tokens[1]},
 		{Key: "label", Value: tokens[3]}}
 
 	mdp.Collections[deviceCollectionName].FindOneAndDelete(ctx, filter)
@@ -68,7 +68,7 @@ func (mdp *MongoStorageProvider) GetDevice(ctx context.Context, name string) (de
 		return
 	}
 	filter := bson.D{
-		{Key: "domain", Value: tokens[1]},
+		{Key: "sector", Value: tokens[1]},
 		{Key: "label", Value: tokens[3]}}
 
 	device = &api.Device{}
@@ -87,7 +87,7 @@ func (mdp *MongoStorageProvider) ListDevices(ctx context.Context, parent string)
 	glog.Info(tokens, l)
 	filter := bson.D{}
 	if l > 1 {
-		filter = bson.D{{Key: "domain", Value: tokens[1]}}
+		filter = bson.D{{Key: "sector", Value: tokens[1]}}
 	}
 
 	devices = make([]*api.Device, 0)
@@ -115,7 +115,7 @@ func (mdp *MongoStorageProvider) UpdateDevice(ctx context.Context, name string, 
 		return
 	}
 	filter := bson.D{
-		{Key: "domain", Value: tokens[1]},
+		{Key: "sector", Value: tokens[1]},
 		{Key: "label", Value: tokens[3]}}
 
 	res, err := mdp.Collections[deviceCollectionName].ReplaceOne(ctx, filter, patch)

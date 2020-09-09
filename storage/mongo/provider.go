@@ -23,7 +23,7 @@ type MongoStorageProvider struct {
 }
 
 var deviceCollectionName = "devices"
-var processCollectionName = "processes"
+var sketchCollectionName = "sketches"
 
 // MongoStorageProviderNew creates and returns an instance of MongoStorageProvider
 func MongoStorageProviderNew(uri, databaseName string) (mdp *MongoStorageProvider, err error) {
@@ -46,7 +46,7 @@ func MongoStorageProviderNew(uri, databaseName string) (mdp *MongoStorageProvide
 
 	// map supported collections
 	mdp.Collections[deviceCollectionName] = mdp.client.Database(mdp.Name).Collection(deviceCollectionName)
-	mdp.Collections[processCollectionName] = mdp.client.Database(mdp.Name).Collection(processCollectionName)
+	mdp.Collections[sketchCollectionName] = mdp.client.Database(mdp.Name).Collection(sketchCollectionName)
 	return
 }
 
@@ -71,7 +71,7 @@ func (mdp *MongoStorageProvider) ListCollections(ctx context.Context, name strin
 	for cursor.Next(ctx) {
 		c := &MongoCollection{}
 		cursor.Decode(c)
-		collections = append(collections, c.makeCollection())
+		collections = append(collections, c.MongoCollectionNew())
 		//
 		// fmt.Printf("Name: %s, Type: %s\n", coll.Name, coll.Type)
 		// sch := c.Options.Validator.JSONSchema
@@ -81,7 +81,7 @@ func (mdp *MongoStorageProvider) ListCollections(ctx context.Context, name strin
 
 	}
 	// glog.Infof("ListCollections %+v", res)
-	//names = []string{deviceCollectionName, processCollectionName}
+	//names = []string{deviceCollectionName, sketchCollectionName}
 	return
 }
 

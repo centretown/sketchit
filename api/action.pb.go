@@ -25,7 +25,7 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// Action defines a process step or instruction
+// Action defines a processing step or instruction
 type Action struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

@@ -12,6 +12,20 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
+type commandOptions struct {
+	format  string
+	detail  string
+	confirm bool
+}
+
+var sketchitOptions commandOptions
+
+func init() {
+	flag.StringVar(&sketchitOptions.format, "f", "yaml", "format output type: --f=json --f=yaml")
+	flag.StringVar(&sketchitOptions.detail, "d", "full", "listing detail level: --d=full --d=summary --d=names")
+	flag.BoolVar(&sketchitOptions.confirm, "y", false, "confirm yes to inquiries: --y")
+}
+
 func main() {
 	// for glog
 	flag.Parse()

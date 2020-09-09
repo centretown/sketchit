@@ -14,7 +14,7 @@ import (
 
 var testURI = "mongodb://testing:test@localhost:27017/?authSource=sketchit-test-02"
 var newDevice = &api.Device{
-	Domain: "home",
+	Sector: "home",
 	Label:  "esp32-01",
 	Model:  "ESP32",
 	Ip:     "192.168.1.200:8080",
@@ -78,7 +78,7 @@ func TestMongoStorageProvider(t *testing.T) {
 	for cursor.Next(ctx) {
 		c := &MongoCollection{}
 		cursor.Decode(c)
-		coll := c.makeCollection()
+		coll := c.MongoCollectionNew()
 
 		fmt.Printf("Name: %s, Type: %s\n", coll.Name, coll.Type)
 		// sch := c.Options.Validator.JSONSchema
@@ -89,7 +89,7 @@ func TestMongoStorageProvider(t *testing.T) {
 	}
 	t.Log()
 	// t.Logf("ListCollections %+v", res)
-	// names = []string{deviceCollectionName, processCollectionName}
+	// names = []string{deviceCollectionName, sketchCollectionName}
 	return
 }
 
@@ -112,8 +112,8 @@ func showSchema(sch *api.Schema, level *indent) {
 	if len(sch.Required) > 1 {
 		fmt.Printf("%s Required: %v\n", level, sch.Required)
 	}
-	if len(sch.Enum) > 0 {
-		fmt.Printf("%s Enum: %v\n", level, sch.Enum)
+	if len(sch.Options) > 0 {
+		fmt.Printf("%s Options: %v\n", level, sch.Options)
 	}
 	if len(sch.OneOf) > 1 {
 		fmt.Printf("%s One of:\n", level)

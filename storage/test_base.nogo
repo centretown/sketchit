@@ -46,7 +46,7 @@
 // }
 
 // var testDevice = &api.Device{
-// 	Domain: "home",
+// 	Sector: "home",
 // 	Label:  "esp32-01",
 // 	Model:  "ESP32",
 // 	Ip:     "192.168.1.200:8080",

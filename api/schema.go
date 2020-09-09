@@ -23,8 +23,8 @@ type FakeSchema struct {
 	Items *Schema `yaml:"Items,omitempty"`
 	// required properties and order
 	Required []string `yaml:"Required,omitempty"`
-	// enum constrains schema to an array of choices
-	Enum []string `yaml:"Enum,omitempty"`
+	// options constrains schema to an array of choices
+	Options []string `yaml:"Options,omitempty"`
 	// oneOf constrains schema to one of a selection of options
 	OneOf []*Schema `yaml:"OneOf,omitempty"`
 	// properties defines an ordered list of children
@@ -75,7 +75,7 @@ func (sch *Schema) MarshalYAML() (out interface{}, err error) {
 	fake.Title = sch.Title
 	fake.UniqueItems = sch.UniqueItems
 	fake.Required = sch.Required
-	fake.Enum = sch.Enum
+	fake.Options = sch.Options
 
 	return
 }
@@ -137,8 +137,8 @@ func (sch *Schema) showSchema() {
 		if len(s.Required) > 1 {
 			fmt.Printf("%s Required: %v\n", l, s.Required)
 		}
-		if len(s.Enum) > 0 {
-			fmt.Printf("%s Enum: %v\n", l, s.Enum)
+		if len(s.Options) > 0 {
+			fmt.Printf("%s Options: %v\n", l, s.Options)
 		}
 	}
 
@@ -189,7 +189,6 @@ func DictionaryNew(collections []*Collection) (dict Dictionary) {
 	var f = func(s *Schema, t Traveler) {
 		t.Push(s)
 		dict[t.String()] = s
-		fmt.Println(t)
 		t.Pop()
 	}
 

@@ -2,6 +2,7 @@ package storage
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/centretown/sketchit/api"
 )
@@ -22,13 +23,13 @@ type MongoSchema struct {
 // MakeSchema -
 func (sch *MongoSchema) makeSchema(name string) (schema *api.Schema) {
 	schema = &api.Schema{
-		Name:        name,
+		Name:        strings.ToLower(sch.Title),
 		Title:       sch.Title,
 		Type:        sch.BsonType,
 		Description: sch.Description,
 		UniqueItems: sch.UniqueItems,
 		Required:    sch.Required,
-		Enum:        sch.Enum,
+		Options:     sch.Enum,
 	}
 
 	if sch.Items != nil {
@@ -85,8 +86,8 @@ type MongoCollection struct {
 	} `bson:"idIndex"`
 }
 
-// MakeCollection convert to message
-func (coll *MongoCollection) makeCollection() (collection *api.Collection) {
+// MongoCollectionNew convert to message
+func (coll *MongoCollection) MongoCollectionNew() (collection *api.Collection) {
 	collection = &api.Collection{
 		Name:     coll.Name,
 		Type:     coll.Type,

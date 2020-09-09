@@ -7,43 +7,43 @@ import (
 	"golang.org/x/net/context"
 )
 
-// ListProcesses -
-func (h *RequestHandler) ListProcesses(ctx context.Context,
-	req *api.ListProcessesRequest) (response *api.ListProcessesResponse, err error) {
-	var Processes []*api.Process
+// ListSketches -
+func (h *RequestHandler) ListSketches(ctx context.Context,
+	req *api.ListSketchesRequest) (response *api.ListSketchesResponse, err error) {
+	var Sketches []*api.Sketch
 	glog.Infof("LIST message %s", req.Parent)
-	Processes, err = h.store.ListProcesses(ctx, req.Parent)
-	response = &api.ListProcessesResponse{
-		Processes: Processes,
+	Sketches, err = h.store.ListSketches(ctx, req.Parent)
+	response = &api.ListSketchesResponse{
+		Sketches: Sketches,
 	}
 	return
 }
 
-// GetProcess -
-func (h *RequestHandler) GetProcess(ctx context.Context,
-	req *api.GetProcessRequest) (Process *api.Process, err error) {
+// GetSketch -
+func (h *RequestHandler) GetSketch(ctx context.Context,
+	req *api.GetSketchRequest) (Sketch *api.Sketch, err error) {
 	glog.Infof("GET message name=%s", req.Name)
-	Process, err = h.store.GetProcess(ctx, req.Name)
+	Sketch, err = h.store.GetSketch(ctx, req.Name)
 	return
 }
 
-// CreateProcess -
-func (h *RequestHandler) CreateProcess(ctx context.Context, req *api.CreateProcessRequest) (Process *api.Process, err error) {
+// CreateSketch -
+func (h *RequestHandler) CreateSketch(ctx context.Context, req *api.CreateSketchRequest) (Sketch *api.Sketch, err error) {
 	glog.Infof("CREATE message parent=%s", req.Parent)
-	Process, err = h.store.CreateProcess(ctx, req.Parent, req.Process)
+	Sketch, err = h.store.CreateSketch(ctx, req.Parent, req.Sketch)
 	return
 }
 
-// UpdateProcess -
-func (h *RequestHandler) UpdateProcess(ctx context.Context, req *api.UpdateProcessRequest) (Process *api.Process, err error) {
+// UpdateSketch -
+func (h *RequestHandler) UpdateSketch(ctx context.Context, req *api.UpdateSketchRequest) (Sketch *api.Sketch, err error) {
 	glog.Infof("UPDATE message name=%s", req.Name)
-	Process, err = h.store.UpdateProcess(ctx, req.Name, req.Process)
+	Sketch, err = h.store.UpdateSketch(ctx, req.Name, req.Sketch)
 	return
 }
 
-// DeleteProcess -
-func (h *RequestHandler) DeleteProcess(ctx context.Context, req *api.DeleteProcessRequest) (*empty.Empty, error) {
+// DeleteSketch -
+func (h *RequestHandler) DeleteSketch(ctx context.Context, req *api.DeleteSketchRequest) (*empty.Empty, error) {
 	glog.Infof("DELETE message %s", req.Name)
-	err := h.store.DeleteProcess(ctx, req.Name)
+	err := h.store.DeleteSketch(ctx, req.Name)
 	return &empty.Empty{}, err
 }

@@ -1,90 +1,42 @@
-=== RUN   TestCrud
-    client_test.go:31: Response from server: bar
-    client_test.go:38: Response from server: []
-        
-.devices
-.devices.domain
-.devices.label
-.devices.model
-.devices.pins
-.devices.pins.items
-.devices.pins.items.id
-.devices.pins.items.label
-.devices.pins.items.purpose
-.processes
-.processes.model
-.processes.label
-.processes.deviceKey
-.processes.purpose
-.processes.setup
-.processes.setup.items
-.processes.setup.items.sequence
-.processes.setup.items.type
-.processes.setup.items.command
-.processes.setup.items.command.option-1
-.processes.setup.items.command.option-1.duration
-.processes.setup.items.command.option-2
-.processes.setup.items.command.option-2.id
-.processes.setup.items.command.option-2.signal
-.processes.setup.items.command.option-2.mode
-.processes.setup.items.command.option-3
-.processes.setup.items.command.option-3.id
-.processes.setup.items.command.option-3.signal
-.processes.setup.items.command.option-3.mode
-.processes.setup.items.command.option-3.value
-.processes.setup.items.command.option-4
-.processes.setup.items.command.option-4.measurement
-.processes.loop
-.processes.loop.items
-.processes.loop.items.sequence
-.processes.loop.items.type
-.processes.loop.items.command
-.processes.loop.items.command.option-1
-.processes.loop.items.command.option-1.duration
-.processes.loop.items.command.option-2
-.processes.loop.items.command.option-2.id
-.processes.loop.items.command.option-2.signal
-.processes.loop.items.command.option-2.mode
-.processes.loop.items.command.option-3
-.processes.loop.items.command.option-3.id
-.processes.loop.items.command.option-3.signal
-.processes.loop.items.command.option-3.mode
-.processes.loop.items.command.option-3.value
-.processes.loop.items.command.option-4
-.processes.loop.items.command.option-4.measurement
-Name: processes
+=== RUN   TestDictionary
+    client_test.go:30: Response from server: bar
+Title: Sketches
+Name: sketches
 Type: object
+Description: the sketch defines the actions taken on a device
 Required:
 - model
 - label
-- deviceKey
+- device
 - purpose
+- setup
+- loop
 Properties:
 - Title: Model
   Name: model
   Type: string
-  Description: the device model type
+  Description: the model defines the scope of actions that can be taken
 - Title: Label
   Name: label
   Type: string
-  Description: the name of the process
-- Title: Device Key
-  Name: deviceKey
+  Description: the label assigned is unique for the model
+- Title: Device
+  Name: device
   Type: string
-  Description: the key for the device
+  Description: the device acted on by this sketch
 - Title: Purpose
   Name: purpose
   Type: string
-  Description: the purpose or intent
+  Description: the purpose of this sketch
 - Title: Setup
   Name: setup
   Type: array
-  Description: the actions taken during the setup stage
+  Description: the setup stage list of actions
   Items:
     Title: Action
-    Name: items
+    Name: action
     Type: object
-    Description: the action to take
+    Description: the action taken on the device
     UniqueItems: true
     Required:
     - sequence
@@ -101,23 +53,23 @@ Properties:
     - Title: Command
       Name: command
       Type: object
-      Description: the possible command parameters
+      Description: the command options available to this device
       OneOf:
-      - Title: Delay Command
-        Name: option-1
+      - Title: Delay
+        Name: delay
         Type: object
-        Description: delays for <duration>
+        Description: the delay command pauses before the next action
         Required:
         - duration
         Properties:
         - Title: Duration
           Name: duration
           Type: number
-          Description: the time to do something (delay)
-      - Title: Mode Command
-        Name: option-2
+          Description: the duration in milli-seconds
+      - Title: Mode
+        Name: mode
         Type: object
-        Description: prepares <signal> pin <id> for <mode>
+        Description: the mode command prepares a pin for reading or writing
         Required:
         - id
         - signal
@@ -126,25 +78,25 @@ Properties:
         - Title: Id
           Name: id
           Type: number
-          Description: the pin Id number as defined by the device
+          Description: the id number of the pin as defined by this device
         - Title: Signal
           Name: signal
           Type: string
-          Description: the Signal type analog/digital
-          Enum:
+          Description: the signal type as defined by the device
+          Options:
           - analog
           - digital
         - Title: Mode
           Name: mode
           Type: string
-          Description: the input/output Mode
-          Enum:
+          Description: the mode of operation
+          Options:
           - input
           - output
-      - Title: Pin Command
-        Name: option-3
+      - Title: Pin
+        Name: pin
         Type: object
-        Description: <inputs/outputs> from/to <analog/digital> pin <id>
+        Description: the pin command performs a read or write operation on the pin.
         Required:
         - id
         - signal
@@ -154,27 +106,27 @@ Properties:
         - Title: Id
           Name: id
           Type: number
-          Description: the pin number as defined on the device
+          Description: the id number of the pin as defined by this device
         - Title: Signal
           Name: signal
           Type: string
-          Description: the type of signal analog/digital
-          Enum:
+          Description: the signal type as defined by the device
+          Options:
           - analog
           - digital
         - Title: Mode
           Name: mode
           Type: string
-          Description: the read/write mode
-          Enum:
+          Description: the mode of operation
+          Options:
           - input
           - output
-        - Title: Value output or input
+        - Title: Value
           Name: value
           Type: number
           Description: the value to read or write
-      - Title: Hall Command
-        Name: option-4
+      - Title: Hall
+        Name: hall
         Type: object
         Description: reads magnetic field to measurement
         Required:
@@ -187,12 +139,12 @@ Properties:
 - Title: Loop
   Name: loop
   Type: array
-  Description: the actions taken during the processing loop
+  Description: the loop cycle list of actions
   Items:
     Title: Action
-    Name: items
+    Name: action
     Type: object
-    Description: the action to take
+    Description: the action taken on the device
     UniqueItems: true
     Required:
     - sequence
@@ -209,23 +161,23 @@ Properties:
     - Title: Command
       Name: command
       Type: object
-      Description: the possible command parameters
+      Description: the command options available to this device
       OneOf:
-      - Title: Delay Command
-        Name: option-1
+      - Title: Delay
+        Name: delay
         Type: object
-        Description: delays for <duration>
+        Description: the delay command pauses before the next action
         Required:
         - duration
         Properties:
         - Title: Duration
           Name: duration
           Type: number
-          Description: the time to do something (delay)
-      - Title: Mode Command
-        Name: option-2
+          Description: the duration in milli-seconds
+      - Title: Mode
+        Name: mode
         Type: object
-        Description: prepares <signal> pin <id> for <mode>
+        Description: the mode command prepares a pin for reading or writing
         Required:
         - id
         - signal
@@ -234,25 +186,25 @@ Properties:
         - Title: Id
           Name: id
           Type: number
-          Description: the pin Id number as defined by the device
+          Description: the id number of the pin as defined by this device
         - Title: Signal
           Name: signal
           Type: string
-          Description: the Signal type analog/digital
-          Enum:
+          Description: the signal type as defined by the device
+          Options:
           - analog
           - digital
         - Title: Mode
           Name: mode
           Type: string
-          Description: the input/output Mode
-          Enum:
+          Description: the mode of operation
+          Options:
           - input
           - output
-      - Title: Pin Command
-        Name: option-3
+      - Title: Pin
+        Name: pin
         Type: object
-        Description: <inputs/outputs> from/to <analog/digital> pin <id>
+        Description: the pin command performs a read or write operation on the pin.
         Required:
         - id
         - signal
@@ -262,27 +214,27 @@ Properties:
         - Title: Id
           Name: id
           Type: number
-          Description: the pin number as defined on the device
+          Description: the id number of the pin as defined by this device
         - Title: Signal
           Name: signal
           Type: string
-          Description: the type of signal analog/digital
-          Enum:
+          Description: the signal type as defined by the device
+          Options:
           - analog
           - digital
         - Title: Mode
           Name: mode
           Type: string
-          Description: the read/write mode
-          Enum:
+          Description: the mode of operation
+          Options:
           - input
           - output
-        - Title: Value output or input
+        - Title: Value
           Name: value
           Type: number
           Description: the value to read or write
-      - Title: Hall Command
-        Name: option-4
+      - Title: Hall
+        Name: hall
         Type: object
         Description: reads magnetic field to measurement
         Required:
@@ -293,21 +245,22 @@ Properties:
           Type: number
           Description: the measurement read
 
+Title: Devices
 Name: devices
 Type: object
 Required:
-- domain
+- sector
 - label
 - model
 Properties:
-- Title: Domain
-  Name: domain
+- Title: Sector
+  Name: sector
   Type: string
-  Description: the name of the domain
+  Description: the sector groups interconnected devices
 - Title: Label
   Name: label
   Type: string
-  Description: the name of the device
+  Description: the label assigned is unique in the sector
 - Title: Model
   Name: model
   Type: string
@@ -318,9 +271,9 @@ Properties:
   Description: the active pins on this device
   Items:
     Title: Pin
-    Name: items
+    Name: pin
     Type: object
-    Description: the pin definition
+    Description: the pin as defined by its purpose
     UniqueItems: true
     Required:
     - id
@@ -330,86 +283,91 @@ Properties:
     - Title: Id
       Name: id
       Type: number
-      Description: the pin number
+      Description: the id number of the pin as defined by this device
     - Title: Label
       Name: label
       Type: string
-      Description: the label assigned to the pin
+      Description: the label assigned is unique for this device
     - Title: Purpose
       Name: purpose
       Type: string
       Description: the purpose for this pin
 
-Name: processes
+Name: sketches
 Properties:
 - Name: model
 - Name: label
-- Name: deviceKey
+- Name: device
 - Name: purpose
 - Name: setup
   Items:
-    Name: items
+    Name: action
     Properties:
     - Name: sequence
     - Name: type
     - Name: command
       OneOf:
-      - Name: option-1
+      - Name: delay
         Properties:
         - Name: duration
-      - Name: option-2
+      - Name: mode
         Properties:
         - Name: id
         - Name: signal
         - Name: mode
-      - Name: option-3
+      - Name: pin
         Properties:
         - Name: id
         - Name: signal
         - Name: mode
         - Name: value
-      - Name: option-4
+      - Name: hall
         Properties:
         - Name: measurement
 - Name: loop
   Items:
-    Name: items
+    Name: action
     Properties:
     - Name: sequence
     - Name: type
     - Name: command
       OneOf:
-      - Name: option-1
+      - Name: delay
         Properties:
         - Name: duration
-      - Name: option-2
+      - Name: mode
         Properties:
         - Name: id
         - Name: signal
         - Name: mode
-      - Name: option-3
+      - Name: pin
         Properties:
         - Name: id
         - Name: signal
         - Name: mode
         - Name: value
-      - Name: option-4
+      - Name: hall
         Properties:
         - Name: measurement
 
 Name: devices
 Properties:
-- Name: domain
+- Name: sector
 - Name: label
 - Name: model
 - Name: pins
   Items:
-    Name: items
+    Name: pin
     Properties:
     - Name: id
     - Name: label
     - Name: purpose
 
---- PASS: TestCrud (0.01s)
+--- PASS: TestDictionary (0.02s)
+=== RUN   TestCrud
+    client_test.go:78: Response from server: bar
+    client_test.go:85: Response from server: []
+        
+--- PASS: TestCrud (0.00s)
 PASS
-ok  	github.com/centretown/sketchit/client	0.013s
+ok  	github.com/centretown/sketchit/client	0.032s

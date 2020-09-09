@@ -3,7 +3,7 @@ package centretown.sketchit.v1;
 
 option go_package = "github.com/centretown/sketchit/api";
 
-// Action defines a process step or instruction
+// Action defines a processing step or instruction
 message Action {
     // The sequence defines the order of steps
     int32 sequence = 1;

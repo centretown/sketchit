@@ -25,9 +25,9 @@ service Sketchit {
     rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse) {
         // List method maps to HTTP GET.
         option (google.api.http) = {
-            // list device by domain
-            // eg: /v1/domains/home-iot/devices
-            get: "/v1/{parent=domains/*}/devices"
+            // list device by sector
+            // eg: /v1/sectors/home-iot/devices
+            get: "/v1/{parent=sectors/*}/devices"
         };
     }
 
@@ -35,8 +35,8 @@ service Sketchit {
         // Get maps to HTTP GET. Resource name is mapped to the URL. No body.
         option (google.api.http) = {
             // the `name` of device resource, 
-            // eg: `/v1/domains/home-iot/devices/esp32-01`
-            get: "/v1/{name=domains/*/devices/*}"
+            // eg: `/v1/sectors/home-iot/devices/esp32-01`
+            get: "/v1/{name=sectors/*/devices/*}"
         };
     }
       
@@ -44,9 +44,9 @@ service Sketchit {
         // Create maps to HTTP POST. URL path as the collection name.
         // HTTP request body contains the resource.
         option (google.api.http) = {
-            // The `parent` captures the domain resource name, 
-            // eg: `domains/home_iot`.
-            post: "/v1/{parent=domains/*}/devices"
+            // The `parent` captures the sector resource name, 
+            // eg: `sectors/home_iot`.
+            post: "/v1/{parent=sectors/*}/devices"
             body: "device"
         };
     }
@@ -55,70 +55,70 @@ service Sketchit {
         // Update maps to HTTP PATCH. Resource name is mapped to a URL path.
         // Resource is contained in the HTTP request body.
         option (google.api.http) = {
-            // the `name` of Process resource, 
-            // eg: `/v1/domains/home-iot/devices/esp32-02`
-            patch: "/v1/{name=domains/*/devices/*}"
+            // the `name` of Sketch resource, 
+            // eg: `/v1/sectors/home-iot/devices/esp32-02`
+            patch: "/v1/{name=sectors/*/devices/*}"
             body: "device"
         };       
     }
     
     rpc DeleteDevice(DeleteDeviceRequest) returns (google.protobuf.Empty) {
         // Delete maps to HTTP DELETE. Resource name maps to the URL path.
-        // eg: "domain/home-iot/devices/esp32-01"
+        // eg: "sector/home-iot/devices/esp32-01"
         option (google.api.http) = {
-            // the `name` of Process resource, 
-            // eg: `/v1/domains/home-iot/devices/esp32-02`
-            delete:  "/v1/{name=domains/*/devices/*}"
+            // the `name` of Sketch resource, 
+            // eg: `/v1/sectors/home-iot/devices/esp32-02`
+            delete:  "/v1/{name=sectors/*/devices/*}"
         };
     }
     
-    rpc ListProcesses(ListProcessesRequest) returns (ListProcessesResponse) {
+    rpc ListSketches(ListSketchesRequest) returns (ListSketchesResponse) {
         // List method maps to HTTP GET.
         option (google.api.http) = {
-            // list processes by model
-            // eg: /v1/models/ESP32/processes
-            get: "/v1/{parent=models/*}/processes"
+            // list sketches by model
+            // eg: /v1/models/ESP32/sketches
+            get: "/v1/{parent=models/*}/sketches"
         };
     }
     
-    rpc GetProcess(GetProcessRequest) returns (Process) {
+    rpc GetSketch(GetSketchRequest) returns (Sketch) {
         // Get maps to HTTP GET. Resource name is mapped to the URL. No body.
         option (google.api.http) = {
-            // the `name` of Process resource, 
-            // eg: `/v1/models/ESP32/processes/blink`
-            get: "/v1/{name=models/*/processes/*}"
+            // the `name` of Sketch resource, 
+            // eg: `/v1/models/ESP32/sketches/blink`
+            get: "/v1/{name=models/*/sketches/*}"
         };
     }
       
-    rpc CreateProcess(CreateProcessRequest) returns (Process) {
+    rpc CreateSketch(CreateSketchRequest) returns (Sketch) {
         // Create maps to HTTP POST. URL path as the collection name.
         // HTTP request body contains the resource.
         option (google.api.http) = {
             // The `parent` captures the model resource name, 
             // eg: `models/blink`.
-            post: "/v1/{parent=models/*}/processes"
-            body: "Process"
+            post: "/v1/{parent=models/*}/sketches"
+            body: "Sketch"
         };
     }
     
-    rpc UpdateProcess(UpdateProcessRequest) returns (Process) {
+    rpc UpdateSketch(UpdateSketchRequest) returns (Sketch) {
         // Update maps to HTTP PATCH. Resource name is mapped to a URL path.
         // Resource is contained in the HTTP request body.
         option (google.api.http) = {
-            // the `name` of Process resource, 
-            // eg: `/v1/models/ESP32/processes/blink`
-            patch: "/v1/{name=models/*/processes/*}"
-            body: "Process"
+            // the `name` of Sketch resource, 
+            // eg: `/v1/models/ESP32/sketches/blink`
+            patch: "/v1/{name=models/*/sketches/*}"
+            body: "Sketch"
         };       
     }
     
-    rpc DeleteProcess(DeleteProcessRequest) returns (google.protobuf.Empty) {
+    rpc DeleteSketch(DeleteSketchRequest) returns (google.protobuf.Empty) {
         // Delete maps to HTTP DELETE. Resource name maps to the URL path.
-        // eg: "domain/ESP32/processes/esp32-01"
+        // eg: "sector/ESP32/sketches/esp32-01"
         option (google.api.http) = {
-            // the `name` of Process resource, 
-            // eg: `/v1/models/ESP32/processes/blink`
-            delete:  "/v1/{name=models/*/processes/*}"
+            // the `name` of Sketch resource, 
+            // eg: `/v1/models/ESP32/sketches/blink`
+            delete:  "/v1/{name=models/*/sketches/*}"
         };
     }
     rpc ListCollections(ListCollectionsRequest) returns (ListCollectionsResponse) {
@@ -168,8 +168,8 @@ message Schema {
     Schema items = 6;
     // required properties and order
     repeated string required = 7;
-    // enum constrains schema to an array of choices
-    repeated string enum = 8;
+    // options constrains schema to an array of choices
+    repeated string options = 8;
     // oneOf constrains schema to one of a selection of options
     repeated Schema oneOf = 9;
     // properties defines an ordered list of children
@@ -184,8 +184,8 @@ message PingMessage {
 // defines a micro controller device for sketchit
 message Device {
     // collection of connected devices
-    string domain = 6;
-    // The unique label identifies the device within a domain
+    string sector = 6;
+    // The unique label identifies the device within a sector
     string label = 1;
     // The model name
     string model = 2;
@@ -211,7 +211,7 @@ message Device {
   
 // ListDevicesRequest defines the data required to get a list of devices
 message ListDevicesRequest {
-    // The parent domain, eg: "home-iot".
+    // The parent sector, eg: "home-iot".
     string parent = 1;
     // The maximum number of devices to return.
     int32 page_size = 2;
@@ -222,7 +222,7 @@ message ListDevicesRequest {
 // GetDeviceRequest defines the data required to get a device
 message GetDeviceRequest {
     // The device path name, 
-    // eg: "/domains/home-iot/devices/esp32-01"
+    // eg: "/sectors/home-iot/devices/esp32-01"
     string name = 1;
 }
 
@@ -236,8 +236,8 @@ message ListDevicesResponse {
 
 // CreateDeviceRequest defines the data required to create a new device
 message CreateDeviceRequest {
-    // The parent domain name
-    // eg: /domains/home-iot
+    // The parent sector name
+    // eg: /sectors/home-iot
     string parent = 1;
     // The device resource to create.
     Device device = 2;
@@ -246,7 +246,7 @@ message CreateDeviceRequest {
 // UpdateDeviceRequest defines the data required to update an existing device
 message UpdateDeviceRequest {
     // The device path name, 
-    // eg: "/domains/home-iot/devices/esp32-01"
+    // eg: "/sectors/home-iot/devices/esp32-01"
     string name = 1;
     // The replacement device
     Device device = 2;
@@ -258,82 +258,82 @@ message UpdateDeviceRequest {
 // DeleteDeviceRequest defines the data required to delete an existing device
 message DeleteDeviceRequest {
     // The device path name, 
-    // eg: "/domains/home-iot/devices/esp32-01"
+    // eg: "/sectors/home-iot/devices/esp32-01"
     string name = 1;
 }
 
-// Process defines how a device is programmed
-message Process {
-    // The model of the device this process is intended to run on
+// Sketch defines how a device is programmed
+message Sketch {
+    // The model of the device this sketch is intended to run on
     // eg: ESP32, NANO, UNO
     string model = 6;
-    // The unique label assigned to this process 
+    // The unique label assigned to this sketch 
     // eg: "blink"
     string label = 1;
-    // The device activated by this process
+    // The device activated by this sketch
     // eg: "/home-iot/devices/esp32-01"
     string devicekey = 2;
-    // The purpose or description of the actions take by this process
+    // The purpose or description of the actions take by this sketch
     // eg: "Blink at prescribed intervals"
     string purpose = 3;
     // The setup stage defines the actions to take once
-    // before entering the process loop
+    // before entering the sketch loop
     repeated Action setup = 4;
     // The loop defines the actions that repeats forever
     repeated Action loop = 5;
 }
 
-// ListProcessesRequest defines the data required to get a list of processes
-message ListProcessesRequest {
+// ListSketchesRequest defines the data required to get a list of sketches
+message ListSketchesRequest {
     // The parent model, eg: "ESP32".
     string parent = 1;
-    // The maximum number of processes to return.
+    // The maximum number of sketches to return.
     int32 page_size = 2;
     // The next_page_token value returned from a previous List request, if any.
     string page_token = 3;
 }
 
-// GetProcessRequest defines the data required to get a Process
-message GetProcessRequest {
-    // The Process path name, 
-    // eg: "/models/ESP32/processes/esp32-01"
+// GetSketchRequest defines the data required to get a Sketch
+message GetSketchRequest {
+    // The Sketch path name, 
+    // eg: "/models/ESP32/sketches/esp32-01"
     string name = 1;
 }
 
-// ListProcessesResponse defines the return value to a ListprocessesRequest
-message ListProcessesResponse {
-    // processes listed
-    repeated Process processes = 1;
+// ListSketchesResponse defines the return value to a ListsketchesRequest
+message ListSketchesResponse {
+    // sketches listed
+    repeated Sketch sketches = 1;
     // next page
     string next_page_token = 2;
 }
 
-// CreateProcessRequest defines the data required to create a new Process
-message CreateProcessRequest {
+// CreateSketchRequest defines the data required to create a new Sketch
+message CreateSketchRequest {
     // The parent model name
     // eg: /models/ESP32
     string parent = 1;
-    // The Process resource to create.
-    Process Process = 2;
+    // The Sketch resource to create.
+    Sketch Sketch = 2;
 }
 
-// UpdateProcessRequest defines the data required to update an existing Process
-message UpdateProcessRequest {
-    // The Process path name, 
-    // eg: "/models/ESP32/processes/esp32-01"
+// UpdateSketchRequest defines the data required to update an existing Sketch
+message UpdateSketchRequest {
+    // The Sketch path name, 
+    // eg: "/models/ESP32/sketches/esp32-01"
     string name = 1;
-    // The replacement Process
-    Process Process = 2;
+    // The replacement Sketch
+    Sketch Sketch = 2;
     // The update mask app  lies to the resource. For the `FieldMask` definition,
     // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
     // google.protobuf.FieldMask update_mask = 3;
 }
 
 
-// DeleteProcessRequest defines the data required to delete an existing Process
-message DeleteProcessRequest {
-    // The Process path name, 
-    // eg: "/models/ESP32/processes/esp32-01"
+// DeleteSketchRequest defines the data required to delete an existing Sketch
+message DeleteSketchRequest {
+    // The Sketch path name, 
+    // eg: "/models/ESP32/sketches/esp32-01"
     string name = 1;
 }
 

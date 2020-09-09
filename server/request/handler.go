@@ -14,11 +14,11 @@ type StorageProvider interface {
 	UpdateDevice(ctx context.Context, parent string, device *api.Device) (*api.Device, error)
 	DeleteDevice(ctx context.Context, name string) error
 
-	CreateProcess(ctx context.Context, parent string, process *api.Process) (*api.Process, error)
-	GetProcess(ctx context.Context, name string) (*api.Process, error)
-	ListProcesses(ctx context.Context, parent string) ([]*api.Process, error)
-	UpdateProcess(ctx context.Context, parent string, device *api.Process) (*api.Process, error)
-	DeleteProcess(ctx context.Context, name string) error
+	CreateSketch(ctx context.Context, parent string, Sketch *api.Sketch) (*api.Sketch, error)
+	GetSketch(ctx context.Context, name string) (*api.Sketch, error)
+	ListSketches(ctx context.Context, parent string) ([]*api.Sketch, error)
+	UpdateSketch(ctx context.Context, parent string, device *api.Sketch) (*api.Sketch, error)
+	DeleteSketch(ctx context.Context, name string) error
 
 	ListCollections(ctx context.Context, name string) ([]*api.Collection, error)
 }

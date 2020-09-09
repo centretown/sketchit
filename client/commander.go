@@ -14,6 +14,7 @@ import (
 	"github.com/golang/glog"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"gopkg.in/yaml.v2"
 )
 
 // Commander - parameters
@@ -21,9 +22,8 @@ type Commander struct {
 	ctx         context.Context
 	conn        *grpc.ClientConn
 	client      api.SketchitClient
-	commands    map[string]*Command
-	index       []string
 	collections []*api.Collection
+	index       []string
 	directory   struct {
 		prompt     string
 		collection string
@@ -31,7 +31,8 @@ type Commander struct {
 		item       string
 		field      string
 	}
-	dictonary api.Dictionary
+	Commands   map[string]*Command
+	Dictionary api.Dictionary
 }
 
 // CommanderNew -
@@ -65,7 +66,7 @@ func (cmdr *Commander) run() {
 		args := strings.Fields(input)
 		verb := args[0]
 		args = args[1:]
-		c, ok := cmdr.commands[verb]
+		c, ok := cmdr.Commands[verb]
 		if ok == false {
 			err = info.Inform(err, ErrCommandNotFound, verb)
 		} else {
@@ -88,58 +89,96 @@ var (
 	ErrNotEnoughArgs   = errors.New("not enough arguments")
 )
 
+// Summary description of command
+type Summary struct {
+	Usage    string   `yaml:"Usage,omitempty" json:"Usage,omitempty"`
+	Syntax   string   `yaml:"Syntax,omitempty" json:"Syntax,omitempty"`
+	Examples []string `yaml:"Examples,omitempty" json:"Examples,omitempty"`
+}
+
 // Command user imperative
 type Command struct {
-	topic       string
-	description string
-	syntax      string
-	examples    []string
-	next        string
-	f           func(...string) error
+	Topic   string  `yaml:"Topic,omitempty" json:"Topic,omitempty"`
+	Summary Summary `yaml:"Summary,omitempty" json:"Summary,omitempty"`
+	next    string
+	f       func(...string) error
 }
 
 func (cmdr *Commander) indexList() {
-	fmt.Println("Help is available for the following topics:")
-	for _, i := range cmdr.index {
-		c, ok := cmdr.commands[i]
+	fmt.Println("Help is available for the following Topics:")
+	for _, key := range cmdr.index {
+		c, ok := cmdr.Commands[key]
 		if ok {
-			fmt.Println("    ", c.topic+": ", c.description)
+			brief := &Command{
+				Topic:   c.Topic,
+				Summary: Summary{Usage: c.Summary.Usage},
+			}
+			b, err := yaml.Marshal(brief)
+			if err != nil {
+				err = info.Inform(err, errors.New("Index not found"), "indexList")
+				glog.Warning(err)
+				continue
+			}
+			fmt.Println(string(b))
 		}
 	}
 }
 
 func (c *Command) help() {
-	fmt.Println("Topic:       ", c.topic)
-	fmt.Println("Description: ", c.description)
-	fmt.Println("Syntax:      ", c.syntax)
-	fmt.Println("Examples:")
-	for _, eg := range c.examples {
-		fmt.Println("             ", eg)
+	b, err := yaml.Marshal(c)
+	if err != nil {
+		err = info.Inform(err, errors.New("Index not found"), "indexList")
+		glog.Warning(err)
 	}
-	fmt.Println()
+	fmt.Println(string(b))
 }
 
 func (cmdr *Commander) prompt() (p string) {
-	cmdr.directory.prompt = "> "
+	cmdr.directory.prompt = "- "
 	p = cmdr.directory.prompt
 	return
 }
 
 func (cmdr *Commander) build() {
-	creq := &api.ListCollectionsRequest{}
-	cres, err := cmdr.client.ListCollections(cmdr.ctx, creq)
+	request := &api.ListCollectionsRequest{}
+	response, err := cmdr.client.ListCollections(cmdr.ctx, request)
 	if err != nil {
 		glog.Fatalf("Error when calling ListCollections: %s", err)
 	}
-	cmdr.collections = cres.Collections
-	cmdr.commands = make(map[string]*Command)
+	cmdr.collections = response.Collections
+	cmdr.Commands = make(map[string]*Command)
+	cmdr.Dictionary = api.DictionaryNew(response.Collections)
+
+	organize := func() {
+		for k := range cmdr.Commands {
+			cmdr.index = append(cmdr.index, k)
+		}
+		sort.Sort(sort.StringSlice(cmdr.index))
+	}
+
+	defer organize()
 
 	// just say hello
-	cmdr.commands["hello"] = &Command{
-		topic:       "hello",
-		description: "Test server by saying hello.",
-		syntax:      "hello",
-		examples:    []string{"hello"},
+	cmdr.Commands["cd"] = &Command{
+		Topic: "cd",
+		Summary: Summary{
+			Usage:    "Change current directory.",
+			Syntax:   "cd <collection> <parent> <label>",
+			Examples: []string{"cd devices", "cd devices work", "cd sketches ESP32"},
+		},
+		f: func(args ...string) (err error) {
+			return
+		},
+	}
+
+	// just say hello
+	cmdr.Commands["hello"] = &Command{
+		Topic: "hello",
+		Summary: Summary{
+			Usage:    "Test server by saying hello.",
+			Syntax:   "hello",
+			Examples: []string{"hello"},
+		},
 		f: func(args ...string) (err error) {
 			message := "hello" + fmt.Sprintln(args)
 			response, err := cmdr.client.SayHello(cmdr.ctx, &api.PingMessage{Greeting: "hello"})
@@ -153,17 +192,19 @@ func (cmdr *Commander) build() {
 	}
 
 	// command line flags
-	cmdr.commands["help"] = &Command{
-		topic:       "help",
-		description: "Display help for a command.",
-		syntax:      "help <topic> <topic>...",
-		examples:    []string{"help", "help list"},
+	cmdr.Commands["help"] = &Command{
+		Topic: "help",
+		Summary: Summary{
+			Usage:    "Display help for a command.",
+			Syntax:   "help <Topic> <Topic>...",
+			Examples: []string{"help", "help list"},
+		},
 		f: func(args ...string) (err error) {
 			if len(args) < 1 {
 				cmdr.indexList()
 			} else {
 				for _, arg := range args {
-					c, ok := cmdr.commands[arg]
+					c, ok := cmdr.Commands[arg]
 					if ok {
 						c.help()
 					} else {
@@ -176,11 +217,13 @@ func (cmdr *Commander) build() {
 	}
 
 	// command line flags
-	cmdr.commands["flags"] = &Command{
-		topic:       "flags",
-		description: "Display command line flag usage.",
-		syntax:      "flags",
-		examples:    []string{"flags"},
+	cmdr.Commands["flags"] = &Command{
+		Topic: "flags",
+		Summary: Summary{
+			Usage:    "Display command line flag usage.",
+			Syntax:   "flags",
+			Examples: []string{"flags"},
+		},
 		f: func(args ...string) (err error) {
 			flag.CommandLine.Usage()
 			// flag.Usage()
@@ -189,18 +232,20 @@ func (cmdr *Commander) build() {
 	}
 
 	// list devices
-	cmdr.commands["list"] = &Command{
-		topic:       "list",
-		description: "List collection.",
-		syntax:      "list <collection> <parent>",
-		examples:    []string{"list", "list devices", "list devices work"},
+	cmdr.Commands["list"] = &Command{
+		Topic: "list",
+		Summary: Summary{
+			Usage:    "List collection.",
+			Syntax:   "list <collection> <parent>",
+			Examples: []string{"list", "list devices", "list devices work"},
+		},
 		f: func(args ...string) (err error) {
 			arg := "/"
 			if len(args) > 0 {
 				arg = args[0]
 			}
 			//cmdr.client.
-			parent := fmt.Sprintf("domains/%s", arg)
+			parent := fmt.Sprintf("sectors/%s", arg)
 			req := &api.ListDevicesRequest{Parent: parent}
 			res, err := cmdr.client.ListDevices(cmdr.ctx, req)
 			if err != nil {
@@ -221,17 +266,19 @@ func (cmdr *Commander) build() {
 	}
 
 	// get a device
-	cmdr.commands["get"] = &Command{
-		topic:       "get",
-		description: "Get item details.",
-		syntax:      "get <collection> <parent> <label>",
-		examples:    []string{"get devices work esp32-02"},
+	cmdr.Commands["get"] = &Command{
+		Topic: "get",
+		Summary: Summary{
+			Usage:    "Get item details.",
+			Syntax:   "get <collection> <parent> <label>",
+			Examples: []string{"get devices work esp32-02"},
+		},
 		f: func(args ...string) (err error) {
 			if len(args) < 2 {
 				err = info.Inform(err, ErrNotEnoughArgs, fmt.Sprint(args))
 				return
 			}
-			name := fmt.Sprintf("domains/%s/devices/%s", args[0], args[1])
+			name := fmt.Sprintf("sectors/%s/devices/%s", args[0], args[1])
 			dreq := &api.GetDeviceRequest{Name: name}
 			device, err := cmdr.client.GetDevice(cmdr.ctx, dreq)
 			if err != nil {
@@ -245,17 +292,19 @@ func (cmdr *Commander) build() {
 	}
 
 	// delete a device
-	cmdr.commands["delete"] = &Command{
-		topic:       "delete",
-		description: "Delete an item.",
-		syntax:      "delete <collection> <parent> <label>",
-		examples:    []string{"delete devices work esp32-02", "delete process ESP32 blink"},
+	cmdr.Commands["delete"] = &Command{
+		Topic: "delete",
+		Summary: Summary{
+			Usage:    "Delete an item.",
+			Syntax:   "delete <collection> <parent> <label>",
+			Examples: []string{"delete devices work esp32-02", "delete sketch ESP32 blink"},
+		},
 		f: func(args ...string) (err error) {
 			if len(args) < 2 {
 				err = info.Inform(err, ErrNotEnoughArgs, fmt.Sprint(args))
 				return
 			}
-			name := fmt.Sprintf("domains/%s/devices/%s", args[0], args[1])
+			name := fmt.Sprintf("sectors/%s/devices/%s", args[0], args[1])
 			dreq := &api.DeleteDeviceRequest{Name: name}
 
 			_, err = cmdr.client.DeleteDevice(cmdr.ctx, dreq)
@@ -270,27 +319,23 @@ func (cmdr *Commander) build() {
 	}
 
 	// exit the app
-	cmdr.commands["exit"] = &Command{
-		topic:       "exit",
-		description: "Exit this program.",
-		syntax:      "exit",
-		examples:    []string{"exit"},
+	cmdr.Commands["exit"] = &Command{
+		Topic: "exit",
+		Summary: Summary{
+			Usage:    "Exit this program.",
+			Syntax:   "exit",
+			Examples: []string{"exit"},
+		},
 		f: func(args ...string) (err error) {
 			cmdr.conn.Close()
 			os.Exit(0)
 			return
 		},
 	}
-
-	for k := range cmdr.commands {
-		cmdr.index = append(cmdr.index, k)
-	}
-
-	sort.Sort(sort.StringSlice(cmdr.index))
 }
 
 func showDevice(device *api.Device) {
-	fmt.Printf("Domain: %v\tLabel: %v\tModel: %v\n", device.Domain, device.Label, device.Model)
+	fmt.Printf("Sector: %v\tLabel: %v\tModel: %v\n", device.Sector, device.Label, device.Model)
 	for _, p := range device.Pins {
 		fmt.Printf("\tId: %v\tLabel: %v\tPurpose: %v\n", p.Id, p.Label, p.Purpose)
 	}

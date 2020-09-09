@@ -64,7 +64,6 @@ func build(dbURI string) (err error) {
 		return
 	}
 
-	//
 	var disconnect = func() {
 		err := client.Disconnect(ctx)
 		if err != nil {
@@ -82,10 +81,10 @@ func build(dbURI string) (err error) {
 		return
 	}
 
-	processValidator := bson.M{
-		"$jsonSchema": processSchema,
+	sketchValidator := bson.M{
+		"$jsonSchema": sketchSchema,
 	}
-	_, err = createCollection(ctx, db, dbURI, "processes", processValidator, processIndeces)
+	_, err = createCollection(ctx, db, dbURI, "sketches", sketchValidator, sketchIndeces)
 	if err != nil {
 		return
 	}
@@ -97,22 +96,22 @@ func createCollection(
 	ctx context.Context,
 	db *mongo.Database,
 	dbURI string,
-	name string,
+	dbName string,
 	validator bson.M,
 	indexes []mongo.IndexModel) (collection *mongo.Collection, err error) {
 
 	opts := options.CreateCollection().SetValidator(validator)
-	err = db.CreateCollection(ctx, name, opts)
+	err = db.CreateCollection(ctx, dbName, opts)
 	if err != nil {
 		err = info.Inform(err, ErrCreate, dbURI)
 		return
 	}
 
-	collection = db.Collection(name)
+	collection = db.Collection(dbName)
 
 	names, err := collection.Indexes().CreateMany(ctx, indexes)
 	if err != nil {
-		err = info.Inform(err, ErrCreateIndexes, name)
+		err = info.Inform(err, ErrCreateIndexes, dbName)
 		return
 	}
 	glog.Info(names)

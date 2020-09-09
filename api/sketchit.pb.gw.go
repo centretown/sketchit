@@ -386,11 +386,11 @@ func local_request_Sketchit_DeleteDevice_0(ctx context.Context, marshaler runtim
 }
 
 var (
-	filter_Sketchit_ListProcesses_0 = &utilities.DoubleArray{Encoding: map[string]int{"parent": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+	filter_Sketchit_ListSketches_0 = &utilities.DoubleArray{Encoding: map[string]int{"parent": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
-func request_Sketchit_ListProcesses_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ListProcessesRequest
+func request_Sketchit_ListSketches_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ListSketchesRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -414,17 +414,17 @@ func request_Sketchit_ListProcesses_0(ctx context.Context, marshaler runtime.Mar
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Sketchit_ListProcesses_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Sketchit_ListSketches_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.ListProcesses(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.ListSketches(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Sketchit_ListProcesses_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ListProcessesRequest
+func local_request_Sketchit_ListSketches_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ListSketchesRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -448,17 +448,17 @@ func local_request_Sketchit_ListProcesses_0(ctx context.Context, marshaler runti
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Sketchit_ListProcesses_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Sketchit_ListSketches_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.ListProcesses(ctx, &protoReq)
+	msg, err := server.ListSketches(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_Sketchit_GetProcess_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetProcessRequest
+func request_Sketchit_GetSketch_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetSketchRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -479,13 +479,13 @@ func request_Sketchit_GetProcess_0(ctx context.Context, marshaler runtime.Marsha
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := client.GetProcess(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetSketch(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Sketchit_GetProcess_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetProcessRequest
+func local_request_Sketchit_GetSketch_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetSketchRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -506,20 +506,20 @@ func local_request_Sketchit_GetProcess_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := server.GetProcess(ctx, &protoReq)
+	msg, err := server.GetSketch(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_Sketchit_CreateProcess_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateProcessRequest
+func request_Sketchit_CreateSketch_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreateSketchRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
 	if berr != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Process); err != nil && err != io.EOF {
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Sketch); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -541,20 +541,20 @@ func request_Sketchit_CreateProcess_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "parent", err)
 	}
 
-	msg, err := client.CreateProcess(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.CreateSketch(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Sketchit_CreateProcess_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateProcessRequest
+func local_request_Sketchit_CreateSketch_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreateSketchRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
 	if berr != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Process); err != nil && err != io.EOF {
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Sketch); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -576,20 +576,20 @@ func local_request_Sketchit_CreateProcess_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "parent", err)
 	}
 
-	msg, err := server.CreateProcess(ctx, &protoReq)
+	msg, err := server.CreateSketch(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_Sketchit_UpdateProcess_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdateProcessRequest
+func request_Sketchit_UpdateSketch_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateSketchRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
 	if berr != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Process); err != nil && err != io.EOF {
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Sketch); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -611,20 +611,20 @@ func request_Sketchit_UpdateProcess_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := client.UpdateProcess(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.UpdateSketch(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Sketchit_UpdateProcess_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdateProcessRequest
+func local_request_Sketchit_UpdateSketch_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateSketchRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
 	if berr != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
 	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Process); err != nil && err != io.EOF {
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Sketch); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -646,13 +646,13 @@ func local_request_Sketchit_UpdateProcess_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := server.UpdateProcess(ctx, &protoReq)
+	msg, err := server.UpdateSketch(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_Sketchit_DeleteProcess_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeleteProcessRequest
+func request_Sketchit_DeleteSketch_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DeleteSketchRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -673,13 +673,13 @@ func request_Sketchit_DeleteProcess_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := client.DeleteProcess(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.DeleteSketch(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_Sketchit_DeleteProcess_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeleteProcessRequest
+func local_request_Sketchit_DeleteSketch_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DeleteSketchRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -700,7 +700,7 @@ func local_request_Sketchit_DeleteProcess_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := server.DeleteProcess(ctx, &protoReq)
+	msg, err := server.DeleteSketch(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -867,7 +867,7 @@ func RegisterSketchitHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 
 	})
 
-	mux.Handle("GET", pattern_Sketchit_ListProcesses_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Sketchit_ListSketches_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -876,18 +876,18 @@ func RegisterSketchitHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Sketchit_ListProcesses_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Sketchit_ListSketches_0(rctx, inboundMarshaler, server, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_ListProcesses_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_ListSketches_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Sketchit_GetProcess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Sketchit_GetSketch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -896,18 +896,18 @@ func RegisterSketchitHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Sketchit_GetProcess_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Sketchit_GetSketch_0(rctx, inboundMarshaler, server, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_GetProcess_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_GetSketch_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_Sketchit_CreateProcess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Sketchit_CreateSketch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -916,18 +916,18 @@ func RegisterSketchitHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Sketchit_CreateProcess_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Sketchit_CreateSketch_0(rctx, inboundMarshaler, server, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_CreateProcess_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_CreateSketch_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("PATCH", pattern_Sketchit_UpdateProcess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_Sketchit_UpdateSketch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -936,18 +936,18 @@ func RegisterSketchitHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Sketchit_UpdateProcess_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Sketchit_UpdateSketch_0(rctx, inboundMarshaler, server, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_UpdateProcess_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_UpdateSketch_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_Sketchit_DeleteProcess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("DELETE", pattern_Sketchit_DeleteSketch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -956,14 +956,14 @@ func RegisterSketchitHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Sketchit_DeleteProcess_0(rctx, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Sketchit_DeleteSketch_0(rctx, inboundMarshaler, server, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_DeleteProcess_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_DeleteSketch_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1148,7 +1148,7 @@ func RegisterSketchitHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 
 	})
 
-	mux.Handle("GET", pattern_Sketchit_ListProcesses_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Sketchit_ListSketches_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -1157,18 +1157,18 @@ func RegisterSketchitHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Sketchit_ListProcesses_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Sketchit_ListSketches_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_ListProcesses_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_ListSketches_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_Sketchit_GetProcess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Sketchit_GetSketch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -1177,18 +1177,18 @@ func RegisterSketchitHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Sketchit_GetProcess_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Sketchit_GetSketch_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_GetProcess_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_GetSketch_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_Sketchit_CreateProcess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Sketchit_CreateSketch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -1197,18 +1197,18 @@ func RegisterSketchitHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Sketchit_CreateProcess_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Sketchit_CreateSketch_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_CreateProcess_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_CreateSketch_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("PATCH", pattern_Sketchit_UpdateProcess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_Sketchit_UpdateSketch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -1217,18 +1217,18 @@ func RegisterSketchitHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Sketchit_UpdateProcess_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Sketchit_UpdateSketch_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_UpdateProcess_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_UpdateSketch_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_Sketchit_DeleteProcess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("DELETE", pattern_Sketchit_DeleteSketch_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -1237,14 +1237,14 @@ func RegisterSketchitHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Sketchit_DeleteProcess_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Sketchit_DeleteSketch_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Sketchit_DeleteProcess_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Sketchit_DeleteSketch_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1274,25 +1274,25 @@ func RegisterSketchitHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 var (
 	pattern_Sketchit_SayHello_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"1", "ping"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_ListDevices_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "domains", "parent", "devices"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_ListDevices_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "sectors", "parent", "devices"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_GetDevice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "domains", "devices", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_GetDevice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "sectors", "devices", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_CreateDevice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "domains", "parent", "devices"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_CreateDevice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "sectors", "parent", "devices"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_UpdateDevice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "domains", "devices", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_UpdateDevice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "sectors", "devices", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_DeleteDevice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "domains", "devices", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_DeleteDevice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "sectors", "devices", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_ListProcesses_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "models", "parent", "processes"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_ListSketches_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "models", "parent", "sketches"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_GetProcess_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "models", "processes", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_GetSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "models", "sketches", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_CreateProcess_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "models", "parent", "processes"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_CreateSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "models", "parent", "sketches"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_UpdateProcess_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "models", "processes", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_UpdateSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "models", "sketches", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_DeleteProcess_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "models", "processes", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_DeleteSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "models", "sketches", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Sketchit_ListCollections_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "collections"}, "", runtime.AssumeColonVerbOpt(true)))
 )
@@ -1310,15 +1310,15 @@ var (
 
 	forward_Sketchit_DeleteDevice_0 = runtime.ForwardResponseMessage
 
-	forward_Sketchit_ListProcesses_0 = runtime.ForwardResponseMessage
+	forward_Sketchit_ListSketches_0 = runtime.ForwardResponseMessage
 
-	forward_Sketchit_GetProcess_0 = runtime.ForwardResponseMessage
+	forward_Sketchit_GetSketch_0 = runtime.ForwardResponseMessage
 
-	forward_Sketchit_CreateProcess_0 = runtime.ForwardResponseMessage
+	forward_Sketchit_CreateSketch_0 = runtime.ForwardResponseMessage
 
-	forward_Sketchit_UpdateProcess_0 = runtime.ForwardResponseMessage
+	forward_Sketchit_UpdateSketch_0 = runtime.ForwardResponseMessage
 
-	forward_Sketchit_DeleteProcess_0 = runtime.ForwardResponseMessage
+	forward_Sketchit_DeleteSketch_0 = runtime.ForwardResponseMessage
 
 	forward_Sketchit_ListCollections_0 = runtime.ForwardResponseMessage
 )
