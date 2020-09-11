@@ -1,5 +1,7 @@
 package cmdr
 
+import "strings"
+
 // Flags define available Commander flags
 type Flags struct {
 	Format  FormatFlag  `yaml:"Format,omitempty" json:"Format,omitempty"`
@@ -88,11 +90,13 @@ func oneOf(in string, choices []string) bool {
 }
 
 func extractFlags(in []string) (out []string, flags []string) {
-	out = make([]string, len(in))
-	flags = make([]string, len(in))
+	out = make([]string, 0, len(in))
+	flags = make([]string, 0, len(in))
+	prefix := "-"
 	for _, s := range in {
-		if s[0] == '-' {
-			flags = append(flags, s[1:])
+		if strings.HasPrefix(s, prefix) {
+			s = strings.TrimPrefix(s, prefix)
+			flags = append(flags, s)
 		} else {
 			out = append(out, s)
 		}

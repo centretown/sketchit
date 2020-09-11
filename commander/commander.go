@@ -14,22 +14,24 @@ import (
 	"google.golang.org/grpc"
 )
 
-// Commander - parameters
+// Commander script api dispatcher
 type Commander struct {
-	Commands    []*Command
-	Aliases     map[string]*Command
-	Dictionary  api.Dictionary
-	Flags       *Flags
 	ctx         context.Context
 	conn        *grpc.ClientConn
 	client      api.SketchitClient
 	collections []*api.Collection
-	index       []string
-	directory   []string
-	suffix      string
+
+	Commands   []*Command
+	Aliases    map[string]*Command
+	Dictionary api.Dictionary
+	Flags      *Flags
+
+	index     []string
+	directory []string
+	suffix    string
 }
 
-// New -
+// New Commander
 func New(ctx context.Context,
 	conn *grpc.ClientConn,
 	client api.SketchitClient,
@@ -39,7 +41,7 @@ func New(ctx context.Context,
 	return
 }
 
-// Print -
+// Print using flags
 func (cmdr *Commander) Print(o interface{}) string {
 	return Print(cmdr.Flags.Format.Value, o)
 }
@@ -160,6 +162,10 @@ func (cmdr *Commander) Build() {
 	}
 
 	flagsCmd.F = func(args ...string) (s string, err error) {
+		a, f := extractFlags(args)
+		if len(f) > 1 {
+			fmt.Printf("%v %v", a, f)
+		}
 		// if len(args) < 1 {
 		// }
 		return cmdr.Print(cmdr.Flags), nil

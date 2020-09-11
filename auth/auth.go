@@ -35,7 +35,7 @@ var (
 )
 
 // SnakeOil self signed cert
-var SnakeOil = "../cert/snakeoil/server.pem"
+var SnakeOil = "cert/snakeoil/server.pem"
 
 // Connect -
 func Connect(pem string, auth *Authentication) (conn *grpc.ClientConn, err error) {

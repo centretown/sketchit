@@ -41,7 +41,7 @@ api/action.pb.go: protos/action.proto
 	
 
 test: ## run unit tests
-	@./curl_test.sh >curl_test.txt
+	@client/curl_test.sh
 	@go test ./...
 
 api: api/sketchit.pb.go api/action.pb.go ## Auto-generate grpc go sources

@@ -1,0 +1,16 @@
+
+List
+{}
+Get
+{"error":"\n 'get device' failed to decode mongo: no documents in result","code":2,"message":"\n 'get device' failed to decode mongo: no documents in result"}
+Create 02
+{"sector":"cottage","label":"esp32-02","model":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}
+Get 02
+{"sector":"cottage","label":"esp32-02","model":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}
+Update 02
+{"sector":"cottage","label":"esp32-02","model":"WHOLE WEED BREAD","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}
+Get 02
+{"sector":"cottage","label":"esp32-02","model":"WHOLE WEED BREAD","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}
+Delete 02
+{}
+

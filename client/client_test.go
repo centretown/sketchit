@@ -8,6 +8,8 @@ import (
 	"golang.org/x/net/context"
 )
 
+var snakeoil = "../" + auth.SnakeOil
+
 // TestCrud -
 func TestCrud(t *testing.T) {
 	a := &auth.Authentication{
@@ -15,7 +17,7 @@ func TestCrud(t *testing.T) {
 		Password: "test",
 	}
 
-	conn, err := auth.Connect(auth.SnakeOil, a)
+	conn, err := auth.Connect(snakeoil, a)
 	if err != nil {
 		t.Fatalf("did not connect: %s", err)
 	}

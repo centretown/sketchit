@@ -42,8 +42,8 @@ const (
 	ReduceNone SchemaReducer = iota
 	// ReduceSummary includes less detail
 	ReduceSummary
-	// ReduceName includes name only
-	ReduceName
+	// ReduceBrief includes name only
+	ReduceBrief
 )
 
 var schemaReducer = ReduceNone
@@ -64,7 +64,7 @@ func (sch *Schema) Reduce() (out interface{}) {
 	fake.Properties = sch.Properties
 
 	fake.Name = sch.Name
-	if schemaReducer == ReduceName {
+	if schemaReducer == ReduceBrief {
 		return
 	}
 

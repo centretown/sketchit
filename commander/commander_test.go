@@ -10,6 +10,69 @@ import (
 	"golang.org/x/net/context"
 )
 
+var snakeoil = "../" + auth.SnakeOil
+
+// TestDictionary -
+func TestDictionary(t *testing.T) {
+	a := &auth.Authentication{
+		Login:    "testing",
+		Password: "test",
+	}
+
+	conn, err := auth.Connect(snakeoil, a)
+	if err != nil {
+		t.Fatalf("did not connect: %s", err)
+	}
+	defer conn.Close()
+
+	client := api.NewSketchitClient(conn)
+	ctx := context.Background()
+	response, err := client.SayHello(ctx, &api.PingMessage{Greeting: "foo"})
+	if err != nil {
+		t.Fatalf("Error when calling SayHello: %s", err)
+	}
+	t.Logf("Response from server: %s", response.Greeting)
+
+	creq := &api.ListCollectionsRequest{}
+	cres, err := client.ListCollections(ctx, creq)
+	if err != nil {
+		t.Fatalf("Error when calling ListCollections: %s", err)
+	}
+
+	dictionary := api.DictionaryNew(cres.Collections)
+
+	sch := dictionary[".sketches"]
+	sch.SetReducer(api.ReduceNone)
+	s, err := Marshal("yaml", sch)
+	if err != nil {
+		t.Fatalf("marshal: %s, yaml, .sketches", err)
+	}
+	t.Log(s)
+
+	sch = dictionary[".devices"]
+	s, err = Marshal("yaml", sch)
+	if err != nil {
+		t.Fatalf("marshal: %s, yaml, .devices", err)
+	}
+	t.Log(s)
+
+	sch = dictionary[".sketches"]
+	sch.SetReducer(api.ReduceBrief)
+	s, err = Marshal("json", sch)
+	if err != nil {
+		t.Fatalf("marshal: %s, json, .sketches", err)
+	}
+	t.Log(s)
+
+	sch = dictionary[".devices"]
+	sch.SetReducer(api.ReduceSummary)
+	s, err = Marshal("xml", sch)
+	if err != nil {
+		t.Fatalf("marshal: %s, xml, .devices", err)
+	}
+	t.Log(s)
+}
+
 func TestCommands(t *testing.T) {
 
 	a := &auth.Authentication{
@@ -17,7 +80,7 @@ func TestCommands(t *testing.T) {
 		Password: "test",
 	}
 
-	conn, err := auth.Connect(auth.SnakeOil, a)
+	conn, err := auth.Connect(snakeoil, a)
 	if err != nil {
 		t.Fatalf("did not connect: %s", err)
 	}
@@ -120,65 +183,11 @@ func testFlags(t *testing.T, cmdr *Commander) {
 	}
 	t.Log(s)
 	t.Log()
-}
 
-// TestDictionary -
-func TestDictionary(t *testing.T) {
-	a := &auth.Authentication{
-		Login:    "testing",
-		Password: "test",
-	}
-
-	conn, err := auth.Connect(auth.SnakeOil, a)
+	s, err = c.F("-f=yaml", "-d=full")
 	if err != nil {
-		t.Fatalf("did not connect: %s", err)
-	}
-	defer conn.Close()
-
-	client := api.NewSketchitClient(conn)
-	ctx := context.Background()
-	response, err := client.SayHello(ctx, &api.PingMessage{Greeting: "foo"})
-	if err != nil {
-		t.Fatalf("Error when calling SayHello: %s", err)
-	}
-	t.Logf("Response from server: %s", response.Greeting)
-
-	creq := &api.ListCollectionsRequest{}
-	cres, err := client.ListCollections(ctx, creq)
-	if err != nil {
-		t.Fatalf("Error when calling ListCollections: %s", err)
-	}
-
-	dict := api.DictionaryNew(cres.Collections)
-
-	sch := dict[".sketches"]
-	sch.SetReducer(api.ReduceNone)
-	s, err := Marshal("yaml", sch)
-	if err != nil {
-		t.Fatalf("marshal: %s, yaml, .sketches", err)
+		return
 	}
 	t.Log(s)
-
-	sch = dict[".devices"]
-	s, err = Marshal("yaml", sch)
-	if err != nil {
-		t.Fatalf("marshal: %s, yaml, .devices", err)
-	}
-	t.Log(s)
-
-	sch = dict[".sketches"]
-	sch.SetReducer(api.ReduceName)
-	s, err = Marshal("json", sch)
-	if err != nil {
-		t.Fatalf("marshal: %s, json, .sketches", err)
-	}
-	t.Log(s)
-
-	sch = dict[".devices"]
-	s, err = Marshal("xml", sch)
-	if err != nil {
-		t.Fatalf("marshal: %s, xml, .devices", err)
-	}
-	t.Log(s)
-
+	t.Log()
 }
