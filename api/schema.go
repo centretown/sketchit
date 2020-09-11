@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"strings"
 
@@ -10,26 +12,26 @@ import (
 // FakeSchema -
 type FakeSchema struct {
 	// schema title for presentation
-	Title string `yaml:"Title,omitempty"`
+	Title string `yaml:"Title,omitempty" json:"Title,omitempty" xml:"Title,omitempty"`
 	// schema name used for keyed lookup
-	Name string `yaml:"Name,omitempty"`
+	Name string `yaml:"Name,omitempty" json:"Name,omitempty" xml:"Name,omitempty"`
 	// type of data represented
-	Type string `yaml:"Type,omitempty"`
+	Type string `yaml:"Type,omitempty" json:"Type,omitempty" xml:"Type,omitempty"`
 	// description of the schema
-	Description string `yaml:"Description,omitempty"`
+	Description string `yaml:"Description,omitempty" json:"Description,omitempty" xml:"Description,omitempty"`
 	// uniqueItems constrains items to be unique
-	UniqueItems bool `yaml:"UniqueItems,omitempty"`
+	UniqueItems bool `yaml:"UniqueItems,omitempty" json:"UniqueItems,omitempty" xml:"UniqueItems,omitempty"`
 	// item list definition
-	Items *Schema `yaml:"Items,omitempty"`
+	Items *Schema `yaml:"Items,omitempty" json:"Items,omitempty" xml:"Items,omitempty"`
 	// required properties and order
-	Required []string `yaml:"Required,omitempty"`
+	Required []string `yaml:"Required,omitempty" json:"Required,omitempty" xml:"Required,omitempty"`
 	// options constrains schema to an array of choices
-	Options []string `yaml:"Options,omitempty"`
+	Options []string `yaml:"Options,omitempty" json:"Options,omitempty" xml:"Options,omitempty"`
 	// oneOf constrains schema to one of a selection of options
-	OneOf []*Schema `yaml:"OneOf,omitempty"`
+	OneOf []*Schema `yaml:"OneOf,omitempty" json:"OneOf,omitempty" xml:"OneOf,omitempty"`
 	// properties defines an ordered list of children
 	// order determined by required array
-	Properties []*Schema `yaml:"Properties,omitempty"`
+	Properties []*Schema `yaml:"Properties,omitempty" json:"Properties,omitempty" xml:"Properties,omitempty"`
 }
 
 // SchemaReducer -
@@ -51,8 +53,8 @@ func (sch *Schema) SetReducer(r SchemaReducer) {
 	schemaReducer = r
 }
 
-// MarshalYAML produces yaml output for schema
-func (sch *Schema) MarshalYAML() (out interface{}, err error) {
+// Reduce schema within fake based on schemaReducer
+func (sch *Schema) Reduce() (out interface{}) {
 	fake := &FakeSchema{}
 	out = fake
 
@@ -76,7 +78,26 @@ func (sch *Schema) MarshalYAML() (out interface{}, err error) {
 	fake.UniqueItems = sch.UniqueItems
 	fake.Required = sch.Required
 	fake.Options = sch.Options
+	return
+}
 
+// MarshalYAML produces yaml output for schema
+func (sch *Schema) MarshalYAML() (out interface{}, err error) {
+	out = sch.Reduce()
+	return
+}
+
+// MarshalJSON produces json output for schema
+func (sch *Schema) MarshalJSON() (b []byte, err error) {
+	out := sch.Reduce()
+	b, err = json.Marshal(out)
+	return
+}
+
+// MarshalXML - xml Marshaler interface
+func (sch *Schema) MarshalXML(e *xml.Encoder, start xml.StartElement) (err error) {
+	out := sch.Reduce()
+	err = e.EncodeElement(out, start)
 	return
 }
 

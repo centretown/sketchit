@@ -1,69 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/centretown/sketchit/api"
+	"github.com/centretown/sketchit/auth"
 	"golang.org/x/net/context"
-	"gopkg.in/yaml.v2"
 )
 
-func TestDictionary(t *testing.T) {
-	auth := &Authentication{
-		Login:    "testing",
-		Password: "test",
-	}
-
-	conn, err := connect("../cert/snakeoil/server.pem", auth)
-	if err != nil {
-		t.Fatalf("did not connect: %s", err)
-	}
-	defer conn.Close()
-
-	client := api.NewSketchitClient(conn)
-	ctx := context.Background()
-	response, err := client.SayHello(ctx, &api.PingMessage{Greeting: "foo"})
-	if err != nil {
-		t.Fatalf("Error when calling SayHello: %s", err)
-	}
-	t.Logf("Response from server: %s", response.Greeting)
-
-	creq := &api.ListCollectionsRequest{}
-	cres, err := client.ListCollections(ctx, creq)
-	if err != nil {
-		t.Fatalf("Error when calling ListCollections: %s", err)
-	}
-
-	dict := api.DictionaryNew(cres.Collections)
-
-	sch := dict[".sketches"]
-	sch.SetReducer(api.ReduceNone)
-	y, _ := yaml.Marshal(sch)
-	fmt.Println(string(y))
-
-	sch = dict[".devices"]
-	y, _ = yaml.Marshal(sch)
-	fmt.Println(string(y))
-
-	sch = dict[".sketches"]
-	sch.SetReducer(api.ReduceName)
-	y, _ = yaml.Marshal(sch)
-	fmt.Println(string(y))
-
-	sch = dict[".devices"]
-	y, _ = yaml.Marshal(sch)
-	fmt.Println(string(y))
-
-}
-
+// TestCrud -
 func TestCrud(t *testing.T) {
-	auth := &Authentication{
+	a := &auth.Authentication{
 		Login:    "testing",
 		Password: "test",
 	}
 
-	conn, err := connect("../cert/snakeoil/server.pem", auth)
+	conn, err := auth.Connect(auth.SnakeOil, a)
 	if err != nil {
 		t.Fatalf("did not connect: %s", err)
 	}
@@ -75,6 +27,7 @@ func TestCrud(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error when calling SayHello: %s", err)
 	}
+
 	t.Logf("Response from server: %s", response.Greeting)
 
 	req := &api.ListDevicesRequest{Parent: "sectors/cottage"}

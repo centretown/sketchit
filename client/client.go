@@ -1,42 +1,45 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"flag"
+	"fmt"
+	"os"
+	"strings"
 
 	"github.com/centretown/sketchit/api"
+	"github.com/centretown/sketchit/auth"
+	cmdr "github.com/centretown/sketchit/commander"
 	"github.com/centretown/sketchit/info"
 	"github.com/golang/glog"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
-type commandOptions struct {
-	format  string
-	detail  string
-	confirm bool
-}
-
-var sketchitOptions commandOptions
+var flags *cmdr.Flags
 
 func init() {
-	flag.StringVar(&sketchitOptions.format, "f", "yaml", "format output type: --f=json --f=yaml")
-	flag.StringVar(&sketchitOptions.detail, "d", "full", "listing detail level: --d=full --d=summary --d=names")
-	flag.BoolVar(&sketchitOptions.confirm, "y", false, "confirm yes to inquiries: --y")
+	flags = cmdr.GetDefaultFlags()
+	flag.StringVar(&flags.Format.Value, flags.Format.Key,
+		flags.Format.Value, flags.Format.Summary.String())
+
+	flag.StringVar(&flags.Detail.Value, flags.Detail.Key,
+		flags.Detail.Value, flags.Detail.Summary.String())
+
+	flag.BoolVar(&flags.Confirm.Value, flags.Confirm.Key,
+		flags.Confirm.Value, flags.Confirm.Summary.String())
 }
 
 func main() {
-	// for glog
 	flag.Parse()
 
-	auth := &Authentication{
+	testAuth := &auth.Authentication{
 		Login:    "testing",
 		Password: "test",
 	}
 
 	// connect to self cert
-	conn, err := connect(SnakeOil, auth)
+	conn, err := auth.Connect(auth.SnakeOil, testAuth)
 	if err != nil {
 		glog.Errorf("did not connect: %s", err)
 		return
@@ -51,35 +54,49 @@ func main() {
 		return
 	}
 
-	cmdr := &Commander{ctx: ctx, client: client, conn: conn}
-	cmdr.run()
+	cmdr := cmdr.New(ctx, conn, client, flags)
+	run(cmdr)
 }
 
-// connection errors
-var (
-	ErrNewClient = errors.New("failed to create client with credentials")
-	ErrDial      = errors.New("failed to connect to server")
-)
+// ErrCommandNotFound -
+var ErrCommandNotFound = errors.New("command not found")
 
-// SnakeOil self signed cert
-var SnakeOil = "cert/snakeoil/server.pem"
+func run(commander *cmdr.Commander) {
+	commander.Build()
 
-func connect(pem string, auth *Authentication) (conn *grpc.ClientConn, err error) {
-	// Create the client TLS credentials
-	creds, err := credentials.NewClientTLSFromFile(pem, "")
-	if err != nil {
-		info.Inform(err, ErrNewClient, "")
-		return
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Print(commander.Prompt())
+		// Read the keyboard input.
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+
+		// Remove the newline character.
+		input = strings.TrimSuffix(input, "\n")
+
+		// Skip an empty input.
+		if input == "" {
+			continue
+		}
+
+		args := strings.Fields(input)
+		verb := args[0]
+		args = args[1:]
+		s := ""
+		c, ok := commander.Aliases[verb]
+		if ok == false {
+			err = info.Inform(err, ErrCommandNotFound, verb)
+		} else {
+			s, err = c.F(args...)
+		}
+
+		if err != nil {
+			fmt.Println(err)
+		} else if len(s) > 0 {
+			fmt.Println(s)
+		}
 	}
 
-	// connect to server
-	conn, err = grpc.Dial("dragon:7777",
-		grpc.WithTransportCredentials(creds),
-		grpc.WithPerRPCCredentials(auth))
-	if err != nil {
-		info.Inform(err, ErrDial, pem)
-		return
-	}
-
-	return
 }
