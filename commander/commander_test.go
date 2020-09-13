@@ -42,31 +42,27 @@ func TestDictionary(t *testing.T) {
 	dictionary := api.DictionaryNew(cres.Collections)
 
 	sch := dictionary[".sketches"]
-	sch.SetReducer(api.ReduceNone)
-	s, err := Marshal("yaml", sch)
+	s, err := Marshal(sch, api.YAML, api.Full)
 	if err != nil {
 		t.Fatalf("marshal: %s, yaml, .sketches", err)
 	}
 	t.Log(s)
 
 	sch = dictionary[".devices"]
-	s, err = Marshal("yaml", sch)
 	if err != nil {
 		t.Fatalf("marshal: %s, yaml, .devices", err)
 	}
 	t.Log(s)
 
 	sch = dictionary[".sketches"]
-	sch.SetReducer(api.ReduceBrief)
-	s, err = Marshal("json", sch)
+	s, err = Marshal(sch, api.YAML, api.Brief)
 	if err != nil {
 		t.Fatalf("marshal: %s, json, .sketches", err)
 	}
 	t.Log(s)
 
 	sch = dictionary[".devices"]
-	sch.SetReducer(api.ReduceSummary)
-	s, err = Marshal("xml", sch)
+	s, err = Marshal(sch, api.XML, api.Summary)
 	if err != nil {
 		t.Fatalf("marshal: %s, xml, .devices", err)
 	}
@@ -88,8 +84,7 @@ func TestCommands(t *testing.T) {
 
 	client := api.NewSketchitClient(conn)
 	ctx := context.Background()
-	flags := GetDefaultFlags()
-	cmdr := New(ctx, conn, client, flags)
+	cmdr := New(ctx, conn, client)
 	cmdr.Build()
 
 	testHello(t, cmdr)
@@ -98,12 +93,13 @@ func TestCommands(t *testing.T) {
 }
 
 func testHello(t *testing.T, cmdr *Commander) {
+	fv := cmdr.Flags.Values()
 	name := "hello"
 	c, ok := cmdr.Aliases[name]
 	if !ok {
 		t.Fatalf("%s command not found.", name)
 	}
-	s, err := c.F("sketchit")
+	s, err := c.F(fv, "sketchit")
 	if err != nil {
 		t.Fatalf("hello reported: %v", err)
 	}
@@ -111,6 +107,7 @@ func testHello(t *testing.T, cmdr *Commander) {
 }
 
 func testHelp(t *testing.T, cmdr *Commander) {
+	fv := cmdr.Flags.Values()
 	name := "help"
 	var err error
 	var errFunc = func() {
@@ -125,19 +122,19 @@ func testHelp(t *testing.T, cmdr *Commander) {
 		t.Fatalf("%s command not found.", name)
 	}
 
-	s, err := c.F()
+	s, err := c.F(fv)
 	if err != nil {
 		return
 	}
 
-	s, err = c.F("all")
+	s, err = c.F(fv, "all")
 	if err != nil {
 		return
 	}
 	t.Log(s)
 	t.Log()
 
-	s, err = c.F("list")
+	s, err = c.F(fv, "list")
 	if err != nil {
 		return
 	}
@@ -149,7 +146,7 @@ func testHelp(t *testing.T, cmdr *Commander) {
 	t.Log(s)
 	t.Log()
 
-	s, err = c.F("foo")
+	s, err = c.F(fv, "foo")
 	if err == nil {
 		err = fmt.Errorf("uncaught unknown command: %v", "foo")
 		return
@@ -160,12 +157,14 @@ func testHelp(t *testing.T, cmdr *Commander) {
 }
 
 func testFlags(t *testing.T, cmdr *Commander) {
+	fv := cmdr.Flags.Values()
 	name := "flags"
 	var err error
 	var s string
 	var errFunc = func() {
 		if err != nil {
 			err = fmt.Errorf("%s reported: %v", name, err)
+			// fmt.Sscan(str string, a ...interface{})
 			return
 		}
 	}
@@ -177,14 +176,14 @@ func testFlags(t *testing.T, cmdr *Commander) {
 		return
 	}
 
-	s, err = c.F()
+	s, err = c.F(fv)
 	if err != nil {
 		return
 	}
 	t.Log(s)
 	t.Log()
 
-	s, err = c.F("-f=yaml", "-d=full")
+	s, err = c.F(fv)
 	if err != nil {
 		return
 	}

@@ -272,7 +272,7 @@ message Sketch {
     string label = 1;
     // The device activated by this sketch
     // eg: "/home-iot/devices/esp32-01"
-    string devicekey = 2;
+    string device = 2;
     // The purpose or description of the actions take by this sketch
     // eg: "Blink at prescribed intervals"
     string purpose = 3;

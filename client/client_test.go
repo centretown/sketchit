@@ -40,3 +40,20 @@ func TestCrud(t *testing.T) {
 	t.Logf("Response from server: %s\n\n", res.Devices)
 
 }
+
+// up-arrow ^[[A down-arrow^[[B right-arrow^[[C left-arrow^[[D
+
+// xterm sequences:
+// <esc>[A     - Up          <esc>[K     -             <esc>[U     -
+// <esc>[B     - Down        <esc>[L     -             <esc>[V     -
+// <esc>[C     - Right       <esc>[M     -             <esc>[W     -
+// <esc>[D     - Left        <esc>[N     -             <esc>[X     -
+// <esc>[E     -             <esc>[O     -             <esc>[Y     -
+// <esc>[F     - End         <esc>[1P    - F1          <esc>[Z     -
+// <esc>[G     - Keypad 5    <esc>[1Q    - F2
+// <esc>[H     - Home        <esc>[1R    - F3
+// <esc>[I     -             <esc>[1S    - F4
+// <esc>[J     -             <esc>[T     -
+func TestKeyboard(t *testing.T) {
+
+}

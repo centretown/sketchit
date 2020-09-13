@@ -749,7 +749,7 @@
           "type": "string",
           "title": "The unique label assigned to this sketch \neg: \"blink\""
         },
-        "devicekey": {
+        "device": {
           "type": "string",
           "title": "The device activated by this sketch\neg: \"/home-iot/devices/esp32-01\""
         },

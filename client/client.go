@@ -2,16 +2,14 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
-	"strings"
 
 	"github.com/centretown/sketchit/api"
 	"github.com/centretown/sketchit/auth"
 	cmdr "github.com/centretown/sketchit/commander"
-	"github.com/centretown/sketchit/info"
 	"github.com/golang/glog"
 	"golang.org/x/net/context"
 )
@@ -19,18 +17,10 @@ import (
 var flags *cmdr.Flags
 
 func init() {
-	flags = cmdr.GetDefaultFlags()
-	flag.StringVar(&flags.Format.Value, flags.Format.Key,
-		flags.Format.Value, flags.Format.Summary.String())
-
-	flag.StringVar(&flags.Detail.Value, flags.Detail.Key,
-		flags.Detail.Value, flags.Detail.Summary.String())
-
-	flag.BoolVar(&flags.Confirm.Value, flags.Confirm.Key,
-		flags.Confirm.Value, flags.Confirm.Summary.String())
 }
 
 func main() {
+	// for commander and glog
 	flag.Parse()
 
 	testAuth := &auth.Authentication{
@@ -54,48 +44,48 @@ func main() {
 		return
 	}
 
-	cmdr := cmdr.New(ctx, conn, client, flags)
+	cmdr := cmdr.New(ctx, conn, client)
 	run(cmdr)
 }
 
-// ErrCommandNotFound -
-var ErrCommandNotFound = errors.New("command not found")
-
 func run(commander *cmdr.Commander) {
 	commander.Build()
-
+	eof := false
 	reader := bufio.NewReader(os.Stdin)
-	for {
+	for !eof {
 		fmt.Print(commander.Prompt())
 		// Read the keyboard input.
 		input, err := reader.ReadString('\n')
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			// ReadString only returns err when
+			// no line feed was captured
+			// treat all errors as eof and issue
+			// warning when EOF not returned
+			if err != io.EOF {
+				glog.Error(err)
+			}
+			eof = true
 		}
 
-		// Remove the newline character.
-		input = strings.TrimSuffix(input, "\n")
-
-		// Skip an empty input.
-		if input == "" {
-			continue
-		}
-
-		args := strings.Fields(input)
-		verb := args[0]
-		args = args[1:]
+		command, flagValues, args, err := commander.Parse(input)
 		s := ""
-		c, ok := commander.Aliases[verb]
-		if ok == false {
-			err = info.Inform(err, ErrCommandNotFound, verb)
-		} else {
-			s, err = c.F(args...)
+		if err == nil {
+			s, err = command.F(flagValues, args...)
+			if err == cmdr.ErrExit {
+				return
+			}
 		}
 
 		if err != nil {
-			fmt.Println(err)
+			if err != cmdr.ErrEmpty {
+				fmt.Println(err)
+			}
 		} else if len(s) > 0 {
 			fmt.Println(s)
+		}
+
+		if eof {
+			return
 		}
 	}
 
