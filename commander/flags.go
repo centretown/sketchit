@@ -2,6 +2,7 @@ package cmdr
 
 import (
 	"flag"
+	"fmt"
 
 	"github.com/centretown/sketchit/api"
 )
@@ -40,6 +41,7 @@ func (fv FlagValues) Format() (marshalFormat api.MarshalFormat) {
 	marshalFormat = api.NewMarshalFormat(format)
 	if marshalFormat == api.FormatNotFound {
 		marshalFormat = api.YAML
+		fmt.Println("format not found", format)
 	}
 	return
 }

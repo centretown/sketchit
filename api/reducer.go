@@ -1,56 +1,63 @@
 package api
 
-// Reducer is the interface implemented by an object
-// that can reduce itself to a summary or brief
-type Reducer interface {
-	Reduce(...Reduction) interface{}
-}
+import (
+	"encoding/json"
+	"encoding/xml"
 
-// Reduction level
-type Reduction int
-
-// Reduction levels
-const (
-	// no reduction
-	Full Reduction = iota
-	// less detail than full
-	Summary
-	// name and value
-	Brief
-	ReductionMax
-	ReductionNotFound Reduction = -1
+	"gopkg.in/yaml.v2"
 )
 
-var reductionKeys []string
-var reductionValues map[string]Reduction
-
-func init() {
-	reductionKeys = make([]string, ReductionMax)
-	reductionKeys[Full] = "full"
-	reductionKeys[Summary] = "summary"
-	reductionKeys[Brief] = "brief"
-
-	reductionValues = make(map[string]Reduction, ReductionMax)
-	for i, k := range reductionKeys {
-		reductionValues[k] = Reduction(i)
-	}
+// Sprinter commander's Print/Marshall functions use this interface
+// to reduce in memory output
+type Sprinter interface {
+	Sprint(o interface{}, flags *FlagValues) (s string, err error)
 }
 
-func (r Reduction) String() (key string) {
-	if r == ReductionNotFound || r >= ReductionMax {
-		return
-	}
-	key = reductionKeys[r]
+// Marshaler -
+type Marshaler func(o interface{}) (out []byte, err error)
+
+// Marshalers - jump table
+var Marshalers [Format_XML + 1]Marshaler
+
+// MarshalYAML -
+func MarshalYAML(o interface{}) (b []byte, err error) {
+	b, err = yaml.Marshal(o)
 	return
 }
 
-// NewReduction finds the key and returns a reduction level
-// ReductionNotFound is returned when not found
-func NewReduction(key string) (reduction Reduction) {
-	reduction = ReductionNotFound
-	r, ok := reductionValues[key]
-	if ok {
-		reduction = r
+// MarshalJSON -
+func MarshalJSON(o interface{}) (b []byte, err error) {
+	b, err = json.MarshalIndent(o, "", "  ")
+	return
+}
+
+// MarshalXML -
+func MarshalXML(o interface{}) (b []byte, err error) {
+	b, err = xml.MarshalIndent(o, "", "  ")
+	return
+}
+
+func init() {
+	Marshalers[Format_YAML] = MarshalYAML
+	Marshalers[Format_JSON] = MarshalJSON
+	Marshalers[Format_XML] = MarshalXML
+}
+
+// GetMarshaler returns a marshal function given the flags
+func GetMarshaler(flags *FlagValues) (m Marshaler) {
+	switch flags.Format {
+	case Format_YAML,
+		Format_JSON,
+		Format_XML:
+		m = Marshalers[flags.Format]
+	default:
+		m = Marshalers[Format_YAML]
 	}
+	return
+}
+
+// Marshal -
+func Marshal(o interface{}, flags *FlagValues) (b []byte, err error) {
+	b, err = GetMarshaler(flags)(o)
 	return
 }

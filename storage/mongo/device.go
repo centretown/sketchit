@@ -87,7 +87,9 @@ func (mdp *MongoStorageProvider) ListDevices(ctx context.Context, parent string)
 	glog.Info(tokens, l)
 	filter := bson.D{}
 	if l > 1 {
-		filter = bson.D{{Key: "sector", Value: tokens[1]}}
+		filter = bson.D{
+			{Key: "sector", Value: tokens[1]},
+		}
 	}
 
 	devices = make([]*api.Device, 0)
@@ -96,8 +98,21 @@ func (mdp *MongoStorageProvider) ListDevices(ctx context.Context, parent string)
 		err = info.Inform(err, ErrFind, "ListDevices")
 		return
 	}
+	defer cursor.Close(ctx)
 
-	err = cursor.All(ctx, &devices)
+	// err = cursor.All(ctx, &devices)
+	for cursor.Next(ctx) {
+		var device = &api.Device{}
+		err = cursor.Decode(&device)
+		if err != nil {
+			err = info.Inform(err, ErrDecode, "ListDevices")
+			return
+		}
+		devices = append(devices, device)
+	}
+	// 	if err := cursor.Err(); err != nil {
+	// 		t.Fatal(err)
+
 	if err != nil {
 		err = info.Inform(err, ErrDecode, "ListDevices")
 	}

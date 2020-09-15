@@ -62,8 +62,8 @@
         },
         "parameters": [
           {
-            "name": "name",
-            "description": "ignored.",
+            "name": "ignore",
+            "description": "ignore.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -501,20 +501,39 @@
           "title": "The sequence defines the order of steps"
         },
         "type": {
-          "type": "string",
+          "$ref": "#/definitions/v1ActionType",
           "title": "The type identifies the type of command to run"
         },
         "delay": {
-          "$ref": "#/definitions/v1DelayCommand"
+          "$ref": "#/definitions/v1DelayAction"
         },
         "mode": {
-          "$ref": "#/definitions/v1ModeCommand"
+          "$ref": "#/definitions/v1ModeAction"
         },
         "pin": {
-          "$ref": "#/definitions/v1PinCommand"
+          "$ref": "#/definitions/v1PinAction"
         }
       },
       "title": "Action defines a processing step or instruction"
+    },
+    "v1ActionType": {
+      "type": "string",
+      "enum": [
+        "delay",
+        "mode",
+        "pin"
+      ],
+      "default": "delay"
+    },
+    "v1Auto": {
+      "type": "string",
+      "enum": [
+        "N",
+        "Y"
+      ],
+      "default": "N",
+      "description": "- N: no\n - Y: yes",
+      "title": "Auto confirmation"
     },
     "v1Collection": {
       "type": "object",
@@ -525,21 +544,21 @@
         },
         "type": {
           "type": "string",
-          "title": "collection type is always \"collection\""
+          "title": "type is mostly \"collection\""
         },
         "readOnly": {
           "type": "boolean",
           "format": "boolean",
-          "title": "readOnly indicates the updata status"
+          "title": "readOnly indicates the update status"
         },
         "schema": {
           "$ref": "#/definitions/v1Schema",
           "title": "schema define the structure of the document"
         }
       },
-      "title": "Collection defines a group of store documents"
+      "title": "Collection of stored documents"
     },
-    "v1DelayCommand": {
+    "v1DelayAction": {
       "type": "object",
       "properties": {
         "duration": {
@@ -548,7 +567,7 @@
           "title": "The duration of the delay in milliseconds"
         }
       },
-      "title": "DelayCommand defines the data to carry out this action"
+      "title": "DelayAction defines the data to carry out this action"
     },
     "v1Device": {
       "type": "object",
@@ -583,6 +602,38 @@
       },
       "title": "defines a micro controller device for sketchit"
     },
+    "v1FlagValues": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "$ref": "#/definitions/v1Format",
+          "title": "Format used by commander print"
+        },
+        "projection": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Projection"
+          },
+          "title": "Projection used by storage \u0026 commander"
+        },
+        "auto": {
+          "$ref": "#/definitions/v1Auto",
+          "title": "Auto used by sketchit client"
+        }
+      },
+      "title": "FlagValues are use by commander and storage"
+    },
+    "v1Format": {
+      "type": "string",
+      "enum": [
+        "YAML",
+        "JSON",
+        "XML"
+      ],
+      "default": "YAML",
+      "description": "- YAML: commander output yaml\n - JSON: commander output yaml\n - XML: key, value pair",
+      "title": "Format defines commander print"
+    },
     "v1ListCollectionsResponse": {
       "type": "object",
       "properties": {
@@ -592,7 +643,8 @@
             "$ref": "#/definitions/v1Collection"
           }
         }
-      }
+      },
+      "title": "ListCollectionsResponse -"
     },
     "v1ListDevicesResponse": {
       "type": "object",
@@ -628,7 +680,15 @@
       },
       "title": "ListSketchesResponse defines the return value to a ListsketchesRequest"
     },
-    "v1ModeCommand": {
+    "v1Mode": {
+      "type": "string",
+      "enum": [
+        "input",
+        "output"
+      ],
+      "default": "input"
+    },
+    "v1ModeAction": {
       "type": "object",
       "properties": {
         "id": {
@@ -637,17 +697,17 @@
           "title": "The pin id"
         },
         "signal": {
-          "type": "string",
-          "title": "The signal type analog/digita"
+          "$ref": "#/definitions/v1Signal",
+          "title": "The signal type analog/digital"
         },
         "mode": {
-          "type": "string",
+          "$ref": "#/definitions/v1Mode",
           "title": "The mode type output/input"
         }
       },
-      "description": "ModeCommand defines how a pin is acted on."
+      "description": "ModeAction defines how a pin is acted on."
     },
-    "v1PinCommand": {
+    "v1PinAction": {
       "type": "object",
       "properties": {
         "id": {
@@ -656,11 +716,11 @@
           "title": "The pin id"
         },
         "signal": {
-          "type": "string",
+          "$ref": "#/definitions/v1Signal",
           "title": "The signal type analog/digita"
         },
         "mode": {
-          "type": "string",
+          "$ref": "#/definitions/v1Mode",
           "title": "The mode type output/input"
         },
         "value": {
@@ -669,7 +729,7 @@
           "title": "The value to read from or write to"
         }
       },
-      "title": "PinCommand reads/writes analog/digital values"
+      "title": "PinAction reads/writes analog/digital values"
     },
     "v1PingMessage": {
       "type": "object",
@@ -678,6 +738,16 @@
           "type": "string"
         }
       }
+    },
+    "v1Projection": {
+      "type": "string",
+      "enum": [
+        "FULL",
+        "SUMMARY",
+        "BRIEF"
+      ],
+      "default": "FULL",
+      "title": "- FULL: no reduction\n - SUMMARY: less detail than full\n - BRIEF: key, value pair"
     },
     "v1Schema": {
       "type": "object",
@@ -726,7 +796,7 @@
           "items": {
             "$ref": "#/definitions/v1Schema"
           },
-          "title": "oneOf constrains schema to one of a selection of options"
+          "title": "oneOf a selection of Schemas"
         },
         "properties": {
           "type": "array",
@@ -737,6 +807,14 @@
         }
       },
       "title": "Schema defines the structure of schemas within a document"
+    },
+    "v1Signal": {
+      "type": "string",
+      "enum": [
+        "analog",
+        "digital"
+      ],
+      "default": "analog"
     },
     "v1Sketch": {
       "type": "object",

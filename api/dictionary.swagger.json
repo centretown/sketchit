@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "action.proto",
+    "title": "dictionary.proto",
     "version": "version not set"
   },
   "consumes": [

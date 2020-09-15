@@ -2,6 +2,7 @@ package cmdr
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -13,7 +14,7 @@ import (
 var snakeoil = "../" + auth.SnakeOil
 
 // TestDictionary -
-func TestDictionary(t *testing.T) {
+func testDictionary(t *testing.T) {
 	a := &auth.Authentication{
 		Login:    "testing",
 		Password: "test",
@@ -87,9 +88,10 @@ func TestCommands(t *testing.T) {
 	cmdr := New(ctx, conn, client)
 	cmdr.Build()
 
-	testHello(t, cmdr)
-	testHelp(t, cmdr)
-	testFlags(t, cmdr)
+	// testHello(t, cmdr)
+	// testHelp(t, cmdr)
+	// testFlags(t, cmdr)
+	testReducer(t, cmdr)
 }
 
 func testHello(t *testing.T, cmdr *Commander) {
@@ -99,7 +101,7 @@ func testHello(t *testing.T, cmdr *Commander) {
 	if !ok {
 		t.Fatalf("%s command not found.", name)
 	}
-	s, err := c.F(fv, "sketchit")
+	s, err := c.Run(fv, "sketchit")
 	if err != nil {
 		t.Fatalf("hello reported: %v", err)
 	}
@@ -122,19 +124,18 @@ func testHelp(t *testing.T, cmdr *Commander) {
 		t.Fatalf("%s command not found.", name)
 	}
 
-	s, err := c.F(fv)
+	s, err := c.Run(fv)
 	if err != nil {
 		return
 	}
 
-	s, err = c.F(fv, "all")
+	s, err = c.Run(fv, "all")
 	if err != nil {
 		return
 	}
 	t.Log(s)
-	t.Log()
 
-	s, err = c.F(fv, "list")
+	s, err = c.Run(fv, "list")
 	if err != nil {
 		return
 	}
@@ -144,49 +145,116 @@ func testHelp(t *testing.T, cmdr *Commander) {
 		return
 	}
 	t.Log(s)
-	t.Log()
 
-	s, err = c.F(fv, "foo")
+	s, err = c.Run(fv, "foo")
 	if err == nil {
 		err = fmt.Errorf("uncaught unknown command: %v", "foo")
 		return
 	}
 	err = nil
 	t.Log(s)
-	t.Log()
 }
 
 func testFlags(t *testing.T, cmdr *Commander) {
-	fv := cmdr.Flags.Values()
-	name := "flags"
 	var err error
 	var s string
-	var errFunc = func() {
-		if err != nil {
-			err = fmt.Errorf("%s reported: %v", name, err)
-			// fmt.Sscan(str string, a ...interface{})
-			return
-		}
-	}
-	defer errFunc()
 
-	c, ok := cmdr.Aliases[name]
-	if !ok {
-		err = fmt.Errorf("command not found '%s'", name)
-		return
+	cmd, flags, args, err := cmdr.Parse("flags -f=json -d:summary")
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	s, err = c.F(fv)
+	cmd, flags, args, err = cmdr.Parse("flags -f=xmls -d:brief")
+	if err == nil {
+		t.Fatal("invalid -f flag value accepted")
+	}
+	t.Log(err)
+
+	cmd, flags, args, err = cmdr.Parse("flags -f=xml -d:brieff")
+	if err == nil {
+		t.Fatal("invalid -d flag value accepted")
+	}
+	t.Log(err)
+
+	cmd, flags, args, err = cmdr.Parse("flags -g=xml -d:brief")
+	if err == nil {
+		t.Fatal("invalid -d flags accepted")
+	}
+	t.Log(err)
+
+	cmd, flags, args, err = cmdr.Parse("flags -f=xml -d:brief")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cmd, flags, args, err = cmdr.Parse("list -f=json -d:brief cottage")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log("list command", args, flags)
+
+	s, err = cmd.Run(flags, args...)
 	if err != nil {
 		return
 	}
 	t.Log(s)
-	t.Log()
 
-	s, err = c.F(fv)
-	if err != nil {
-		return
+	// if devKind == reflect.Slice {
+	// 	t.Log("its a slice")
+	// 	elemType := devType.Elem()
+	// 	t.Log(devType.Elem())
+	// 	if elemType.Implements(reflect.Type()) {
+	// 		t.Fatal("device not a reducer")
+	// 	} else {
+	// 		t.Log("device is a reducer")
+	// 	}
+	// }
+
+}
+func readTag(e interface{}, name string) (tag reflect.StructTag, ok bool) {
+	t := reflect.TypeOf(e)
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
 	}
-	t.Log(s)
-	t.Log()
+	f, ok := t.FieldByName(name)
+	tag = f.Tag
+	return
+}
+
+func testReducer(t *testing.T, cmdr *Commander) {
+	device := &api.Device{}
+	devices := make([]*api.Device, 0)
+	devices = append(devices, device)
+	d := &api.DevicesReducer{Devices: devices}
+	tag, _ := readTag(d, "Devices")
+	t.Log("tag", tag)
+	// t, ok := devices.(api.DeviceSlice)
+
+	// var o interface{}
+	// o = devices
+	// ovalue := reflect.ValueOf(o)
+	// ovalue.Interface()
+	// otype := ovalue.Type()
+	// okind := otype.Kind()
+	// oelem := otype.Elem()
+	// reducerType := reflect.TypeOf((*api.Reducer)(nil)).Elem()
+	// ok := oelem.Implements(reducerType)
+	// t.Log("implements reducer", ok, oelem)
+	// t.Log("reducerType", reducerType)
+	// t.Logf("v=%v t=%v, k=%v, e=%v ek=%v",
+	// 	ovalue, otype, okind, oelem, oelem.Kind())
+	// if ok {
+	// 	m, ok := oelem.MethodByName("SetReduction")
+	// 	t.Logf("method:%v,ok:%v", m, ok)
+	// 	if ok {
+	// 		t.Log("SetReduction")
+	// 		f := m.Func
+	// 		levels := []api.Reduction{api.Full, api.Brief}
+	// 		lv := reflect.ValueOf(levels)
+	// 		rlv := []reflect.Value{lv}
+	// 		t.Logf("func=%v lv%v, rlv%v", f, lv, rlv)
+	// 		f.Call(rlv)
+	// 	}
+	// }
+
 }

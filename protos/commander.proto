@@ -1,0 +1,38 @@
+syntax = "proto3";
+package centretown.sketchit.v1;
+
+option go_package = "github.com/centretown/sketchit/api";
+
+import public "dictionary.proto";
+
+message Commander {
+    string name = 1;
+    repeated Command commands = 2;
+    Aliases aliases = 3;
+    Dictionary dictionary = 4;
+    Flags flag = 5;
+}
+
+message Aliases {
+    map<string,string> alias_map = 1;
+}
+message Flags {
+    map<string,Flag> flag_map = 1;
+}
+
+// Flags drive the commander printer
+message Flag {
+    FlagKey key = 1;
+    string value = 2;
+    string name = 3;
+    Summary summary = 4;
+}
+
+message Command {
+    Verb verb = 1;
+    repeated string aliases = 2;
+    Summary summary = 3;
+    repeated string arguments = 4;
+    FlagValues flags = 5;
+}
+

@@ -27,16 +27,49 @@ api/sketchit.pb.go: protos/sketchit.proto
 	# create Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api sketchit.proto
 
-api/action.pb.go: protos/action.proto
+api/sketch.pb.go: protos/sketch.proto
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
-    action.proto 
+    sketch.proto 
 
 	# create reverse proxy
-	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src action.proto
+	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src sketch.proto
 
 	# create Open API doc for REST interface
-	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api action.proto
+	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api sketch.proto
+
+api/device.pb.go: protos/device.proto
+	@protoc -I $(GOSOURCE)/protos \
+        --go_out=plugins=grpc:$(GOPATH)/src\
+    device.proto 
+
+	# create reverse proxy
+	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src device.proto
+
+	# create Open API doc for REST interface
+	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api device.proto
+
+api/dictionary.pb.go: protos/dictionary.proto
+	@protoc -I $(GOSOURCE)/protos \
+        --go_out=plugins=grpc:$(GOPATH)/src\
+    dictionary.proto 
+
+	# create reverse proxy
+	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src dictionary.proto
+
+	# create Open API doc for REST interface
+	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api dictionary.proto
+
+api/commander.pb.go: protos/commander.proto
+	@protoc -I $(GOSOURCE)/protos \
+        --go_out=plugins=grpc:$(GOPATH)/src\
+    commander.proto 
+
+	# create reverse proxy
+	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src commander.proto
+
+	# create Open API doc for REST interface
+	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api commander.proto
 
 	
 
@@ -44,7 +77,7 @@ test: ## run unit tests
 	@client/curl_test.sh
 	@go test ./...
 
-api: api/sketchit.pb.go api/action.pb.go ## Auto-generate grpc go sources
+api: api/sketchit.pb.go api/sketch.pb.go api/device.pb.go api/commander.pb.go api/dictionary.pb.go ## Auto-generate grpc go sources
 
 dep: ## Get the dependencies
 	@go get -v -d ./...

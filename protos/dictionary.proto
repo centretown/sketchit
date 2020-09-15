@@ -1,0 +1,130 @@
+syntax = "proto3";
+package centretown.sketchit.v1;
+
+option go_package = "github.com/centretown/sketchit/api";
+
+// Dictionary is a dot notated key map
+// notation
+message Dictionary {
+    repeated Collection collections = 1;
+    map<string,Schema> dictionary_map = 2;
+}
+
+// Collection of stored documents
+message Collection {
+    // name of the collection
+    string name = 1;
+    // type is mostly "collection"
+    string type = 2;
+    // readOnly indicates the update status
+    bool readOnly = 3;
+    // schema define the structure of the document
+    Schema schema = 4;
+}
+
+// ListCollectionsRequest -
+message ListCollectionsRequest {
+    // ignore
+    string ignore = 1;
+}
+
+// ListCollectionsResponse -
+message ListCollectionsResponse {
+    repeated Collection collections = 1;
+}
+
+// Schema defines the structure of schemas within a document
+message Schema {
+    // schema name used for keyed lookup
+    string name = 1;
+    // schema title for presentation
+    string title = 2;
+    // type of data represented
+    string type = 3;
+    // description of the schema
+    string description = 4;
+    // uniqueItems constrains items to be unique
+    bool uniqueItems = 5;
+    // item list definition
+    Schema items = 6;
+    // required properties and order
+    repeated string required = 7;
+    // options constrains schema to an array of choices
+    repeated string options = 8;
+    // oneOf a selection of Schemas
+    repeated Schema oneOf = 9;
+    // properties defines an ordered list of children
+    // order determined by required array
+    repeated Schema properties = 10;
+}
+
+// ListSchemaRequest
+message ListSchemaRequest {
+    // FlagValues
+    FlagValues flags = 1;
+}
+
+// FlagValues are use by commander and storage
+message FlagValues {
+    // Format used by commander print
+    Format format = 1;
+    // Projection used by storage & commander
+    repeated Projection projection = 2;
+    // Auto used by sketchit client
+    Auto auto = 3;
+}
+
+enum Verb {
+    help = 0;
+    ping = 1;
+    go = 2;
+    flags = 3;
+    list = 4;
+    get = 5;
+    delete = 6;
+    exit = 999;
+}
+
+enum Projection {
+	// no reduction
+    FULL = 0;
+	// less detail than full
+    SUMMARY = 1;
+	// key, value pair
+    BRIEF = 2;
+}
+
+// Format defines commander print
+enum Format {
+	// commander output yaml
+    YAML = 0;
+	// commander output yaml
+    JSON = 1;
+	// key, value pair
+    XML = 2;
+}
+
+// Auto confirmation
+enum Auto {
+    // no
+    N = 0;
+    // yes
+    Y = 1;
+}
+
+enum FlagKey {
+    // format
+    f = 0;
+    // project
+    d = 1;
+    // auto
+    auto = 3;
+}
+
+// Summary of Message used in commander
+message Summary {
+    string usage = 1;
+    string syntax = 2;
+    repeated string examples = 3;
+}
+

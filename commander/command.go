@@ -2,7 +2,6 @@ package cmdr
 
 import (
 	"errors"
-	"strings"
 )
 
 // Command user imperative
@@ -11,22 +10,22 @@ type Command struct {
 	Aliases   []string                                    `yaml:"Aliases,omitempty" json:"Aliases,omitempty"`
 	Summary   Summary                                     `yaml:"Summary,omitempty" json:"Summary,omitempty"`
 	Arguments []string                                    `yaml:"Arguments,omitempty" json:"Arguments,omitempty"`
-	F         func(FlagValues, ...string) (string, error) `yaml:"-" json:"-" xml:"-"`
+	Run       func(FlagValues, ...string) (string, error) `yaml:"-" json:"-" xml:"-"`
 }
 
 func (c *Command) help(fv FlagValues) string {
 	return Print(c, fv.Format(), fv.Detail())
 }
 
-func extractArgs(in []string) (args []string) {
-	args = make([]string, 0, len(in))
-	for _, s := range in {
-		if !strings.HasPrefix(s, "-") {
-			args = append(args, s)
-		}
-	}
-	return
-}
+// func extractArgs(in []string) (args []string) {
+// 	args = make([]string, 0, len(in))
+// 	for _, s := range in {
+// 		if !strings.HasPrefix(s, "-") {
+// 			args = append(args, s)
+// 		}
+// 	}
+// 	return
+// }
 
 // Error messsages
 var (

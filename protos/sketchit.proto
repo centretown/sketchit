@@ -3,10 +3,12 @@ package centretown.sketchit.v1;
 
 option go_package = "github.com/centretown/sketchit/api";
 
-import "google/protobuf/empty.proto";
+import public "google/protobuf/empty.proto";
 // import "google/protobuf/field_mask.proto";
 import public "google/api/annotations.proto";
-import public "action.proto";
+import public "device.proto";
+import public "sketch.proto";
+import public "dictionary.proto";
 
 // import "grpc.gateway.protoc_gen_swagger.options";
 // import "protoc-gen-swagger/options/annotations.proto";
@@ -121,6 +123,7 @@ service Sketchit {
             delete:  "/v1/{name=models/*/sketches/*}"
         };
     }
+
     rpc ListCollections(ListCollectionsRequest) returns (ListCollectionsResponse) {
         // ListCollections maps to HTTP GET
         option (google.api.http) = {
@@ -131,209 +134,8 @@ service Sketchit {
     }
 }
 
-message ListCollectionsRequest {
-    // ignored 
-    string name = 1;
-}
-
-message ListCollectionsResponse {
-    repeated Collection collections = 1;
-}
-
-// Collection defines a group of store documents
-message Collection {
-    // name of the collection
-    string name = 1;
-    // collection type is always "collection"
-    string type = 2;
-    // readOnly indicates the updata status
-    bool readOnly = 3;
-    // schema define the structure of the document
-    Schema schema = 4;
-}
-
-// Schema defines the structure of schemas within a document
-message Schema {
-    // schema name used for keyed lookup
-    string name = 1;
-    // schema title for presentation
-    string title = 2;
-    // type of data represented
-    string type = 3;
-    // description of the schema
-    string description = 4;
-    // uniqueItems constrains items to be unique
-    bool uniqueItems = 5;
-    // item list definition
-    Schema items = 6;
-    // required properties and order
-    repeated string required = 7;
-    // options constrains schema to an array of choices
-    repeated string options = 8;
-    // oneOf constrains schema to one of a selection of options
-    repeated Schema oneOf = 9;
-    // properties defines an ordered list of children
-    // order determined by required array
-    repeated Schema properties = 10;
-}
 
 message PingMessage {
     string greeting = 1;
-}
-
-// defines a micro controller device for sketchit
-message Device {
-    // collection of connected devices
-    string sector = 6;
-    // The unique label identifies the device within a sector
-    string label = 1;
-    // The model name
-    string model = 2;
-    // Identifies a pin on a micro controller device
-    message Pin {
-        // The pin number as designated by the device
-        // eg: 2 for Pin #2
-        int32 id = 1;
-        // The label assigned to this pin
-        // eg: "Internal-LED"
-        string label = 2;
-        // The pins overall purpose in the sketch
-        // eg: "blink on to indicate activity"
-        string purpose = 3;
-    }
-    // io pins if any
-    repeated Pin pins = 3;
-    // ip address if any
-    string ip = 4;
-    // serial port id if any
-    string port = 5;
-}
-  
-// ListDevicesRequest defines the data required to get a list of devices
-message ListDevicesRequest {
-    // The parent sector, eg: "home-iot".
-    string parent = 1;
-    // The maximum number of devices to return.
-    int32 page_size = 2;
-    // The next_page_token value returned from a previous List request, if any.
-    string page_token = 3;
-}
-
-// GetDeviceRequest defines the data required to get a device
-message GetDeviceRequest {
-    // The device path name, 
-    // eg: "/sectors/home-iot/devices/esp32-01"
-    string name = 1;
-}
-
-// ListDevicesResponse defines the return value to a ListDevicesRequest
-message ListDevicesResponse {
-    // Devices listed
-    repeated Device devices = 1;
-    // next page
-    string next_page_token = 2;
-}
-
-// CreateDeviceRequest defines the data required to create a new device
-message CreateDeviceRequest {
-    // The parent sector name
-    // eg: /sectors/home-iot
-    string parent = 1;
-    // The device resource to create.
-    Device device = 2;
-}
-
-// UpdateDeviceRequest defines the data required to update an existing device
-message UpdateDeviceRequest {
-    // The device path name, 
-    // eg: "/sectors/home-iot/devices/esp32-01"
-    string name = 1;
-    // The replacement device
-    Device device = 2;
-    // The update mask app  lies to the resource. For the `FieldMask` definition,
-    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
-    // google.protobuf.FieldMask update_mask = 3;
-}
-
-// DeleteDeviceRequest defines the data required to delete an existing device
-message DeleteDeviceRequest {
-    // The device path name, 
-    // eg: "/sectors/home-iot/devices/esp32-01"
-    string name = 1;
-}
-
-// Sketch defines how a device is programmed
-message Sketch {
-    // The model of the device this sketch is intended to run on
-    // eg: ESP32, NANO, UNO
-    string model = 6;
-    // The unique label assigned to this sketch 
-    // eg: "blink"
-    string label = 1;
-    // The device activated by this sketch
-    // eg: "/home-iot/devices/esp32-01"
-    string device = 2;
-    // The purpose or description of the actions take by this sketch
-    // eg: "Blink at prescribed intervals"
-    string purpose = 3;
-    // The setup stage defines the actions to take once
-    // before entering the sketch loop
-    repeated Action setup = 4;
-    // The loop defines the actions that repeats forever
-    repeated Action loop = 5;
-}
-
-// ListSketchesRequest defines the data required to get a list of sketches
-message ListSketchesRequest {
-    // The parent model, eg: "ESP32".
-    string parent = 1;
-    // The maximum number of sketches to return.
-    int32 page_size = 2;
-    // The next_page_token value returned from a previous List request, if any.
-    string page_token = 3;
-}
-
-// GetSketchRequest defines the data required to get a Sketch
-message GetSketchRequest {
-    // The Sketch path name, 
-    // eg: "/models/ESP32/sketches/esp32-01"
-    string name = 1;
-}
-
-// ListSketchesResponse defines the return value to a ListsketchesRequest
-message ListSketchesResponse {
-    // sketches listed
-    repeated Sketch sketches = 1;
-    // next page
-    string next_page_token = 2;
-}
-
-// CreateSketchRequest defines the data required to create a new Sketch
-message CreateSketchRequest {
-    // The parent model name
-    // eg: /models/ESP32
-    string parent = 1;
-    // The Sketch resource to create.
-    Sketch Sketch = 2;
-}
-
-// UpdateSketchRequest defines the data required to update an existing Sketch
-message UpdateSketchRequest {
-    // The Sketch path name, 
-    // eg: "/models/ESP32/sketches/esp32-01"
-    string name = 1;
-    // The replacement Sketch
-    Sketch Sketch = 2;
-    // The update mask app  lies to the resource. For the `FieldMask` definition,
-    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
-    // google.protobuf.FieldMask update_mask = 3;
-}
-
-
-// DeleteSketchRequest defines the data required to delete an existing Sketch
-message DeleteSketchRequest {
-    // The Sketch path name, 
-    // eg: "/models/ESP32/sketches/esp32-01"
-    string name = 1;
 }
 

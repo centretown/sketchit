@@ -70,7 +70,7 @@ func run(commander *cmdr.Commander) {
 		command, flagValues, args, err := commander.Parse(input)
 		s := ""
 		if err == nil {
-			s, err = command.F(flagValues, args...)
+			s, err = command.Run(flagValues, args...)
 			if err == cmdr.ErrExit {
 				return
 			}
@@ -83,10 +83,5 @@ func run(commander *cmdr.Commander) {
 		} else if len(s) > 0 {
 			fmt.Println(s)
 		}
-
-		if eof {
-			return
-		}
 	}
-
 }
