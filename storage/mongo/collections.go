@@ -21,9 +21,9 @@ type MongoSchema struct {
 }
 
 // MakeSchema -
-func (sch *MongoSchema) makeSchema(name string) (schema *api.Schema) {
-	schema = &api.Schema{
-		Name:        strings.ToLower(sch.Title),
+func (sch *MongoSchema) makeSchema(name string) (schema *api.Model) {
+	schema = &api.Model{
+		Label:       strings.ToLower(sch.Title),
 		Title:       sch.Title,
 		Type:        sch.BsonType,
 		Description: sch.Description,
@@ -37,7 +37,7 @@ func (sch *MongoSchema) makeSchema(name string) (schema *api.Schema) {
 	}
 
 	if len(sch.OneOf) > 0 {
-		schema.OneOf = make([]*api.Schema, 0, len(sch.OneOf))
+		schema.OneOf = make([]*api.Model, 0, len(sch.OneOf))
 		for i, s := range sch.OneOf {
 			schema.OneOf = append(schema.OneOf,
 				s.makeSchema(fmt.Sprintf("option-%0d", i+1)))
@@ -45,7 +45,7 @@ func (sch *MongoSchema) makeSchema(name string) (schema *api.Schema) {
 	}
 
 	if len(sch.Properties) > 0 {
-		schema.Properties = make([]*api.Schema, len(sch.Required), len(sch.Properties))
+		schema.Properties = make([]*api.Model, len(sch.Required), len(sch.Properties))
 		for key, property := range sch.Properties {
 			vacant := true
 			for i, required := range sch.Required {
@@ -94,6 +94,6 @@ func (coll *MongoCollection) MongoCollectionNew() (collection *api.Collection) {
 		ReadOnly: coll.Info.ReadOnly,
 	}
 	sch := coll.Options.Validator.JSONSchema
-	collection.Schema = sch.makeSchema(coll.Name)
+	collection.Model = sch.makeSchema(coll.Name)
 	return
 }

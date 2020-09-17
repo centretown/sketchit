@@ -1,7 +1,7 @@
 package api
 
-// SketchYAML -
-type SketchYAML struct {
+// SketchFax -
+type SketchFax struct {
 	Model   string    `yaml:"model,omitempty" json:"model,omitempty"`
 	Label   string    `yaml:"label,omitempty" json:"label,omitempty"`
 	Device  string    `yaml:"device,omitempty" json:"device,omitempty"`
@@ -10,15 +10,15 @@ type SketchYAML struct {
 	Loop    []*Action `yaml:"loop,omitempty" json:"loop,omitempty"`
 }
 
-// MarshalYAML produces yaml output for schema
+// MarshalYAML yaml Marshaler interface contract
 func (skch *Sketch) MarshalYAML() (out interface{}, err error) {
-	yaml := &SketchYAML{}
-	yaml.Model = skch.Model
-	yaml.Label = skch.Label
-	yaml.Device = skch.Device
-	yaml.Purpose = skch.Purpose
-	yaml.Setup = skch.Setup
-	yaml.Loop = skch.Loop
-	out = yaml
+	yml := &SketchFax{}
+	yml.Model = skch.Model
+	yml.Label = skch.Label
+	yml.Device = skch.Device
+	yml.Purpose = skch.Purpose
+	yml.Setup = skch.Setup
+	yml.Loop = skch.Loop
+	out = yml
 	return
 }

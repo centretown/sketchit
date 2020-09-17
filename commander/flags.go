@@ -7,13 +7,11 @@ import (
 	"github.com/centretown/sketchit/api"
 )
 
-// Flag -
-type Flag struct {
-	Key     string   `yaml:"Key,omitempty" json:"Key,omitempty"`
-	Value   string   `yaml:"Value,omitempty" json:"Value,omitempty"`
-	Name    string   `yaml:"Name,omitempty" json:"Name,omitempty"`
-	Summary Summary  `yaml:"Summary,omitempty" json:"Summary,omitempty"`
-	Oneof   []string `yaml:"Oneof,omitempty" json:"Oneof,omitempty"`
+// FlagsFax -
+type FlagsFax struct {
+	Presentation *api.Presentation `yaml:"Key,omitempty" json:"Key,omitempty"`
+	Name         string            `yaml:"Name,omitempty" json:"Name,omitempty"`
+	Summary      Summary           `yaml:"Summary,omitempty" json:"Summary,omitempty"`
 }
 
 func (flg *Flag) String() string {
@@ -23,20 +21,20 @@ func (flg *Flag) String() string {
 // Flags defines the Flag map
 type Flags map[string]*Flag
 
-// Values returns a FlagValues map
-func (flgs Flags) Values() (flagValues FlagValues) {
-	flagValues = make(FlagValues, len(flgs))
+// Values returns a Presentation map
+func (flgs Flags) Values() (flagValues Presentation) {
+	flagValues = make(Presentation, len(flgs))
 	for k, v := range flgs {
 		flagValues[k] = v.Value
 	}
 	return
 }
 
-// FlagValues map the Value Accessor string value
-type FlagValues map[string]string
+// Presentation map the Value Accessor string value
+type Presentation map[string]string
 
 // Format -
-func (fv FlagValues) Format() (marshalFormat api.MarshalFormat) {
+func (fv Presentation) Format() (marshalFormat api.MarshalFormat) {
 	format := fv["f"]
 	marshalFormat = api.NewMarshalFormat(format)
 	if marshalFormat == api.FormatNotFound {
@@ -47,7 +45,7 @@ func (fv FlagValues) Format() (marshalFormat api.MarshalFormat) {
 }
 
 // Detail -
-func (fv FlagValues) Detail() (reduction api.Reduction) {
+func (fv Presentation) Detail() (reduction api.Reduction) {
 	detail := fv["d"]
 	reduction = api.NewReduction(detail)
 	if reduction == api.ReductionNotFound {

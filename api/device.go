@@ -1,7 +1,7 @@
 package api
 
-// DeviceYAML -
-type DeviceYAML struct {
+// DeviceFax -
+type DeviceFax struct {
 	Sector string        `yaml:"sector,omitempty" json:"sector,omitempty"`
 	Label  string        `yaml:"label,omitempty" json:"label,omitempty"`
 	Model  string        `yaml:"model,omitempty" json:"model,omitempty"`
@@ -12,13 +12,22 @@ type DeviceYAML struct {
 
 // MarshalYAML produces yaml output for schema
 func (dev *Device) MarshalYAML() (out interface{}, err error) {
-	yaml := &DeviceYAML{}
-	yaml.Sector = dev.Sector
-	yaml.Label = dev.Label
-	yaml.Model = dev.Model
-	yaml.IP = dev.Ip
-	yaml.Port = dev.Port
-	yaml.Pins = dev.Pins
-	out = yaml
+	yml := &DeviceFax{}
+	yml.Sector = dev.Sector
+	yml.Label = dev.Label
+	yml.Model = dev.Model
+	yml.IP = dev.Ip
+	yml.Port = dev.Port
+	yml.Pins = dev.Pins
+	out = yml
 	return
 }
+
+// // DeviceList is a wrapper that implements the Sprinter interface
+// type DeviceList []*Device
+
+// // Sprint -
+// func (dl *DeviceList) Sprint(o interface{}, presentation *Presentation) (s string, err error) {
+
+// 	return
+// }

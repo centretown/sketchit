@@ -38,7 +38,7 @@ message ListDevicesRequest {
     // The parent sector, eg: "home-iot".
     string parent = 1;
     // reduction full, brief, summary
-    repeated FlagValues flags = 4;
+    repeated Presentation presentation = 4;
     // The maximum number of devices to return.
     int32 page_size = 2;
     // The next_page_token value returned from a previous List request, if any.

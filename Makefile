@@ -2,76 +2,84 @@ PKG := "github.com/centretown/sketchit"
 GOSOURCE := ${GOPATH}/src/$(PKG)
 SERVER_OUT := $(GOSOURCE)"/bin/server"
 CLIENT_OUT := $(GOSOURCE)"/bin/client"
-BUILD_MONGO_SCHEMA_OUT := $(GOSOURCE)"/bin/build-mongo-schema"
+BUILD_MONGO_SCHEMA_OUT := $(GOSOURCE)"/bin/models"
 API_OUT := $(GOSOURCE)"/api/sketchit.pb.go"
 API_ACTION_OUT := $(GOSOURCE)"/api/action.pb.go"
 GW_OUT := $(GOSOURCE)"/api/sketchit.pb.gw.go"
 SWAG_OUT := $(GOSOURCE)"/api/sketchit.swagger.json"
 SERVER_PKG_BUILD := "${PKG}/server"
 CLIENT_PKG_BUILD := "${PKG}/client"
-MONGO_SCHEMA_PKG_BUILD := "${PKG}/db-schema/mongo"
+MONGO_SCHEMA_PKG_BUILD := "${PKG}/models/mongo"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 
 .PHONY: all api build_server build_client build_mongo_schema
 
 all: build_server build_client build_mongo_schema
-
+ 
+# generate sketchit services
 api/sketchit.pb.go: protos/sketchit.proto
+	# generate sketchit GRPC services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     sketchit.proto 
 	
-	# create reverse proxy
+	# generate GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src sketchit.proto
 
-	# create Open API doc for REST interface
+	# generate Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api sketchit.proto
 
+# generate sketch 
 api/sketch.pb.go: protos/sketch.proto
+	# generate sketch GRPC services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     sketch.proto 
 
-	# create reverse proxy
+	# generate GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src sketch.proto
 
-	# create Open API doc for REST interface
+	# generate Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api sketch.proto
 
+# generate device
 api/device.pb.go: protos/device.proto
+	# generate device GRPC services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     device.proto 
 
-	# create reverse proxy
+	# generate GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src device.proto
 
-	# create Open API doc for REST interface
+	# generate Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api device.proto
 
+# generate dictionary
 api/dictionary.pb.go: protos/dictionary.proto
+	# generate dictionary GRPC services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     dictionary.proto 
 
-	# create reverse proxy
+	# generate GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src dictionary.proto
 
-	# create Open API doc for REST interface
+	# generate Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api dictionary.proto
 
+# generate commander
 api/commander.pb.go: protos/commander.proto
+	# generate GRPC commander services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     commander.proto 
 
-	# create reverse proxy
+	# generate GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src commander.proto
 
-	# create Open API doc for REST interface
+	# generate Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api commander.proto
-
-	
 
 test: ## run unit tests
 	@client/curl_test.sh
@@ -82,13 +90,13 @@ api: api/sketchit.pb.go api/sketch.pb.go api/device.pb.go api/commander.pb.go ap
 dep: ## Get the dependencies
 	@go get -v -d ./...
 
-build_server: dep api ## Build the binary file for server
+server: dep api ## Build the binary file for server
 	@go build -i -v -o $(SERVER_OUT) $(SERVER_PKG_BUILD)
 
-build_client: dep api ## Build the binary file for client
+client: dep api ## Build the binary file for client
 	@go build -i -v -o $(CLIENT_OUT) $(CLIENT_PKG_BUILD)
 
-build_mongo_schema: ##
+models: ##
 	@go build -i -v -o $(BUILD_MONGO_SCHEMA_OUT) $(MONGO_SCHEMA_PKG_BUILD)
 
 clean: ## Remove previous builds

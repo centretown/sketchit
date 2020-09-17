@@ -6,14 +6,14 @@ import (
 
 // Command user imperative
 type Command struct {
-	Topic     string                                      `yaml:"Topic,omitempty" json:"Topic,omitempty"`
-	Aliases   []string                                    `yaml:"Aliases,omitempty" json:"Aliases,omitempty"`
-	Summary   Summary                                     `yaml:"Summary,omitempty" json:"Summary,omitempty"`
-	Arguments []string                                    `yaml:"Arguments,omitempty" json:"Arguments,omitempty"`
-	Run       func(FlagValues, ...string) (string, error) `yaml:"-" json:"-" xml:"-"`
+	Topic     string                                        `yaml:"Topic,omitempty" json:"Topic,omitempty"`
+	Aliases   []string                                      `yaml:"Aliases,omitempty" json:"Aliases,omitempty"`
+	Summary   Summary                                       `yaml:"Summary,omitempty" json:"Summary,omitempty"`
+	Arguments []string                                      `yaml:"Arguments,omitempty" json:"Arguments,omitempty"`
+	Run       func(Presentation, ...string) (string, error) `yaml:"-" json:"-" xml:"-"`
 }
 
-func (c *Command) help(fv FlagValues) string {
+func (c *Command) help(fv Presentation) string {
 	return Print(c, fv.Format(), fv.Detail())
 }
 

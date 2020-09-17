@@ -3,14 +3,48 @@ package centretown.sketchit.v1;
 
 option go_package = "github.com/centretown/sketchit/api";
 
-// Dictionary is a dot notated key map
-// notation
+// Dictionary provides a pathway to the item collections.
+// Items include application documents and the documents 
+// that decsribe the semanatics of the commander api.
+// The api provides access to the sketchit services.
 message Dictionary {
+    // Collections of items or documents
     repeated Collection collections = 1;
-    map<string,Schema> dictionary_map = 2;
+    // Map to models to routes.
+    // Routes are strings of text composed of labels 
+    // split by separators.
+    // Labels are unique to a collection, should have meaning
+    // and must exclude separators.
+    // Separators can be periods '.' or forward slashes '/'
+    // Route structure:
+    // <root>. single separator
+    //   <collection>. collection label
+    //     <parent>. route to ancestors
+    //       <label>.
+    //         <model>...
+    // <model>
+    //   <items>... values, arrays, maps and models
+    map<string,Model> dictionary_map = 2;
 }
 
-// Collection of stored documents
+// Pathway provides the directions to a subject
+message Pathway {
+    // Routes are composed of labels split by separators.
+    // Labels are unique to a collection, should have meaning
+    // and must exclude separators.
+    // Separators can be periods '.' or forward slashes '/'
+    // Route structure:
+    // <root>. single separator
+    //   <collection>. collection label
+    //     <parent>. route to ancestors
+    //       <label>.
+    //         <model>...
+    // <model>
+    //   <items>... values, arrays, maps and models
+    string route = 1;
+}
+
+// Collection of stored items
 message Collection {
     // name of the collection
     string name = 1;
@@ -18,14 +52,15 @@ message Collection {
     string type = 2;
     // readOnly indicates the update status
     bool readOnly = 3;
-    // schema define the structure of the document
-    Schema schema = 4;
+    // model describes 
+    // of each document in the collection
+    Model model = 4;
 }
 
 // ListCollectionsRequest -
 message ListCollectionsRequest {
-    // ignore
-    string ignore = 1;
+    // flags ignored when retrieved from storage 
+    Presentation presentation = 1;
 }
 
 // ListCollectionsResponse -
@@ -33,68 +68,75 @@ message ListCollectionsResponse {
     repeated Collection collections = 1;
 }
 
-// Schema defines the structure of schemas within a document
-message Schema {
-    // schema name used for keyed lookup
-    string name = 1;
-    // schema title for presentation
+// Model defines the attributes of a collected item
+message Model {
+    // label used for route
+    string label = 1;
+    // model title for presentation
     string title = 2;
     // type of data represented
     string type = 3;
-    // description of the schema
+    // description of the model
     string description = 4;
     // uniqueItems constrains items to be unique
     bool uniqueItems = 5;
     // item list definition
-    Schema items = 6;
+    Model items = 6;
     // required properties and order
     repeated string required = 7;
-    // options constrains schema to an array of choices
+    // options constrains model to an array of choices
     repeated string options = 8;
     // oneOf a selection of Schemas
-    repeated Schema oneOf = 9;
+    repeated Model oneOf = 9;
     // properties defines an ordered list of children
     // order determined by required array
-    repeated Schema properties = 10;
+    repeated Model properties = 10;
 }
 
-// ListSchemaRequest
-message ListSchemaRequest {
-    // FlagValues
-    FlagValues flags = 1;
+// ListModelRequest
+message ListModelRequest {
+    // Presentation
+    Presentation presentation = 1;
 }
 
-// FlagValues are use by commander and storage
-message FlagValues {
-    // Format used by commander print
+// Presentation defines the features
+// used to present output and respond to input
+message Presentation {
+    // Format to present (yaml,json,xml)
     Format format = 1;
-    // Projection used by storage & commander
+    // Projection detail (full,summary,brief)
     repeated Projection projection = 2;
-    // Auto used by sketchit client
+    // Auto reply to confirmations. (off,y,n)
     Auto auto = 3;
 }
 
-enum Verb {
-    help = 0;
-    ping = 1;
-    go = 2;
-    flags = 3;
-    list = 4;
-    get = 5;
-    delete = 6;
-    exit = 999;
+// Feature defines how respond to input and 
+// to present output
+message Feature {
+    // flag to alter default 
+    Flag flag = 1;
+    // current defaut value
+    string current = 2;
+    // name to describe feature
+    string name = 3;
+    // summary description
+    Summary summary = 4;
+    // full description
+    string full = 5;
 }
 
-enum Projection {
-	// no reduction
-    FULL = 0;
-	// less detail than full
-    SUMMARY = 1;
-	// key, value pair
-    BRIEF = 2;
+// Feature traits
+enum Flag {
+    // format
+    f = 0;
+    // projection (d for detail)
+    d = 1;
+    // auto reply
+    auto = 3;
 }
 
-// Format defines commander print
+
+// Format defines the options
 enum Format {
 	// commander output yaml
     YAML = 0;
@@ -102,26 +144,36 @@ enum Format {
     JSON = 1;
 	// key, value pair
     XML = 2;
+    // MAX
+    FORMAT_MAX = 3;
+}
+
+// Projection defines the level of detail
+// that is presented
+enum Projection {
+	// no reduction
+    FULL = 0;
+	// less detail than full
+    SUMMARY = 1;
+	// key, value pair
+    BRIEF = 2;
+    // MAX
+    PROJECTION_MAX = 3;
 }
 
 // Auto confirmation
 enum Auto {
-    // no
-    N = 0;
-    // yes
+    // turn off auto
+    AUTO_OFF = 0;
+    // auto reply yes
     Y = 1;
+    // auto reply no
+    N = 2;
+    // MAX
+    AUTO_MAX = 3;
 }
 
-enum FlagKey {
-    // format
-    f = 0;
-    // project
-    d = 1;
-    // auto
-    auto = 3;
-}
-
-// Summary of Message used in commander
+// Summary description of model
 message Summary {
     string usage = 1;
     string syntax = 2;

@@ -84,7 +84,7 @@ func TestMongoStorageProvider(t *testing.T) {
 		// sch := c.Options.Validator.JSONSchema
 		level := indent(0)
 		// showMongoSchema(sch, c.Name, &level)
-		showSchema(coll.Schema, &level)
+		showSchema(coll.Model, &level)
 
 	}
 	t.Log()
@@ -106,9 +106,9 @@ func (i *indent) String() string {
 	return strings.Repeat("  ", int(*i))
 }
 
-func showSchema(sch *api.Schema, level *indent) {
+func showSchema(sch *api.Model, level *indent) {
 	fmt.Printf("%s%s\n", level, sch.Title)
-	fmt.Printf("%s Name: %v, Type: %v Description:%v\n", level, sch.Name, sch.Type, sch.Description)
+	fmt.Printf("%s Name: %v, Type: %v Description:%v\n", level, sch.Label, sch.Type, sch.Description)
 	if len(sch.Required) > 1 {
 		fmt.Printf("%s Required: %v\n", level, sch.Required)
 	}

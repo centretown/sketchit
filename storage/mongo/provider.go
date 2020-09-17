@@ -77,7 +77,7 @@ func (mdp *MongoStorageProvider) ListCollections(ctx context.Context, name strin
 		// sch := c.Options.Validator.JSONSchema
 		// level := indent(0)
 		// showMongoSchema(sch, c.Name, &level)
-		// showSchema(coll.Schema, &level)
+		// showSchema(coll.Model, &level)
 
 	}
 	// glog.Infof("ListCollections %+v", res)

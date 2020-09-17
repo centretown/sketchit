@@ -40,7 +40,7 @@ func New(ctx context.Context,
 }
 
 // Print using flags
-func (cmdr *Commander) Print(o interface{}, fv FlagValues) string {
+func (cmdr *Commander) Print(o interface{}, fv Presentation) string {
 	fmt.Println("print flagvalues", fv)
 	format := fv.Format()
 	reduction := fv.Detail()
@@ -97,8 +97,8 @@ var (
 // parseFlags removes flag tokens from input arguments
 // returns flag values and remaining arguments
 // errors are flagged for invalid flags or values
-func (cmdr *Commander) parseFlags(input []string) (flagValues FlagValues, args []string, err error) {
-	flagValues = make(FlagValues)
+func (cmdr *Commander) parseFlags(input []string) (flagValues Presentation, args []string, err error) {
+	flagValues = make(Presentation)
 	args = make([]string, 0, len(input))
 	prefix, equals, colon := "-", "=", ":"
 
@@ -150,7 +150,7 @@ func (cmdr *Commander) parseFlags(input []string) (flagValues FlagValues, args [
 }
 
 // Parse -
-func (cmdr *Commander) Parse(input string) (cmd *Command, flagValues FlagValues, args []string, err error) {
+func (cmdr *Commander) Parse(input string) (cmd *Command, flagValues Presentation, args []string, err error) {
 	input = strings.TrimSuffix(input, "\n")
 	if input == "" {
 		err = ErrEmpty
@@ -222,12 +222,12 @@ func (cmdr *Commander) Build() {
 		exitCmd,
 	}
 
-	goCmd.Run = func(fv FlagValues, args ...string) (s string, err error) {
+	goCmd.Run = func(fv Presentation, args ...string) (s string, err error) {
 		cmdr.directory = directory(cmdr.directory, args...)
 		return
 	}
 
-	helloCmd.Run = func(fv FlagValues, args ...string) (s string, err error) {
+	helloCmd.Run = func(fv Presentation, args ...string) (s string, err error) {
 		message := "hello " + fmt.Sprintln(args)
 		response, err := cmdr.client.SayHello(cmdr.ctx, &api.PingMessage{Greeting: "hello"})
 		if err != nil {
@@ -238,7 +238,7 @@ func (cmdr *Commander) Build() {
 		return
 	}
 
-	helpCmd.Run = func(fv FlagValues, args ...string) (s string, err error) {
+	helpCmd.Run = func(fv Presentation, args ...string) (s string, err error) {
 		if len(args) < 1 {
 			s = cmdr.indexList()
 		} else if args[0] == "all" {
@@ -257,14 +257,14 @@ func (cmdr *Commander) Build() {
 		return
 	}
 
-	flagsCmd.Run = func(fv FlagValues, cmdArgs ...string) (s string, err error) {
+	flagsCmd.Run = func(fv Presentation, cmdArgs ...string) (s string, err error) {
 		for key, value := range fv {
 			fmt.Printf("key:%s value:%s\n", key, value)
 		}
 		return
 	}
 
-	listCmd.Run = func(fv FlagValues, args ...string) (s string, err error) {
+	listCmd.Run = func(fv Presentation, args ...string) (s string, err error) {
 		arg := "/"
 		if len(args) > 0 {
 			arg = args[0]
@@ -285,7 +285,7 @@ func (cmdr *Commander) Build() {
 		return
 	}
 
-	getCmd.Run = func(fv FlagValues, args ...string) (s string, err error) {
+	getCmd.Run = func(fv Presentation, args ...string) (s string, err error) {
 		if len(args) < 2 {
 			err = info.Inform(err, ErrNotEnoughArgs, fmt.Sprint(args))
 			return
@@ -301,7 +301,7 @@ func (cmdr *Commander) Build() {
 		return
 	}
 
-	deleteCmd.Run = func(fv FlagValues, args ...string) (s string, err error) {
+	deleteCmd.Run = func(fv Presentation, args ...string) (s string, err error) {
 		if len(args) < 2 {
 			err = info.Inform(err, ErrNotEnoughArgs, fmt.Sprint(args))
 			return
@@ -319,7 +319,7 @@ func (cmdr *Commander) Build() {
 		return
 	}
 
-	exitCmd.Run = func(fv FlagValues, args ...string) (s string, err error) {
+	exitCmd.Run = func(fv Presentation, args ...string) (s string, err error) {
 		err = ErrExit
 		return
 	}

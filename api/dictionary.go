@@ -2,50 +2,35 @@ package api
 
 // Dictionary is keyed to data model sch
 // string keys are dot separated
-// type Dictionary map[string]*Schema
+// type Dictionary map[string]*Model
 
 // DictionaryNew -
 func DictionaryNew(collections []*Collection) (dictionary *Dictionary) {
 	dictionary = &Dictionary{}
-	dictionary.DictionaryMap = make(map[string]*Schema)
+	dictionary.DictionaryMap = make(map[string]*Model)
 	dictionary.Collections = make([]*Collection, len(collections))
 	dictionary.Collections = append(dictionary.Collections, collections...)
 
-	var f = func(s *Schema, t Traveler) {
+	var f = func(s *Model, t Traveler) {
 		t.Push(s)
 		dictionary.DictionaryMap[t.String()] = s
 		t.Pop()
 	}
 
 	var km = KeyMaker{
-		stack: make([]string, 0, maxStackDepth),
+		stack: make([]string, 0, KeyStackDepth),
 	}
 
 	for _, c := range collections {
-		c.Schema.Travel(&km, f)
+		c.Model.Travel(&km, f)
 	}
 	return
 }
 
-// Reduce interface support
-func (dictionary *Dictionary) Reduce(projection ...Projection) (out interface{}) {
-
-	var f = func(s *Schema, t Traveler) {
-		t.Push(s)
-		s.Reduce(projection...)
-		t.Pop()
-	}
-
-	var km = KeyMaker{
-		stack: make([]string, 0, maxStackDepth),
-	}
-
-	for _, c := range dictionary.Collections {
-		c.Schema.Travel(&km, f)
+// Present Presenter interface contract
+func (dict *Dictionary) Present(presentation *Presentation) (s string) {
+	for _, coll := range dict.Collections {
+		s += coll.Present(presentation)
 	}
 	return
-}
-
-func (coll *Collection) Reduce() {
-
 }
