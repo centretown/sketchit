@@ -24,15 +24,16 @@ type MongoStorageProvider struct {
 
 var deviceCollectionName = "devices"
 var sketchCollectionName = "sketches"
+var deputyCollectionName = "deputies"
 
 // MongoStorageProviderNew creates and returns an instance of MongoStorageProvider
-func MongoStorageProviderNew(uri, databaseName string) (mdp *MongoStorageProvider, err error) {
+func MongoStorageProviderNew(uri, databaseName, authSource string) (mdp *MongoStorageProvider, err error) {
 	mdp = &MongoStorageProvider{}
 	mdp.Name = databaseName
 	mdp.URI = uri
 	mdp.Collections = make(map[string]*mongo.Collection)
 	mdp.client, err = mongo.NewClient(options.Client().ApplyURI(uri).SetAuth(options.Credential{
-		AuthSource: databaseName, Username: "testing", Password: "test"}))
+		AuthSource: authSource, Username: "testing", Password: "test"}))
 	if err != nil {
 		err = info.Inform(err, ErrMongoClient, fmt.Sprintf("%v: %v", databaseName, uri))
 		return
@@ -47,6 +48,7 @@ func MongoStorageProviderNew(uri, databaseName string) (mdp *MongoStorageProvide
 	// map supported collections
 	mdp.Collections[deviceCollectionName] = mdp.client.Database(mdp.Name).Collection(deviceCollectionName)
 	mdp.Collections[sketchCollectionName] = mdp.client.Database(mdp.Name).Collection(sketchCollectionName)
+	mdp.Collections[deputyCollectionName] = mdp.client.Database(mdp.Name).Collection(deputyCollectionName)
 	return
 }
 

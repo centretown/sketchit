@@ -29,7 +29,7 @@ var marshalers = []Marshaler{
 func Marshal(o interface{}, presentation *Presentation) (b []byte, err error) {
 	m := marshalers[Format_YAML]
 	if presentation.Format > 0 &&
-		presentation.Format < Format_FORMAT_MAX {
+		presentation.Format < Format_FORMAT_LEN {
 
 		m = marshalers[presentation.Format]
 	}

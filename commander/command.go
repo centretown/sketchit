@@ -4,8 +4,8 @@ import (
 	"errors"
 )
 
-// Command user imperative
-type Command struct {
+// Skill user imperative
+type Skill struct {
 	Topic     string                                        `yaml:"Topic,omitempty" json:"Topic,omitempty"`
 	Aliases   []string                                      `yaml:"Aliases,omitempty" json:"Aliases,omitempty"`
 	Summary   Summary                                       `yaml:"Summary,omitempty" json:"Summary,omitempty"`
@@ -13,8 +13,8 @@ type Command struct {
 	Run       func(Presentation, ...string) (string, error) `yaml:"-" json:"-" xml:"-"`
 }
 
-func (c *Command) help(fv Presentation) string {
-	return Print(c, fv.Format(), fv.Detail())
+func (c *Skill) help(fv *Presentation) string {
+	return Print(c, fv)
 }
 
 // func extractArgs(in []string) (args []string) {
@@ -36,7 +36,7 @@ var (
 	ErrDecode        = errors.New("failed to decode")
 )
 
-var goCmd = &Command{
+var goCmd = &Skill{
 	Topic:   "go",
 	Aliases: []string{"cd"},
 	Summary: Summary{
@@ -46,7 +46,7 @@ var goCmd = &Command{
 	},
 }
 
-var helloCmd = &Command{
+var helloCmd = &Skill{
 	Topic:   "hello",
 	Aliases: []string{"ping"},
 	Summary: Summary{
@@ -56,7 +56,7 @@ var helloCmd = &Command{
 	},
 }
 
-var helpCmd = &Command{
+var helpCmd = &Skill{
 	Topic:   "help",
 	Aliases: []string{"info"},
 	Summary: Summary{
@@ -66,7 +66,7 @@ var helpCmd = &Command{
 	},
 }
 
-var flagsCmd = &Command{
+var flagsCmd = &Skill{
 	Topic: "flags",
 	Summary: Summary{
 		Usage:  "list or modify current flag defaults.",
@@ -82,7 +82,7 @@ var flagsCmd = &Command{
 	},
 }
 
-var listCmd = &Command{
+var listCmd = &Skill{
 	Topic:   "list",
 	Aliases: []string{"ls"},
 	Summary: Summary{
@@ -92,7 +92,7 @@ var listCmd = &Command{
 	},
 }
 
-var getCmd = &Command{
+var getCmd = &Skill{
 	Topic:   "get",
 	Aliases: []string{"show"},
 	Summary: Summary{
@@ -102,7 +102,7 @@ var getCmd = &Command{
 	},
 }
 
-var deleteCmd = &Command{
+var deleteCmd = &Skill{
 	Topic:   "delete",
 	Aliases: []string{"del", "erase", "rm", "remove"},
 	Summary: Summary{
@@ -112,7 +112,7 @@ var deleteCmd = &Command{
 	},
 }
 
-var exitCmd = &Command{
+var exitCmd = &Skill{
 	Topic:   "exit",
 	Aliases: []string{"x", "quit"},
 	Summary: Summary{

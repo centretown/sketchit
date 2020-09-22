@@ -9,7 +9,7 @@ import (
 
 	"github.com/centretown/sketchit/api"
 	"github.com/centretown/sketchit/auth"
-	cmdr "github.com/centretown/sketchit/commander"
+	cmdr "github.com/centretown/sketchit/deputy"
 	"github.com/golang/glog"
 	"golang.org/x/net/context"
 )
@@ -20,7 +20,7 @@ func init() {
 }
 
 func main() {
-	// for commander and glog
+	// for deputy and glog
 	flag.Parse()
 
 	testAuth := &auth.Authentication{
@@ -48,12 +48,12 @@ func main() {
 	run(cmdr)
 }
 
-func run(commander *cmdr.Commander) {
-	commander.Build()
+func run(deputy *cmdr.Deputy) {
+	deputy.Build()
 	eof := false
 	reader := bufio.NewReader(os.Stdin)
 	for !eof {
-		fmt.Print(commander.Prompt())
+		fmt.Print(deputy.Prompt())
 		// Read the keyboard input.
 		input, err := reader.ReadString('\n')
 		if err != nil {
@@ -67,7 +67,7 @@ func run(commander *cmdr.Commander) {
 			eof = true
 		}
 
-		command, flagValues, args, err := commander.Parse(input)
+		command, flagValues, args, err := deputy.Parse(input)
 		s := ""
 		if err == nil {
 			s, err = command.Run(flagValues, args...)

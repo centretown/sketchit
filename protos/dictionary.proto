@@ -5,7 +5,7 @@ option go_package = "github.com/centretown/sketchit/api";
 
 // Dictionary provides a pathway to the item collections.
 // Items include application documents and the documents 
-// that decsribe the semanatics of the commander api.
+// that decsribe the semanatics of the deputy api.
 // The api provides access to the sketchit services.
 message Dictionary {
     // Collections of items or documents
@@ -24,7 +24,7 @@ message Dictionary {
     //         <model>...
     // <model>
     //   <items>... values, arrays, maps and models
-    map<string,Model> dictionary_map = 2;
+    map<string,Model> models = 2;
 }
 
 // Pathway provides the directions to a subject
@@ -57,17 +57,6 @@ message Collection {
     Model model = 4;
 }
 
-// ListCollectionsRequest -
-message ListCollectionsRequest {
-    // flags ignored when retrieved from storage 
-    Presentation presentation = 1;
-}
-
-// ListCollectionsResponse -
-message ListCollectionsResponse {
-    repeated Collection collections = 1;
-}
-
 // Model defines the attributes of a collected item
 message Model {
     // label used for route
@@ -91,92 +80,5 @@ message Model {
     // properties defines an ordered list of children
     // order determined by required array
     repeated Model properties = 10;
-}
-
-// ListModelRequest
-message ListModelRequest {
-    // Presentation
-    Presentation presentation = 1;
-}
-
-// Presentation defines the features
-// used to present output and respond to input
-message Presentation {
-    // Format to present (yaml,json,xml)
-    Format format = 1;
-    // Projection detail (full,summary,brief)
-    repeated Projection projection = 2;
-    // Auto reply to confirmations. (off,y,n)
-    Auto auto = 3;
-}
-
-// Feature defines how respond to input and 
-// to present output
-message Feature {
-    // flag to alter default 
-    Flag flag = 1;
-    // current defaut value
-    string current = 2;
-    // name to describe feature
-    string name = 3;
-    // summary description
-    Summary summary = 4;
-    // full description
-    string full = 5;
-}
-
-// Feature traits
-enum Flag {
-    // format
-    f = 0;
-    // projection (d for detail)
-    d = 1;
-    // auto reply
-    auto = 3;
-}
-
-
-// Format defines the options
-enum Format {
-	// commander output yaml
-    YAML = 0;
-	// commander output yaml
-    JSON = 1;
-	// key, value pair
-    XML = 2;
-    // MAX
-    FORMAT_MAX = 3;
-}
-
-// Projection defines the level of detail
-// that is presented
-enum Projection {
-	// no reduction
-    FULL = 0;
-	// less detail than full
-    SUMMARY = 1;
-	// key, value pair
-    BRIEF = 2;
-    // MAX
-    PROJECTION_MAX = 3;
-}
-
-// Auto confirmation
-enum Auto {
-    // turn off auto
-    AUTO_OFF = 0;
-    // auto reply yes
-    Y = 1;
-    // auto reply no
-    N = 2;
-    // MAX
-    AUTO_MAX = 3;
-}
-
-// Summary description of model
-message Summary {
-    string usage = 1;
-    string syntax = 2;
-    repeated string examples = 3;
 }
 

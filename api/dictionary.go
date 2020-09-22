@@ -7,13 +7,13 @@ package api
 // DictionaryNew -
 func DictionaryNew(collections []*Collection) (dictionary *Dictionary) {
 	dictionary = &Dictionary{}
-	dictionary.DictionaryMap = make(map[string]*Model)
+	dictionary.Models = make(map[string]*Model)
 	dictionary.Collections = make([]*Collection, len(collections))
 	dictionary.Collections = append(dictionary.Collections, collections...)
 
 	var f = func(s *Model, t Traveler) {
 		t.Push(s)
-		dictionary.DictionaryMap[t.String()] = s
+		dictionary.Models[t.String()] = s
 		t.Pop()
 	}
 

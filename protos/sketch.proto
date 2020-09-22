@@ -3,14 +3,14 @@ package centretown.sketchit.v1;
 
 option go_package = "github.com/centretown/sketchit/api";
 
-import public "commander.proto";
+import public "deputy.proto";
 
 // Sketch defines how a device is programmed
 message Sketch {
-    // The model of the device this sketch is intended to run on
-    // eg: ESP32, NANO, UNO
-    string model = 6;
-    // The unique label assigned to this sketch 
+    // The toolkit or skillset required to run
+    // this sketch core (Nano,Uno), esp32 ()
+    string toolkit = 6;
+    // The label unique to this toolkit
     // eg: "blink"
     string label = 1;
     // The device activated by this sketch
@@ -24,62 +24,6 @@ message Sketch {
     repeated Action setup = 4;
     // The loop defines the actions that repeats forever
     repeated Action loop = 5;
-}
-
-// ListSketchesRequest defines the data required to get a list of sketches
-message ListSketchesRequest {
-    // The parent model, eg: "ESP32".
-    string parent = 1;
-    // format and projections...
-    repeated Presentation presentation = 4;
-    // The maximum number of sketches to return.
-    int32 page_size = 2;
-    // The next_page_token value returned from a previous List request, if any.
-    string page_token = 3;
-}
-
-// GetSketchRequest defines the data required to get a Sketch
-message GetSketchRequest {
-    // The Sketch path name, 
-    // eg: "/models/ESP32/sketches/esp32-01"
-    string name = 1;
-}
-
-// ListSketchesResponse defines the return value to a ListsketchesRequest
-message ListSketchesResponse {
-    // sketches listed
-    repeated Sketch sketches = 1;
-    // next page
-    string next_page_token = 2;
-}
-
-// CreateSketchRequest defines the data required to create a new Sketch
-message CreateSketchRequest {
-    // The parent model name
-    // eg: /models/ESP32
-    string parent = 1;
-    // The Sketch resource to create.
-    Sketch Sketch = 2;
-}
-
-// UpdateSketchRequest defines the data required to update an existing Sketch
-message UpdateSketchRequest {
-    // The Sketch path name, 
-    // eg: "/models/ESP32/sketches/esp32-01"
-    string name = 1;
-    // The replacement Sketch
-    Sketch Sketch = 2;
-    // The update mask app  lies to the resource. For the `FieldMask` definition,
-    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
-    // google.protobuf.FieldMask update_mask = 3;
-}
-
-
-// DeleteSketchRequest defines the data required to delete an existing Sketch
-message DeleteSketchRequest {
-    // The Sketch path name, 
-    // eg: "/models/ESP32/sketches/esp32-01"
-    string name = 1;
 }
 
 enum ActionType {

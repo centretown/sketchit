@@ -62,11 +62,49 @@
         },
         "parameters": [
           {
-            "name": "ignore",
-            "description": "ignore.",
+            "name": "presentation.format",
+            "description": "Format to present (yaml,json,xml).\n\n - YAML: deputy output yaml\n - JSON: deputy output json\n - XML: deputy output xml\n - FORMAT_LEN: MAX",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "YAML",
+              "JSON",
+              "XML",
+              "FORMAT_LEN"
+            ],
+            "default": "YAML"
+          },
+          {
+            "name": "presentation.projection",
+            "description": "Projection detail (full,summary,brief).\n\n - FULL: no reduction\n - SUMMARY: less detail than full\n - BRIEF: key, value pair\n - PROJECTION_LEN: MAX",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "FULL",
+                "SUMMARY",
+                "BRIEF",
+                "PROJECTION_LEN"
+              ]
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "presentation.confirm",
+            "description": "Auto reply to confirmations. (off,y,n).\n\n - OFF: turn off auto\n - Y: auto reply yes\n - N: auto reply no\n - AUTO_LEN: MAX",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "OFF",
+              "Y",
+              "N",
+              "AUTO_LEN"
+            ],
+            "default": "OFF"
           }
         ],
         "tags": [
@@ -74,14 +112,14 @@
         ]
       }
     },
-    "/v1/{name=models/*/sketches/*}": {
+    "/v1/{name=deputies/*}": {
       "get": {
-        "operationId": "Sketchit_GetSketch",
+        "operationId": "Sketchit_GetDeputy",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1Sketch"
+              "$ref": "#/definitions/v1Deputy"
             }
           },
           "default": {
@@ -94,77 +132,10 @@
         "parameters": [
           {
             "name": "name",
-            "description": "The Sketch path name, \neg: \"/models/ESP32/sketches/esp32-01\"",
+            "description": "The deputy label, \neg: \"/deputies/Andy\"",
             "in": "path",
             "required": true,
             "type": "string"
-          }
-        ],
-        "tags": [
-          "Sketchit"
-        ]
-      },
-      "delete": {
-        "operationId": "Sketchit_DeleteSketch",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "properties": {}
-            }
-          },
-          "default": {
-            "description": "An unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "name",
-            "description": "The Sketch path name, \neg: \"/models/ESP32/sketches/esp32-01\"",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Sketchit"
-        ]
-      },
-      "patch": {
-        "operationId": "Sketchit_UpdateSketch",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1Sketch"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "name",
-            "description": "The Sketch path name, \neg: \"/models/ESP32/sketches/esp32-01\"",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "description": "The replacement Sketch",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1Sketch"
-            }
           }
         ],
         "tags": [
@@ -270,53 +241,9 @@
         ]
       }
     },
-    "/v1/{parent=models/*}/sketches": {
+    "/v1/{name=toolkits/*/sketches/*}": {
       "get": {
-        "operationId": "Sketchit_ListSketches",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1ListSketchesResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "parent",
-            "description": "The parent model, eg: \"ESP32\".",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "page_size",
-            "description": "The maximum number of sketches to return.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "page_token",
-            "description": "The next_page_token value returned from a previous List request, if any.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Sketchit"
-        ]
-      },
-      "post": {
-        "operationId": "Sketchit_CreateSketch",
+        "operationId": "Sketchit_GetSketch",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -333,15 +260,73 @@
         },
         "parameters": [
           {
-            "name": "parent",
-            "description": "The parent model name\neg: /models/ESP32",
+            "name": "name",
+            "description": "The Sketch path name, \neg: \"/models/ESP32/sketches/esp32-01\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      },
+      "delete": {
+        "operationId": "Sketchit_DeleteSketch",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "The Sketch path name, \neg: \"/models/ESP32/sketches/esp32-01\"",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      },
+      "patch": {
+        "operationId": "Sketchit_UpdateSketch",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Sketch"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "description": "The Sketch path name, \neg: \"/models/ESP32/sketches/esp32-01\"",
             "in": "path",
             "required": true,
             "type": "string"
           },
           {
             "name": "body",
-            "description": "The Sketch resource to create.",
+            "description": "The replacement Sketch",
             "in": "body",
             "required": true,
             "schema": {
@@ -437,6 +422,90 @@
           "Sketchit"
         ]
       }
+    },
+    "/v1/{parent=toolkits/*}/sketches": {
+      "get": {
+        "operationId": "Sketchit_ListSketches",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListSketchesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "parent",
+            "description": "The parent model, eg: \"ESP32\".",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page_size",
+            "description": "The maximum number of sketches to return.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_token",
+            "description": "The next_page_token value returned from a previous List request, if any.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      },
+      "post": {
+        "operationId": "Sketchit_CreateSketch",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1Sketch"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "parent",
+            "description": "The parent model name\neg: /models/ESP32",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "description": "The Sketch resource to create.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1Sketch"
+            }
+          }
+        ],
+        "tags": [
+          "Sketchit"
+        ]
+      }
     }
   },
   "definitions": {
@@ -505,13 +574,13 @@
           "title": "The type identifies the type of command to run"
         },
         "delay": {
-          "$ref": "#/definitions/v1DelayAction"
+          "$ref": "#/definitions/v1DelayOperation"
         },
         "mode": {
-          "$ref": "#/definitions/v1ModeAction"
+          "$ref": "#/definitions/v1ModeOperation"
         },
         "pin": {
-          "$ref": "#/definitions/v1PinAction"
+          "$ref": "#/definitions/v1PinOperation"
         }
       },
       "title": "Action defines a processing step or instruction"
@@ -528,12 +597,14 @@
     "v1Auto": {
       "type": "string",
       "enum": [
+        "OFF",
+        "Y",
         "N",
-        "Y"
+        "AUTO_LEN"
       ],
-      "default": "N",
-      "description": "- N: no\n - Y: yes",
-      "title": "Auto confirmation"
+      "default": "OFF",
+      "description": "- OFF: turn off auto\n - Y: auto reply yes\n - N: auto reply no\n - AUTO_LEN: MAX",
+      "title": "values for 'auto' features"
     },
     "v1Collection": {
       "type": "object",
@@ -551,14 +622,14 @@
           "format": "boolean",
           "title": "readOnly indicates the update status"
         },
-        "schema": {
-          "$ref": "#/definitions/v1Schema",
-          "title": "schema define the structure of the document"
+        "model": {
+          "$ref": "#/definitions/v1Model",
+          "title": "model describes \nof each document in the collection"
         }
       },
-      "title": "Collection of stored documents"
+      "title": "Collection of stored items"
     },
-    "v1DelayAction": {
+    "v1DelayOperation": {
       "type": "object",
       "properties": {
         "duration": {
@@ -567,7 +638,47 @@
           "title": "The duration of the delay in milliseconds"
         }
       },
-      "title": "DelayAction defines the data to carry out this action"
+      "title": "DelayOperation defines the data to carry out this action"
+    },
+    "v1Deputy": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "title": "label assigned to this deputy version"
+        },
+        "version": {
+          "type": "string",
+          "title": "version of release"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Skill"
+          },
+          "title": "ordered list of skills"
+        },
+        "skillset": {
+          "$ref": "#/definitions/v1Skillset",
+          "title": "skills map keyed on tasks and alternates"
+        },
+        "dictionary": {
+          "$ref": "#/definitions/v1Dictionary",
+          "title": "models mapped to routes"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Feature"
+          },
+          "title": "ordered list of skills"
+        },
+        "gallery": {
+          "$ref": "#/definitions/v1Gallery",
+          "title": "features map keyed on feature flag and label"
+        }
+      },
+      "title": "Deputy"
     },
     "v1Device": {
       "type": "object",
@@ -602,37 +713,71 @@
       },
       "title": "defines a micro controller device for sketchit"
     },
-    "v1FlagValues": {
+    "v1Dictionary": {
       "type": "object",
       "properties": {
-        "format": {
-          "$ref": "#/definitions/v1Format",
-          "title": "Format used by commander print"
-        },
-        "projection": {
+        "collections": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/v1Projection"
+            "$ref": "#/definitions/v1Collection"
           },
-          "title": "Projection used by storage \u0026 commander"
+          "title": "Collections of items or documents"
         },
-        "auto": {
-          "$ref": "#/definitions/v1Auto",
-          "title": "Auto used by sketchit client"
+        "models": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/v1Model"
+          },
+          "title": "Map to models to routes.\nRoutes are strings of text composed of labels \nsplit by separators.\nLabels are unique to a collection, should have meaning\nand must exclude separators.\nSeparators can be periods '.' or forward slashes '/'\nRoute structure:\n\u003croot\u003e. single separator\n  \u003ccollection\u003e. collection label\n    \u003cparent\u003e. route to ancestors\n      \u003clabel\u003e.\n        \u003cmodel\u003e...\n\u003cmodel\u003e\n  \u003citems\u003e... values, arrays, maps and models"
         }
       },
-      "title": "FlagValues are use by commander and storage"
+      "description": "Dictionary provides a pathway to the item collections.\nItems include application documents and the documents \nthat decsribe the semanatics of the deputy api.\nThe api provides access to the sketchit services."
+    },
+    "v1Feature": {
+      "type": "object",
+      "properties": {
+        "flag": {
+          "type": "string",
+          "title": "flag to indicate feature"
+        },
+        "label": {
+          "type": "string",
+          "title": "unique label to reference feature"
+        },
+        "description": {
+          "type": "string",
+          "title": "unique label to reference feature"
+        },
+        "summary": {
+          "$ref": "#/definitions/v1Summary",
+          "title": "usage summary"
+        }
+      },
+      "description": "Feature can describes how to respond to input and \nhow to present the output."
     },
     "v1Format": {
       "type": "string",
       "enum": [
         "YAML",
         "JSON",
-        "XML"
+        "XML",
+        "FORMAT_LEN"
       ],
       "default": "YAML",
-      "description": "- YAML: commander output yaml\n - JSON: commander output yaml\n - XML: key, value pair",
-      "title": "Format defines commander print"
+      "description": "- YAML: deputy output yaml\n - JSON: deputy output json\n - XML: deputy output xml\n - FORMAT_LEN: MAX",
+      "title": "Format defines the options"
+    },
+    "v1Gallery": {
+      "type": "object",
+      "properties": {
+        "flag_map": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/v1Feature"
+          }
+        }
+      },
+      "title": "Gallery of features keyed to flags and labels"
     },
     "v1ListCollectionsResponse": {
       "type": "object",
@@ -688,7 +833,7 @@
       ],
       "default": "input"
     },
-    "v1ModeAction": {
+    "v1ModeOperation": {
       "type": "object",
       "properties": {
         "id": {
@@ -705,9 +850,68 @@
           "title": "The mode type output/input"
         }
       },
-      "description": "ModeAction defines how a pin is acted on."
+      "description": "ModeOperation defines how a pin is acted on."
     },
-    "v1PinAction": {
+    "v1Model": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "title": "label used for route"
+        },
+        "title": {
+          "type": "string",
+          "title": "model title for presentation"
+        },
+        "type": {
+          "type": "string",
+          "title": "type of data represented"
+        },
+        "description": {
+          "type": "string",
+          "title": "description of the model"
+        },
+        "uniqueItems": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "uniqueItems constrains items to be unique"
+        },
+        "items": {
+          "$ref": "#/definitions/v1Model",
+          "title": "item list definition"
+        },
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "required properties and order"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "options constrains model to an array of choices"
+        },
+        "oneOf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Model"
+          },
+          "title": "oneOf a selection of Schemas"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Model"
+          },
+          "title": "properties defines an ordered list of children\norder determined by required array"
+        }
+      },
+      "title": "Model defines the attributes of a collected item"
+    },
+    "v1PinOperation": {
       "type": "object",
       "properties": {
         "id": {
@@ -729,7 +933,7 @@
           "title": "The value to read from or write to"
         }
       },
-      "title": "PinAction reads/writes analog/digital values"
+      "title": "PinOperation reads/writes analog/digital values"
     },
     "v1PingMessage": {
       "type": "object",
@@ -739,74 +943,38 @@
         }
       }
     },
+    "v1Presentation": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "$ref": "#/definitions/v1Format",
+          "title": "Format to present (yaml,json,xml)"
+        },
+        "projection": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Projection"
+          },
+          "title": "Projection detail (full,summary,brief)"
+        },
+        "confirm": {
+          "$ref": "#/definitions/v1Auto",
+          "title": "Auto reply to confirmations. (off,y,n)"
+        }
+      },
+      "title": "Presentation defines the features\nused to present output and respond to input"
+    },
     "v1Projection": {
       "type": "string",
       "enum": [
         "FULL",
         "SUMMARY",
-        "BRIEF"
+        "BRIEF",
+        "PROJECTION_LEN"
       ],
       "default": "FULL",
-      "title": "- FULL: no reduction\n - SUMMARY: less detail than full\n - BRIEF: key, value pair"
-    },
-    "v1Schema": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "title": "schema name used for keyed lookup"
-        },
-        "title": {
-          "type": "string",
-          "title": "schema title for presentation"
-        },
-        "type": {
-          "type": "string",
-          "title": "type of data represented"
-        },
-        "description": {
-          "type": "string",
-          "title": "description of the schema"
-        },
-        "uniqueItems": {
-          "type": "boolean",
-          "format": "boolean",
-          "title": "uniqueItems constrains items to be unique"
-        },
-        "items": {
-          "$ref": "#/definitions/v1Schema",
-          "title": "item list definition"
-        },
-        "required": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "required properties and order"
-        },
-        "options": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "options constrains schema to an array of choices"
-        },
-        "oneOf": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1Schema"
-          },
-          "title": "oneOf a selection of Schemas"
-        },
-        "properties": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1Schema"
-          },
-          "title": "properties defines an ordered list of children\norder determined by required array"
-        }
-      },
-      "title": "Schema defines the structure of schemas within a document"
+      "description": "- FULL: no reduction\n - SUMMARY: less detail than full\n - BRIEF: key, value pair\n - PROJECTION_LEN: MAX",
+      "title": "Projection defines the level of detail\nthat is presented"
     },
     "v1Signal": {
       "type": "string",
@@ -819,13 +987,13 @@
     "v1Sketch": {
       "type": "object",
       "properties": {
-        "model": {
+        "toolkit": {
           "type": "string",
-          "title": "The model of the device this sketch is intended to run on\neg: ESP32, NANO, UNO"
+          "title": "The toolkit or skillset required to run\nthis sketch core (Nano,Uno), esp32 ()"
         },
         "label": {
           "type": "string",
-          "title": "The unique label assigned to this sketch \neg: \"blink\""
+          "title": "The label unique to this toolkit\neg: \"blink\""
         },
         "device": {
           "type": "string",
@@ -851,6 +1019,61 @@
         }
       },
       "title": "Sketch defines how a device is programmed"
+    },
+    "v1Skill": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "type": "string",
+          "title": "the task this skill effects"
+        },
+        "alternates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "alternate codes for the task"
+        },
+        "description": {
+          "type": "string",
+          "title": "description of skill"
+        },
+        "summary": {
+          "$ref": "#/definitions/v1Summary",
+          "title": "summary of usage"
+        }
+      },
+      "description": "Skill in the skillset."
+    },
+    "v1Skillset": {
+      "type": "object",
+      "properties": {
+        "alias_map": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/v1Skill"
+          }
+        }
+      },
+      "title": "skill mapped to skills' tasks and alternates"
+    },
+    "v1Summary": {
+      "type": "object",
+      "properties": {
+        "usage": {
+          "type": "string"
+        },
+        "syntax": {
+          "type": "string"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "Summary description of model"
     }
   }
 }

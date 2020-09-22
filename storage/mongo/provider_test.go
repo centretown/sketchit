@@ -13,6 +13,7 @@ import (
 )
 
 var testURI = "mongodb://testing:test@localhost:27017/?authSource=sketchit-test-02"
+
 var newDevice = &api.Device{
 	Sector: "home",
 	Label:  "esp32-01",
@@ -25,71 +26,56 @@ var newDevice = &api.Device{
 		{Id: 6, Label: "RX", Purpose: "soft serial receiver"},
 	},
 }
+var (
+	databaseName = "sketchit-test-03"
+	authSource   = "sketchit-test-02"
+)
 
-func TestMongoStorageProvider(t *testing.T) {
-	databaseName := "sketchit-test-02"
-	mdp, err := MongoStorageProviderNew(testURI, databaseName)
+func TestMongoGetDeputy(t *testing.T) {
+	databaseName := "sketchit-test-03"
+	mdp, err := MongoStorageProviderNew(testURI, databaseName, authSource)
 	if err != nil {
 		t.Fatalf("MongoStorageProviderNew: %v", err)
 	}
 
 	ctx := context.Background()
-	// device, err := mdp.CreateDevice(ctx, "cottage", "esp32-01", newDevice)
-	// if err != nil {
-	// 	t.Fatalf("CreateDevice: %v", err)
-	// }
-	// t.Log(device)
-
-	devices, err := mdp.ListDevices(ctx, "work")
+	var deputy *api.Deputy
+	deputy, err = mdp.GetDeputy(ctx, "Andy")
 	if err != nil {
-		t.Fatalf("ListDevices: %v", err)
+		t.Fatalf("GetDeputy: %v", err)
 	}
-	showDevices(t, devices)
+	t.Log(deputy)
+}
 
-	devices, err = mdp.ListDevices(ctx, "cottage")
+func TestMongoListCollection(t *testing.T) {
+	mdp, err := MongoStorageProviderNew(testURI, databaseName, authSource)
 	if err != nil {
-		t.Fatalf("ListDevices: %v", err)
+		t.Fatalf("MongoStorageProviderNew: %v", err)
 	}
-	showDevices(t, devices)
 
-	// names, err := mdp.ListCollections(ctx)
-	// if err != nil {
-	// 	t.Fatalf("ListCollectionNames: %v", err)
-	// }
-	// t.Log("ListCollectionNames:", names)
-	// var isTrue = true
+	ctx := context.Background()
 	db := mdp.client.Database(mdp.Name)
 	filter := bson.D{}
 	opts := &options.ListCollectionsOptions{}
-	// opts := &options.ListCollectionsOptions{NameOnly: &isTrue}
+
 	cursor, err := db.ListCollections(ctx, filter, opts)
 	if err != nil {
 		err = info.Inform(err, ErrCollectionNames, "ListCollections")
+		t.Fatalf("MongoStorageProviderNew: %v", err)
 		return
 	}
-	// var res []bson.D
-	// err = cursor.All(ctx, &res)
-	// if err != nil {
-	// 	err = info.Inform(err, ErrCollectionNames, "ListCollections")
-	// 	return
-	// }
-	// t.Logf("%+v\n", res)
 
+	t.Log("ListCollections", cursor.RemainingBatchLength())
 	for cursor.Next(ctx) {
 		c := &MongoCollection{}
 		cursor.Decode(c)
 		coll := c.MongoCollectionNew()
 
 		fmt.Printf("Name: %s, Type: %s\n", coll.Name, coll.Type)
-		// sch := c.Options.Validator.JSONSchema
 		level := indent(0)
-		// showMongoSchema(sch, c.Name, &level)
 		showSchema(coll.Model, &level)
 
 	}
-	t.Log()
-	// t.Logf("ListCollections %+v", res)
-	// names = []string{deviceCollectionName, sketchCollectionName}
 	return
 }
 
@@ -159,3 +145,15 @@ func showMongoSchema(sch MongoSchema, name string, level *indent) {
 	}
 	*level--
 }
+
+// devices, err := mdp.ListDevices(ctx, "work")
+// if err != nil {
+// 	t.Fatalf("ListDevices: %v", err)
+// }
+// showDevices(t, devices)
+
+// devices, err = mdp.ListDevices(ctx, "cottage")
+// if err != nil {
+// 	t.Fatalf("ListDevices: %v", err)
+// }
+// showDevices(t, devices)

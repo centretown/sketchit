@@ -21,6 +21,7 @@ type StorageProvider interface {
 	DeleteSketch(ctx context.Context, name string) error
 
 	ListCollections(ctx context.Context, name string) ([]*api.Collection, error)
+	GetDeputy(ctx context.Context, name string) (*api.Deputy, error)
 }
 
 // Handler implements grpc DevicesServer interface
@@ -49,4 +50,12 @@ func (h *Handler) ListCollections(ctx context.Context,
 		return
 	}
 	return &api.ListCollectionsResponse{Collections: collections}, nil
+}
+
+// GetDeputy -
+func (h *Handler) GetDeputy(ctx context.Context,
+	req *api.GetDeputyRequest) (Deputy *api.Deputy, err error) {
+	glog.Infof("GET message name=%s", req.Name)
+	Deputy, err = h.store.GetDeputy(ctx, req.Name)
+	return
 }

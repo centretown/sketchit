@@ -741,6 +741,60 @@ func local_request_Sketchit_ListCollections_0(ctx context.Context, marshaler run
 
 }
 
+func request_Sketchit_GetDeputy_0(ctx context.Context, marshaler runtime.Marshaler, client SketchitClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetDeputyRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+	}
+
+	protoReq.Name, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+	}
+
+	msg, err := client.GetDeputy(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_Sketchit_GetDeputy_0(ctx context.Context, marshaler runtime.Marshaler, server SketchitServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetDeputyRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+	}
+
+	protoReq.Name, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+	}
+
+	msg, err := server.GetDeputy(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 // RegisterSketchitHandlerServer registers the http handlers for service Sketchit to "mux".
 // UnaryRPC     :call SketchitServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -984,6 +1038,26 @@ func RegisterSketchitHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		}
 
 		forward_Sketchit_ListCollections_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_Sketchit_GetDeputy_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_Sketchit_GetDeputy_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Sketchit_GetDeputy_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -1268,6 +1342,26 @@ func RegisterSketchitHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 
 	})
 
+	mux.Handle("GET", pattern_Sketchit_GetDeputy_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Sketchit_GetDeputy_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Sketchit_GetDeputy_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -1284,17 +1378,19 @@ var (
 
 	pattern_Sketchit_DeleteDevice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "sectors", "devices", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_ListSketches_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "models", "parent", "sketches"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_ListSketches_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "toolkits", "parent", "sketches"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_GetSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "models", "sketches", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_GetSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "toolkits", "sketches", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_CreateSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "models", "parent", "sketches"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_CreateSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "toolkits", "parent", "sketches"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_UpdateSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "models", "sketches", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_UpdateSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "toolkits", "sketches", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Sketchit_DeleteSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "models", "sketches", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Sketchit_DeleteSketch_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 1, 0, 4, 4, 5, 3}, []string{"v1", "toolkits", "sketches", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Sketchit_ListCollections_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "collections"}, "", runtime.AssumeColonVerbOpt(true)))
+
+	pattern_Sketchit_GetDeputy_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2}, []string{"v1", "deputies", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
@@ -1321,4 +1417,6 @@ var (
 	forward_Sketchit_DeleteSketch_0 = runtime.ForwardResponseMessage
 
 	forward_Sketchit_ListCollections_0 = runtime.ForwardResponseMessage
+
+	forward_Sketchit_GetDeputy_0 = runtime.ForwardResponseMessage
 )

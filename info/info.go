@@ -14,7 +14,7 @@ type Info struct {
 var sep = "\n"
 
 func (e *Info) Error() string {
-	return fmt.Sprintf("\n '%v' %v", e.Text, e.Err)
+	return fmt.Sprintf("%v\n\t '%v'\n\t %v\n", e.Text, e.Kind, e.Err)
 }
 
 // Unwrap a parsing error

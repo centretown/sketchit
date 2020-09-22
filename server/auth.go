@@ -23,7 +23,7 @@ var (
 )
 
 // authenticateClient check the client credentials
-func authenticateClient(ctx context.Context, s *request.RequestHandler) (string, error) {
+func authenticateClient(ctx context.Context, s *request.Handler) (string, error) {
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		clientLogin := strings.Join(md["login"], "")
 		clientPassword := strings.Join(md["password"], "")
@@ -56,7 +56,7 @@ func credMatcher(headerName string) (mdName string, ok bool) {
 // unaryInterceptor calls authenticateClient with current context
 func unaryInterceptor(ctx context.Context,
 	req interface{}, serverInfo *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	s, ok := serverInfo.Server.(*request.RequestHandler)
+	s, ok := serverInfo.Server.(*request.Handler)
 	if !ok {
 		return nil, info.Inform(nil, ErrCastServer, "unaryInterceptor")
 	}

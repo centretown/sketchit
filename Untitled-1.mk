@@ -31,14 +31,14 @@
 	# create Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api collection.proto
 
-# api/commander.pb.go: protos/commander.proto
+# api/deputy.pb.go: protos/deputy.proto
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
-    commander.proto 
+    deputy.proto 
 
 	# create reverse proxy
-	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src commander.proto
+	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src deputy.proto
 
 	# create Open API doc for REST interface
-	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api commander.proto
+	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api deputy.proto
 

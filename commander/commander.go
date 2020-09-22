@@ -13,15 +13,15 @@ import (
 	"google.golang.org/grpc"
 )
 
-// Commander script api dispatcher
-type Commander struct {
+// Deputy script api dispatcher
+type Deputy struct {
 	ctx         context.Context
 	conn        *grpc.ClientConn
 	client      api.SketchitClient
 	collections []*api.Collection
 
-	Commands   []*Command
-	Aliases    map[string]*Command
+	Skills     []*Skill
+	Aliases    map[string]*Skill
 	Dictionary api.Dictionary
 	Flags      Flags
 
@@ -30,17 +30,17 @@ type Commander struct {
 	suffix    string
 }
 
-// New Commander
+// New Deputy
 func New(ctx context.Context,
 	conn *grpc.ClientConn,
-	client api.SketchitClient) (cmdr *Commander) {
+	client api.SketchitClient) (cmdr *Deputy) {
 
-	cmdr = &Commander{ctx: ctx, client: client, conn: conn, Flags: defaultFlags}
+	cmdr = &Deputy{ctx: ctx, client: client, conn: conn, Flags: defaultFlags}
 	return
 }
 
 // Print using flags
-func (cmdr *Commander) Print(o interface{}, fv Presentation) string {
+func (cmdr *Deputy) Print(o interface{}, fv Presentation) string {
 	fmt.Println("print flagvalues", fv)
 	format := fv.Format()
 	reduction := fv.Detail()
@@ -48,17 +48,17 @@ func (cmdr *Commander) Print(o interface{}, fv Presentation) string {
 	return Print(o, format, reduction)
 }
 
-func (cmdr *Commander) indexList(args ...bool) (s string) {
+func (cmdr *Deputy) indexList(args ...bool) (s string) {
 	s = fmt.Sprintln("Help is available for the following Topics:")
 	for _, key := range cmdr.index {
 		c, ok := cmdr.Aliases[key]
 		if ok {
-			var cmd *Command
+			var cmd *Skill
 			// first and only argument
 			if len(args) > 0 {
 				cmd = c
 			} else {
-				cmd = &Command{
+				cmd = &Skill{
 					Topic:   c.Topic,
 					Summary: Summary{Usage: c.Summary.Usage},
 				}
@@ -78,7 +78,7 @@ const (
 )
 
 // Prompt returns the prompt string
-func (cmdr *Commander) Prompt() (p string) {
+func (cmdr *Deputy) Prompt() (p string) {
 	dot := "."
 	dotDir := strings.Join(cmdr.directory, dot)
 	p += dot + dotDir + cmdr.suffix
@@ -87,17 +87,17 @@ func (cmdr *Commander) Prompt() (p string) {
 
 // parsing information
 var (
-	ErrEmpty           = errors.New("no input")
-	ErrCommandNotFound = errors.New("command not found")
-	ErrFlagNotFound    = errors.New("flag not found")
-	ErrExit            = errors.New("exit")
-	ErrFlagNotValid    = errors.New("not a valid value")
+	ErrEmpty         = errors.New("no input")
+	ErrSkillNotFound = errors.New("command not found")
+	ErrFlagNotFound  = errors.New("flag not found")
+	ErrExit          = errors.New("exit")
+	ErrFlagNotValid  = errors.New("not a valid value")
 )
 
 // parseFlags removes flag tokens from input arguments
 // returns flag values and remaining arguments
 // errors are flagged for invalid flags or values
-func (cmdr *Commander) parseFlags(input []string) (flagValues Presentation, args []string, err error) {
+func (cmdr *Deputy) parseFlags(input []string) (flagValues Presentation, args []string, err error) {
 	flagValues = make(Presentation)
 	args = make([]string, 0, len(input))
 	prefix, equals, colon := "-", "=", ":"
@@ -150,7 +150,7 @@ func (cmdr *Commander) parseFlags(input []string) (flagValues Presentation, args
 }
 
 // Parse -
-func (cmdr *Commander) Parse(input string) (cmd *Command, flagValues Presentation, args []string, err error) {
+func (cmdr *Deputy) Parse(input string) (cmd *Skill, flagValues Presentation, args []string, err error) {
 	input = strings.TrimSuffix(input, "\n")
 	if input == "" {
 		err = ErrEmpty
@@ -168,7 +168,7 @@ func (cmdr *Commander) Parse(input string) (cmd *Command, flagValues Presentatio
 
 	cmd, ok := cmdr.Aliases[verb]
 	if !ok {
-		err = info.Inform(err, ErrCommandNotFound, verb)
+		err = info.Inform(err, ErrSkillNotFound, verb)
 		return
 	}
 
@@ -179,30 +179,30 @@ func (cmdr *Commander) Parse(input string) (cmd *Command, flagValues Presentatio
 	return
 }
 
-// Build commander
-func (cmdr *Commander) Build() {
+// Build deputy
+func (cmdr *Deputy) Build() {
 	request := &api.ListCollectionsRequest{}
 	response, err := cmdr.client.ListCollections(cmdr.ctx, request)
 	if err != nil {
 		glog.Fatalf("Error when calling ListCollections: %s", err)
 	}
 	cmdr.collections = response.Collections
-	cmdr.Commands = make([]*Command, 0)
+	cmdr.Skills = make([]*Skill, 0)
 	cmdr.Dictionary = api.DictionaryNew(response.Collections)
 	cmdr.suffix = " - "
 
 	// build index and aliases
 	buildIndex := func() {
 		aliasCount := 0
-		cmdr.index = make([]string, len(cmdr.Commands))
-		for i, c := range cmdr.Commands {
+		cmdr.index = make([]string, len(cmdr.Skills))
+		for i, c := range cmdr.Skills {
 			cmdr.index[i] = c.Topic
 			// plus one for the topic
 			aliasCount += len(c.Aliases) + 1
 		}
 		sort.Sort(sort.StringSlice(cmdr.index))
-		cmdr.Aliases = make(map[string]*Command, aliasCount)
-		for _, c := range cmdr.Commands {
+		cmdr.Aliases = make(map[string]*Skill, aliasCount)
+		for _, c := range cmdr.Skills {
 			cmdr.Aliases[c.Topic] = c
 			for _, a := range c.Aliases {
 				cmdr.Aliases[a] = c
@@ -211,7 +211,7 @@ func (cmdr *Commander) Build() {
 	}
 	defer buildIndex()
 
-	cmdr.Commands = []*Command{
+	cmdr.Skills = []*Skill{
 		goCmd,
 		helloCmd,
 		helpCmd,

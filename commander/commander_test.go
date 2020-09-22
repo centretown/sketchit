@@ -70,7 +70,7 @@ func testDictionary(t *testing.T) {
 	t.Log(s)
 }
 
-func TestCommands(t *testing.T) {
+func TestSkills(t *testing.T) {
 
 	a := &auth.Authentication{
 		Login:    "testing",
@@ -94,7 +94,7 @@ func TestCommands(t *testing.T) {
 	testReducer(t, cmdr)
 }
 
-func testHello(t *testing.T, cmdr *Commander) {
+func testHello(t *testing.T, cmdr *Deputy) {
 	fv := cmdr.Flags.Values()
 	name := "hello"
 	c, ok := cmdr.Aliases[name]
@@ -108,7 +108,7 @@ func testHello(t *testing.T, cmdr *Commander) {
 	t.Log(s)
 }
 
-func testHelp(t *testing.T, cmdr *Commander) {
+func testHelp(t *testing.T, cmdr *Deputy) {
 	fv := cmdr.Flags.Values()
 	name := "help"
 	var err error
@@ -155,7 +155,7 @@ func testHelp(t *testing.T, cmdr *Commander) {
 	t.Log(s)
 }
 
-func testFlags(t *testing.T, cmdr *Commander) {
+func testFlags(t *testing.T, cmdr *Deputy) {
 	var err error
 	var s string
 
@@ -221,7 +221,7 @@ func readTag(e interface{}, name string) (tag reflect.StructTag, ok bool) {
 	return
 }
 
-func testReducer(t *testing.T, cmdr *Commander) {
+func testReducer(t *testing.T, cmdr *Deputy) {
 	device := &api.Device{}
 	devices := make([]*api.Device, 0)
 	devices = append(devices, device)

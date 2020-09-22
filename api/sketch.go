@@ -13,7 +13,7 @@ type SketchFax struct {
 // MarshalYAML yaml Marshaler interface contract
 func (skch *Sketch) MarshalYAML() (out interface{}, err error) {
 	yml := &SketchFax{}
-	yml.Model = skch.Model
+	yml.Model = skch.Toolkit
 	yml.Label = skch.Label
 	yml.Device = skch.Device
 	yml.Purpose = skch.Purpose

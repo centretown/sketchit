@@ -4,7 +4,7 @@ SERVER_OUT := $(GOSOURCE)"/bin/server"
 CLIENT_OUT := $(GOSOURCE)"/bin/client"
 BUILD_MONGO_SCHEMA_OUT := $(GOSOURCE)"/bin/models"
 API_OUT := $(GOSOURCE)"/api/sketchit.pb.go"
-API_ACTION_OUT := $(GOSOURCE)"/api/action.pb.go"
+API_ACTION_OUT := $(GOSOURCE)"/api/sketch.pb.go"
 GW_OUT := $(GOSOURCE)"/api/sketchit.pb.gw.go"
 SWAG_OUT := $(GOSOURCE)"/api/sketchit.swagger.json"
 SERVER_PKG_BUILD := "${PKG}/server"
@@ -68,24 +68,24 @@ api/dictionary.pb.go: protos/dictionary.proto
 	# generate Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api dictionary.proto
 
-# generate commander
-api/commander.pb.go: protos/commander.proto
-	# generate GRPC commander services and protocol buffers
+# generate deputy
+api/deputy.pb.go: protos/deputy.proto
+	# generate GRPC deputy services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
-    commander.proto 
+    deputy.proto 
 
 	# generate GRPC Gateway reverse proxy for REST interface
-	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src commander.proto
+	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src deputy.proto
 
 	# generate Swagger Open API doc for REST interface
-	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api commander.proto
+	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api deputy.proto
 
 test: ## run unit tests
 	@client/curl_test.sh
 	@go test ./...
 
-api: api/sketchit.pb.go api/sketch.pb.go api/device.pb.go api/commander.pb.go api/dictionary.pb.go ## Auto-generate grpc go sources
+api: api/sketchit.pb.go api/sketch.pb.go api/device.pb.go api/deputy.pb.go api/dictionary.pb.go ## Auto-generate grpc go sources
 
 dep: ## Get the dependencies
 	@go get -v -d ./...

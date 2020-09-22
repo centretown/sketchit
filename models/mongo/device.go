@@ -7,9 +7,10 @@ import (
 )
 
 var deviceSchema = bson.M{
-	"title":    "Devices",
-	"bsonType": "object",
-	"required": []string{"sector", "label", "model"},
+	"title":       "Devices",
+	"bsonType":    "object",
+	"description": "controller devices",
+	"required":    []string{"sector", "label", "model"},
 	"properties": bson.M{
 		"sector": bson.M{
 			"title":       "Sector",

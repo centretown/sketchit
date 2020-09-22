@@ -36,8 +36,8 @@ service Sketchit {
     rpc GetDevice(GetDeviceRequest) returns (Device) {
         // Get maps to HTTP GET. Resource name is mapped to the URL. No body.
         option (google.api.http) = {
-            // the `name` of device resource, 
-            // eg: `/v1/sectors/home-iot/devices/esp32-01`
+            // the name of device resource, 
+            // eg: /v1/sectors/home-iot/devices/esp32-01
             get: "/v1/{name=sectors/*/devices/*}"
         };
     }
@@ -46,8 +46,8 @@ service Sketchit {
         // Create maps to HTTP POST. URL path as the collection name.
         // HTTP request body contains the resource.
         option (google.api.http) = {
-            // The `parent` captures the sector resource name, 
-            // eg: `sectors/home_iot`.
+            // The parent captures the sector resource name, 
+            // eg: sectors/home_iot.
             post: "/v1/{parent=sectors/*}/devices"
             body: "device"
         };
@@ -57,8 +57,8 @@ service Sketchit {
         // Update maps to HTTP PATCH. Resource name is mapped to a URL path.
         // Resource is contained in the HTTP request body.
         option (google.api.http) = {
-            // the `name` of Sketch resource, 
-            // eg: `/v1/sectors/home-iot/devices/esp32-02`
+            // the name of Sketch resource, 
+            // eg: /v1/sectors/home-iot/devices/esp32-02
             patch: "/v1/{name=sectors/*/devices/*}"
             body: "device"
         };       
@@ -68,8 +68,8 @@ service Sketchit {
         // Delete maps to HTTP DELETE. Resource name maps to the URL path.
         // eg: "sector/home-iot/devices/esp32-01"
         option (google.api.http) = {
-            // the `name` of Sketch resource, 
-            // eg: `/v1/sectors/home-iot/devices/esp32-02`
+            // the name of Sketch resource, 
+            // eg: /v1/sectors/home-iot/devices/esp32-02
             delete:  "/v1/{name=sectors/*/devices/*}"
         };
     }
@@ -78,17 +78,17 @@ service Sketchit {
         // List method maps to HTTP GET.
         option (google.api.http) = {
             // list sketches by model
-            // eg: /v1/models/ESP32/sketches
-            get: "/v1/{parent=models/*}/sketches"
+            // eg: /v1/toolkits/ESP32/sketches
+            get: "/v1/{parent=toolkits/*}/sketches"
         };
     }
     
     rpc GetSketch(GetSketchRequest) returns (Sketch) {
         // Get maps to HTTP GET. Resource name is mapped to the URL. No body.
         option (google.api.http) = {
-            // the `name` of Sketch resource, 
-            // eg: `/v1/models/ESP32/sketches/blink`
-            get: "/v1/{name=models/*/sketches/*}"
+            // the name of Sketch resource, 
+            // eg: /v1/toolkits/ESP32/sketches/blink
+            get: "/v1/{name=toolkits/*/sketches/*}"
         };
     }
       
@@ -96,9 +96,9 @@ service Sketchit {
         // Create maps to HTTP POST. URL path as the collection name.
         // HTTP request body contains the resource.
         option (google.api.http) = {
-            // The `parent` captures the model resource name, 
-            // eg: `models/blink`.
-            post: "/v1/{parent=models/*}/sketches"
+            // The parent captures the model resource name, 
+            // eg: toolkits/blink.
+            post: "/v1/{parent=toolkits/*}/sketches"
             body: "Sketch"
         };
     }
@@ -107,9 +107,9 @@ service Sketchit {
         // Update maps to HTTP PATCH. Resource name is mapped to a URL path.
         // Resource is contained in the HTTP request body.
         option (google.api.http) = {
-            // the `name` of Sketch resource, 
-            // eg: `/v1/models/ESP32/sketches/blink`
-            patch: "/v1/{name=models/*/sketches/*}"
+            // the name of Sketch resource, 
+            // eg: /v1/toolkits/ESP32/sketches/blink
+            patch: "/v1/{name=toolkits/*/sketches/*}"
             body: "Sketch"
         };       
     }
@@ -118,9 +118,9 @@ service Sketchit {
         // Delete maps to HTTP DELETE. Resource name maps to the URL path.
         // eg: "sector/ESP32/sketches/esp32-01"
         option (google.api.http) = {
-            // the `name` of Sketch resource, 
-            // eg: `/v1/models/ESP32/sketches/blink`
-            delete:  "/v1/{name=models/*/sketches/*}"
+            // the name of Sketch resource, 
+            // eg: /v1/toolkits/ESP32/sketches/blink
+            delete:  "/v1/{name=toolkits/*/sketches/*}"
         };
     }
 
@@ -128,14 +128,151 @@ service Sketchit {
         // ListCollections maps to HTTP GET
         option (google.api.http) = {
             // no parameters
-            // eg: `/v1/collections`
+            // eg: /v1/collections
             get: "/v1/collections"
         };       
     }
+    rpc GetDeputy(GetDeputyRequest) returns (Deputy) {
+        // Get maps to HTTP GET. Resource name is mapped to the URL. No body.
+        option (google.api.http) = {
+            // the name of Deputy resource, 
+            // eg: /v1/deputies/Andy
+            get: "/v1/{name=deputies/*}"
+        };
+    }
+  }
+
+// GetDeviceRequest defines the data required to get a device
+message GetDeputyRequest {
+    // The deputy label, 
+    // eg: "/deputies/Andy"
+    string name = 1;
 }
 
+// ListCollectionsRequest -
+message ListCollectionsRequest {
+    // flags ignored when retrieved from storage 
+    Presentation presentation = 1;
+}
+
+// ListCollectionsResponse -
+message ListCollectionsResponse {
+    repeated Collection collections = 1;
+}
 
 message PingMessage {
     string greeting = 1;
 }
+
+// ListDevicesRequest defines the data required to get a list of devices
+message ListDevicesRequest {
+    // The parent sector, eg: "home-iot".
+    string parent = 1;
+    // reduction full, brief, summary
+    repeated Presentation presentation = 4;
+    // The maximum number of devices to return.
+    int32 page_size = 2;
+    // The next_page_token value returned from a previous List request, if any.
+    string page_token = 3;
+}
+
+// ListDevicesResponse defines the return value to a ListDevicesRequest
+message ListDevicesResponse {
+    // Devices listed
+    repeated Device devices = 1;
+    // next page
+    string next_page_token = 2;
+}
+
+// GetDeviceRequest defines the data required to get a device
+message GetDeviceRequest {
+    // The device path name, 
+    // eg: "/sectors/home-iot/devices/esp32-01"
+    string name = 1;
+}
+
+// CreateDeviceRequest defines the data required to create a new device
+message CreateDeviceRequest {
+    // The parent sector name
+    // eg: /sectors/home-iot
+    string parent = 1;
+    // The device resource to create.
+    Device device = 2;
+}
+
+// UpdateDeviceRequest defines the data required to update an existing device
+message UpdateDeviceRequest {
+    // The device path name, 
+    // eg: "/sectors/home-iot/devices/esp32-01"
+    string name = 1;
+    // The replacement device
+    Device device = 2;
+    // The update mask app  lies to the resource. For the FieldMask definition,
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    // google.protobuf.FieldMask update_mask = 3;
+}
+
+// DeleteDeviceRequest defines the data required to delete an existing device
+message DeleteDeviceRequest {
+    // The device path name, 
+    // eg: "/sectors/home-iot/devices/esp32-01"
+    string name = 1;
+}
+
+// ListSketchesRequest defines the data required to get a list of sketches
+message ListSketchesRequest {
+    // The parent model, eg: "ESP32".
+    string parent = 1;
+    // format and projections...
+    repeated Presentation presentation = 4;
+    // The maximum number of sketches to return.
+    int32 page_size = 2;
+    // The next_page_token value returned from a previous List request, if any.
+    string page_token = 3;
+}
+
+// GetSketchRequest defines the data required to get a Sketch
+message GetSketchRequest {
+    // The Sketch path name, 
+    // eg: "/models/ESP32/sketches/esp32-01"
+    string name = 1;
+}
+
+// ListSketchesResponse defines the return value to a ListsketchesRequest
+message ListSketchesResponse {
+    // sketches listed
+    repeated Sketch sketches = 1;
+    // next page
+    string next_page_token = 2;
+}
+
+// CreateSketchRequest defines the data required to create a new Sketch
+message CreateSketchRequest {
+    // The parent model name
+    // eg: /models/ESP32
+    string parent = 1;
+    // The Sketch resource to create.
+    Sketch Sketch = 2;
+}
+
+// UpdateSketchRequest defines the data required to update an existing Sketch
+message UpdateSketchRequest {
+    // The Sketch path name, 
+    // eg: "/models/ESP32/sketches/esp32-01"
+    string name = 1;
+    // The replacement Sketch
+    Sketch Sketch = 2;
+    // The update mask app  lies to the resource. For the FieldMask definition,
+    // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+    // google.protobuf.FieldMask update_mask = 3;
+}
+
+
+// DeleteSketchRequest defines the data required to delete an existing Sketch
+message DeleteSketchRequest {
+    // The Sketch path name, 
+    // eg: "/models/ESP32/sketches/esp32-01"
+    string name = 1;
+}
+
 

@@ -11,7 +11,7 @@ var sketchSchema = bson.M{
 	"bsonType":    "object",
 	"description": "the sketch defines the actions taken on a device",
 	"required": []string{
-		"model",
+		"toolkit",
 		"label",
 		"device",
 		"purpose",
@@ -19,20 +19,20 @@ var sketchSchema = bson.M{
 		"loop",
 	},
 	"properties": bson.M{
-		"model": bson.M{
-			"title":       "Model",
+		"toolkit": bson.M{
+			"title":       "Toolkit",
 			"bsonType":    "string",
-			"description": "the model defines the scope of actions that can be taken",
+			"description": "the toolkit defines the set of operations available",
 		},
 		"label": bson.M{
 			"title":       "Label",
 			"bsonType":    "string",
-			"description": "the label assigned is unique for the model",
+			"description": "the label assigned is unique for the toolkit",
 		},
 		"device": bson.M{
 			"title":       "Device",
 			"bsonType":    "string",
-			"description": "the device acted on by this sketch",
+			"description": "the route to the device being operated",
 		},
 		"purpose": bson.M{
 			"title":       "Purpose",
@@ -67,8 +67,8 @@ var sketchTrait = &indexTrait{
 var sketchIndeces = []mongo.IndexModel{
 	{
 		Keys: bson.M{
-			"model": 1,
-			"label": 1,
+			"toolkit": 1,
+			"label":   1,
 		},
 		Options: &options.IndexOptions{
 			Name:   &sketchTrait.pathName,

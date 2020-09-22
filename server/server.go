@@ -42,7 +42,7 @@ func startGRPCServer(address, certFile, keyFile string) error {
 	}
 
 	// create a rpc handler for our api
-	RequestHandler := request.RequestHandlerNew(storageProvider)
+	RequestHandler := request.HandlerNew(storageProvider)
 
 	// Create the TLS credentials
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
