@@ -6,9 +6,6 @@ CLIENT_OUT := $(GOSOURCE)"/bin/client"
 CLIENT_PKG_BUILD := "${PKG}/client"
 MONGO_SCHEMA_OUT := $(GOSOURCE)"/bin/models"
 MONGO_SCHEMA_PKG_BUILD := "${PKG}/models/mongo"
-API_OUT := $(GOSOURCE)"/api/*.pb.go"
-GW_OUT := $(GOSOURCE)"/api/*.pb.gw.go"
-SWAG_OUT := $(GOSOURCE)"/api/*.swagger.json"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 
 all: api server client models
@@ -79,7 +76,7 @@ api/deputy.pb.go: protos/deputy.proto
 	# generate Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api deputy.proto
 
-test: ## run unit tests
+test: ## Run unit tests
 	@client/curl_test.sh
 	@go test ./...
 
@@ -90,22 +87,28 @@ dep: ## Get the dependencies
 	@go get -v -d ./...
 
 $(MONGO_SCHEMA_OUT):
+	# build models
 	@go build -i -v -o $(MONGO_SCHEMA_OUT) $(MONGO_SCHEMA_PKG_BUILD)
 
 $(SERVER_OUT): 
+	# build server
 	@go build -i -v -o $(SERVER_OUT) $(SERVER_PKG_BUILD)
 
 $(CLIENT_OUT):
+	# build client
 	@go build -i -v -o $(CLIENT_OUT) $(CLIENT_PKG_BUILD)
 
-server: $(SERVER_OUT) ## Build the binary file for server
+server: $(SERVER_OUT) ## Build the server binary
 
-client: $(CLIENT_OUT) ## Build the binary file for client
+client: $(CLIENT_OUT) ## Build the client binary
 
-models: $(MONGO_SCHEMA_OUT) ## build mongo schema
+models: $(MONGO_SCHEMA_OUT) ## Build models binary
 
 clean: ## Remove previous builds
-	@rm $(SERVER_OUT) $(CLIENT_OUT) $(MONGO_SCHEMA_OUT) $(API_OUT) $(GW_OUT) $(SWAG_OUT) $(API_ACTION_OUT)
+	# remove binaries
+	@rm $(SERVER_OUT) $(CLIENT_OUT) $(MONGO_SCHEMA_OUT)
+	# remove generated
+	@rm api/sketchit.pb.go api/sketch.pb.go api/device.pb.go api/deputy.pb.go api/collection.pb.go
 
 help: ## Display this help screen
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
