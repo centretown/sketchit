@@ -36,7 +36,7 @@ func startGRPCServer(address, certFile, keyFile string) error {
 	}
 
 	// create a storage provider
-	storageProvider, err := storage.MongoStorageProviderNew(testURI, "sketchit-test-02")
+	storageProvider, err := storage.MongoStorageProviderNew(testURI, "sketchit-test-03", "sketchit-test-02")
 	if err != nil {
 		return info.Inform(err, ErrStorageConnect, testURI)
 	}

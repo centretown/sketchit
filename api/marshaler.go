@@ -27,17 +27,14 @@ var marshalers = []Marshaler{
 
 // Marshal -
 func Marshal(o interface{}, presentation *Presentation) (b []byte, err error) {
-	m := marshalers[Format_YAML]
+	m := marshalers[Format_yaml]
 	if presentation.Format > 0 &&
-		presentation.Format < Format_FORMAT_LEN {
-
+		presentation.Format < Format(len(Format_value)) {
 		m = marshalers[presentation.Format]
 	}
-
 	if len(presentation.Projection) > 0 {
 		o = Project(o, presentation.Projection...)
 	}
-
 	b, err = m(o)
 	return
 }

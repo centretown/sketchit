@@ -12,11 +12,11 @@ func Project(o interface{}, p ...Projection) interface{} {
 	pr, ok := o.(Projector)
 	if ok {
 		switch p[0] {
-		case Projection_FULL:
+		case Projection_full:
 			return pr.Full()
-		case Projection_SUMMARY:
+		case Projection_summary:
 			return pr.Summary()
-		case Projection_BRIEF:
+		case Projection_brief:
 			return pr.Brief()
 		}
 	}

@@ -63,48 +63,45 @@
         "parameters": [
           {
             "name": "presentation.format",
-            "description": "Format to present (yaml,json,xml).\n\n - YAML: deputy output yaml\n - JSON: deputy output json\n - XML: deputy output xml\n - FORMAT_LEN: MAX",
+            "description": "Format to present (yaml,json,xml).\n\n - yaml: deputy output yaml\n - json: deputy output json\n - xml: deputy output xml",
             "in": "query",
             "required": false,
             "type": "string",
             "enum": [
-              "YAML",
-              "JSON",
-              "XML",
-              "FORMAT_LEN"
+              "yaml",
+              "json",
+              "xml"
             ],
-            "default": "YAML"
+            "default": "yaml"
           },
           {
             "name": "presentation.projection",
-            "description": "Projection detail (full,summary,brief).\n\n - FULL: no reduction\n - SUMMARY: less detail than full\n - BRIEF: key, value pair\n - PROJECTION_LEN: MAX",
+            "description": "Projection detail (full,summary,brief).\n\n - full: no reduction\n - summary: less detail than full\n - brief: key, value pair",
             "in": "query",
             "required": false,
             "type": "array",
             "items": {
               "type": "string",
               "enum": [
-                "FULL",
-                "SUMMARY",
-                "BRIEF",
-                "PROJECTION_LEN"
+                "full",
+                "summary",
+                "brief"
               ]
             },
             "collectionFormat": "multi"
           },
           {
             "name": "presentation.confirm",
-            "description": "Auto reply to confirmations. (off,y,n).\n\n - OFF: turn off auto\n - Y: auto reply yes\n - N: auto reply no\n - AUTO_LEN: MAX",
+            "description": "Auto reply to confirmations. (off,y,n).\n\n - off: turn off auto\n - y: auto reply yes\n - n: auto reply no",
             "in": "query",
             "required": false,
             "type": "string",
             "enum": [
-              "OFF",
-              "Y",
-              "N",
-              "AUTO_LEN"
+              "off",
+              "y",
+              "n"
             ],
-            "default": "OFF"
+            "default": "off"
           }
         ],
         "tags": [
@@ -528,6 +525,16 @@
       },
       "title": "Identifies a pin on a micro controller device"
     },
+    "FeatureFlag": {
+      "type": "string",
+      "enum": [
+        "f",
+        "d",
+        "auto"
+      ],
+      "default": "f",
+      "title": "- f: format\n - d: projection (d for detail)\n - auto: auto reply"
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
@@ -597,13 +604,12 @@
     "v1Auto": {
       "type": "string",
       "enum": [
-        "OFF",
-        "Y",
-        "N",
-        "AUTO_LEN"
+        "off",
+        "y",
+        "n"
       ],
-      "default": "OFF",
-      "description": "- OFF: turn off auto\n - Y: auto reply yes\n - N: auto reply no\n - AUTO_LEN: MAX",
+      "default": "off",
+      "description": "- off: turn off auto\n - y: auto reply yes\n - n: auto reply no",
       "title": "values for 'auto' features"
     },
     "v1Collection": {
@@ -658,24 +664,40 @@
           },
           "title": "ordered list of skills"
         },
-        "skillset": {
-          "$ref": "#/definitions/v1Skillset",
-          "title": "skills map keyed on tasks and alternates"
-        },
-        "dictionary": {
-          "$ref": "#/definitions/v1Dictionary",
-          "title": "models mapped to routes"
-        },
         "features": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/v1Feature"
           },
-          "title": "ordered list of skills"
+          "title": "features map keyed on feature flag and label"
+        },
+        "skillset": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/v1Skill"
+          },
+          "title": "skills map keyed on tasks and alternates"
         },
         "gallery": {
-          "$ref": "#/definitions/v1Gallery",
-          "title": "features map keyed on feature flag and label"
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/v1Feature"
+          },
+          "title": "ordered list of skills"
+        },
+        "collections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1Collection"
+          },
+          "title": "Collections of items or documents"
+        },
+        "dictionary": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/v1Model"
+          },
+          "description": "Dictionary provides a pathway to the item collections.\nItems include application documents and the documents \nthat decsribe the semanatics of the deputy api.\nThe api provides access to the sketchit services.\n\nMap to models to routes.\nRoutes are strings of text composed of labels \nsplit by separators.\nLabels are unique to a collection, should have meaning\nand must exclude separators.\nSeparators can be periods '.' or forward slashes '/'\nRoute structure:\n\u003croot\u003e. single separator\n  \u003ccollection\u003e. collection label\n    \u003cparent\u003e. route to ancestors\n      \u003clabel\u003e.\n        \u003cmodel\u003e...\n\u003cmodel\u003e\n  \u003citems\u003e... values, arrays, maps and models"
         }
       },
       "title": "Deputy"
@@ -713,31 +735,11 @@
       },
       "title": "defines a micro controller device for sketchit"
     },
-    "v1Dictionary": {
-      "type": "object",
-      "properties": {
-        "collections": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/v1Collection"
-          },
-          "title": "Collections of items or documents"
-        },
-        "models": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/v1Model"
-          },
-          "title": "Map to models to routes.\nRoutes are strings of text composed of labels \nsplit by separators.\nLabels are unique to a collection, should have meaning\nand must exclude separators.\nSeparators can be periods '.' or forward slashes '/'\nRoute structure:\n\u003croot\u003e. single separator\n  \u003ccollection\u003e. collection label\n    \u003cparent\u003e. route to ancestors\n      \u003clabel\u003e.\n        \u003cmodel\u003e...\n\u003cmodel\u003e\n  \u003citems\u003e... values, arrays, maps and models"
-        }
-      },
-      "description": "Dictionary provides a pathway to the item collections.\nItems include application documents and the documents \nthat decsribe the semanatics of the deputy api.\nThe api provides access to the sketchit services."
-    },
     "v1Feature": {
       "type": "object",
       "properties": {
         "flag": {
-          "type": "string",
+          "$ref": "#/definitions/FeatureFlag",
           "title": "flag to indicate feature"
         },
         "label": {
@@ -745,12 +747,10 @@
           "title": "unique label to reference feature"
         },
         "description": {
-          "type": "string",
-          "title": "unique label to reference feature"
+          "type": "string"
         },
         "summary": {
-          "$ref": "#/definitions/v1Summary",
-          "title": "usage summary"
+          "$ref": "#/definitions/v1Summary"
         }
       },
       "description": "Feature can describes how to respond to input and \nhow to present the output."
@@ -758,26 +758,13 @@
     "v1Format": {
       "type": "string",
       "enum": [
-        "YAML",
-        "JSON",
-        "XML",
-        "FORMAT_LEN"
+        "yaml",
+        "json",
+        "xml"
       ],
-      "default": "YAML",
-      "description": "- YAML: deputy output yaml\n - JSON: deputy output json\n - XML: deputy output xml\n - FORMAT_LEN: MAX",
+      "default": "yaml",
+      "description": "- yaml: deputy output yaml\n - json: deputy output json\n - xml: deputy output xml",
       "title": "Format defines the options"
-    },
-    "v1Gallery": {
-      "type": "object",
-      "properties": {
-        "flag_map": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/v1Feature"
-          }
-        }
-      },
-      "title": "Gallery of features keyed to flags and labels"
     },
     "v1ListCollectionsResponse": {
       "type": "object",
@@ -967,13 +954,12 @@
     "v1Projection": {
       "type": "string",
       "enum": [
-        "FULL",
-        "SUMMARY",
-        "BRIEF",
-        "PROJECTION_LEN"
+        "full",
+        "summary",
+        "brief"
       ],
-      "default": "FULL",
-      "description": "- FULL: no reduction\n - SUMMARY: less detail than full\n - BRIEF: key, value pair\n - PROJECTION_LEN: MAX",
+      "default": "full",
+      "description": "- full: no reduction\n - summary: less detail than full\n - brief: key, value pair",
       "title": "Projection defines the level of detail\nthat is presented"
     },
     "v1Signal": {
@@ -1024,7 +1010,7 @@
       "type": "object",
       "properties": {
         "task": {
-          "type": "string",
+          "$ref": "#/definitions/v1Task",
           "title": "the task this skill effects"
         },
         "alternates": {
@@ -1045,18 +1031,6 @@
       },
       "description": "Skill in the skillset."
     },
-    "v1Skillset": {
-      "type": "object",
-      "properties": {
-        "alias_map": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/v1Skill"
-          }
-        }
-      },
-      "title": "skill mapped to skills' tasks and alternates"
-    },
     "v1Summary": {
       "type": "object",
       "properties": {
@@ -1074,6 +1048,21 @@
         }
       },
       "title": "Summary description of model"
+    },
+    "v1Task": {
+      "type": "string",
+      "enum": [
+        "exit",
+        "help",
+        "list",
+        "goto",
+        "save",
+        "remove",
+        "hello",
+        "TASK_LEN"
+      ],
+      "default": "exit",
+      "title": "task list"
     }
   }
 }

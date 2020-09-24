@@ -4,7 +4,7 @@ import "github.com/centretown/sketchit/api"
 
 var features = []*api.Feature{
 	{
-		Flag:        api.Feature_f.String(),
+		Flag:        api.Feature_f,
 		Label:       "format",
 		Description: "The format feature can format outcomes as yaml, json or xml.",
 		Summary: &api.Summary{
@@ -21,7 +21,7 @@ var features = []*api.Feature{
 		},
 	},
 	{
-		Flag:        api.Feature_d.String(),
+		Flag:        api.Feature_d,
 		Label:       "detail",
 		Description: "The detail feature can project outcomes as full, summary or brief. More than one projection may be specified.  Each projection corresponds to a level of detail in the data. The last projection is applied to all remaining levels.",
 		Summary: &api.Summary{
@@ -42,7 +42,7 @@ var features = []*api.Feature{
 		},
 	},
 	{
-		Flag:        api.Feature_auto.String(),
+		Flag:        api.Feature_auto,
 		Label:       "auto",
 		Description: "The auto feature can automatically reply to confirmation requests.",
 		Summary: &api.Summary{

@@ -4,7 +4,7 @@ import "github.com/centretown/sketchit/api"
 
 var skills = []*api.Skill{
 	{
-		Task: api.Task_hello.String(),
+		Task: api.Task_hello,
 		Alternates: []string{
 			"ping", "hi",
 		},
@@ -15,7 +15,7 @@ var skills = []*api.Skill{
 		},
 	},
 	{
-		Task: api.Task_help.String(),
+		Task: api.Task_help,
 		Alternates: []string{
 			"info", "?",
 		},
@@ -34,7 +34,7 @@ var skills = []*api.Skill{
 		},
 	},
 	{
-		Task:        api.Task_list.String(),
+		Task:        api.Task_list,
 		Alternates:  []string{"ls"},
 		Description: "List the contents of the destination.",
 		Summary: &api.Summary{
@@ -48,7 +48,7 @@ var skills = []*api.Skill{
 		},
 	},
 	{
-		Task:        api.Task_goto.String(),
+		Task:        api.Task_goto,
 		Alternates:  []string{"cd", "go"},
 		Description: "Go to a destination.",
 		Summary: &api.Summary{
@@ -62,7 +62,7 @@ var skills = []*api.Skill{
 		},
 	},
 	{
-		Task:        api.Task_save.String(),
+		Task:        api.Task_save,
 		Alternates:  []string{"store"},
 		Description: "Save the current contents. Confirmation required.",
 		Summary: &api.Summary{
@@ -74,7 +74,7 @@ var skills = []*api.Skill{
 		},
 	},
 	{
-		Task:        api.Task_remove.String(),
+		Task:        api.Task_remove,
 		Alternates:  []string{"rm", "del", "delete"},
 		Description: "Remove the current contents. Confirmation required.",
 		Summary: &api.Summary{
@@ -86,7 +86,7 @@ var skills = []*api.Skill{
 		},
 	},
 	{
-		Task:        api.Task_exit.String(),
+		Task:        api.Task_exit,
 		Alternates:  []string{"x", "quit"},
 		Description: "Exit the current session.",
 		Summary: &api.Summary{

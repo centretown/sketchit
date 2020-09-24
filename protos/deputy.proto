@@ -3,35 +3,50 @@ package centretown.sketchit.v1;
 
 option go_package = "github.com/centretown/sketchit/api";
 
-import public "dictionary.proto";
+import public "collection.proto";
 
 // Deputy
 message Deputy {
     // label assigned to this deputy version
-    string label = 6;
+    string label = 1;
     // version of release
-    string version = 1;
+    string version = 2;
     // ordered list of skills
-    repeated Skill skills = 2;
-    // skills map keyed on tasks and alternates
-    Skillset skillset = 3;
-    // models mapped to routes
-    Dictionary dictionary = 4;
-    // ordered list of skills
-    repeated Feature features = 7;
+    repeated Skill skills = 3;
     // features map keyed on feature flag and label
-    Gallery gallery = 5;
-}
-
-// skill mapped to skills' tasks and alternates
-message Skillset {
-    map<string,Skill> alias_map = 1;
+    repeated Feature features = 4;
+    // skills map keyed on tasks and alternates
+    map<int32,Skill> skillset = 5;
+    // ordered list of skills
+    map<int32,Feature> gallery = 6;
+    // Collections of items or documents
+    repeated Collection collections = 7;
+    // Dictionary provides a pathway to the item collections.
+    // Items include application documents and the documents 
+    // that decsribe the semanatics of the deputy api.
+    // The api provides access to the sketchit services.
+    //
+    // Map to models to routes.
+    // Routes are strings of text composed of labels 
+    // split by separators.
+    // Labels are unique to a collection, should have meaning
+    // and must exclude separators.
+    // Separators can be periods '.' or forward slashes '/'
+    // Route structure:
+    // <root>. single separator
+    //   <collection>. collection label
+    //     <parent>. route to ancestors
+    //       <label>.
+    //         <model>...
+    // <model>
+    //   <items>... values, arrays, maps and models
+    map<string,Model> dictionary = 8;
 }
 
 // Skill in the skillset.
 message Skill {
     // the task this skill effects
-    string task = 1;
+    Task task = 1;
     // alternate codes for the task
     repeated string alternates = 2;
     // description of skill
@@ -42,13 +57,14 @@ message Skill {
 
 // task list
 enum Task {
-    help = 0;
-    list = 1;
-    goto = 2;
-    save = 3;
-    remove = 4;
-    hello = 8;
-    exit = 999;
+    exit = 0;
+    help = 1;
+    list = 2;
+    goto = 3;
+    save = 4;
+    remove = 5;
+    hello = 6;
+    TASK_LEN = 7;
 }
 
 // Summary description of model
@@ -58,21 +74,9 @@ message Summary {
     repeated string examples = 3;
 }
 
-// Command to the deputy
-message Command {
-    // task to carry out
-    string task = 1;
-    // where to do the task
-    string location = 2;
-    // how to present the outcome
-    Presentation presentation = 3;
-    // reasons order not carried out
-    string excuse = 4;
-}
-
 // Gallery of features keyed to flags and labels
 message Gallery {
-    map<string,Feature> flag_map = 1;
+    map<uint64,Feature> flag_map = 1;
 }
 
 // Feature can describes how to respond to input and 
@@ -87,12 +91,10 @@ message Feature {
         auto = 2;
     }
     // flag to indicate feature
-    string flag = 1;
+    Flag flag = 1;
     // unique label to reference feature
     string label = 2;
-    // unique label to reference feature
     string description = 3;
-    // usage summary
     Summary summary = 4;
 }
 
@@ -110,35 +112,29 @@ message Presentation {
 // Format defines the options
 enum Format {
 	// deputy output yaml
-    YAML = 0;
+    yaml = 0;
 	// deputy output json
-    JSON = 1;
+    json = 1;
 	// deputy output xml
-    XML = 2;
-    // MAX
-    FORMAT_LEN = 3;
+    xml = 2;
 }
 
 // Projection defines the level of detail
 // that is presented
 enum Projection {
 	// no reduction
-    FULL = 0;
+    full = 0;
 	// less detail than full
-    SUMMARY = 1;
+    summary = 1;
 	// key, value pair
-    BRIEF = 2;
-    // MAX
-    PROJECTION_LEN = 3;
+    brief = 2;
 }
 // values for 'auto' features
 enum Auto {
     // turn off auto
-    OFF = 0;
+    off = 0;
     // auto reply yes
-    Y = 1;
+    y = 1;
     // auto reply no
-    N = 2;
-    // MAX
-    AUTO_LEN = 3;
+    n = 2;
 }

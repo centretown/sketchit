@@ -1,6 +1,9 @@
 package main
 
-import "go.mongodb.org/mongo-driver/bson"
+import (
+	"github.com/centretown/sketchit/api"
+	"go.mongodb.org/mongo-driver/bson"
+)
 
 var featureDef = bson.M{
 	"title":       "Feature",
@@ -12,14 +15,13 @@ var featureDef = bson.M{
 	},
 	"properties": bson.M{
 		"flag": bson.M{
-			"title":       "Flag",
-			"bsonType":    "string",
-			"description": "",
+			"title": "Flag",
 			"enum": bson.A{
-				"f",
-				"d",
-				"auto",
+				api.Feature_f,
+				api.Feature_d,
+				api.Feature_auto,
 			},
+			"description": "",
 		},
 		"label": bson.M{
 			"title":       "Label",

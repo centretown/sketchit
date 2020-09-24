@@ -1,6 +1,9 @@
 package main
 
-import "go.mongodb.org/mongo-driver/bson"
+import (
+	"github.com/centretown/sketchit/api"
+	"go.mongodb.org/mongo-driver/bson"
+)
 
 var skillDef = bson.M{
 	"title":       "Skill",
@@ -18,21 +21,17 @@ var skillDef = bson.M{
 }
 
 var taskDef = bson.M{
-	"title":       "Task",
-	"bsonType":    "string",
-	"description": "A job item with an outcome. A task is identifed by a command issued to the deputy, which finds a matching skill to perform the task. The outcome is relayed to the issuer.",
-	"enum": []string{
-		"hello",
-		"help",
-		"skills",
-		"features",
-		"list",
-		"goto",
-		"edit",
-		"save",
-		"remove",
-		"exit",
+	"title": "Task",
+	"enum": bson.A{
+		api.Task_exit,
+		api.Task_help,
+		api.Task_list,
+		api.Task_goto,
+		api.Task_save,
+		api.Task_remove,
+		api.Task_hello,
 	},
+	"description": "A job item with an outcome. A task is identifed by a command issued to the deputy, which finds a matching skill to perform the task. The outcome is relayed to the issuer.",
 }
 
 var alternatesDef = bson.M{

@@ -9,12 +9,9 @@ import (
 
 	"github.com/centretown/sketchit/api"
 	"github.com/centretown/sketchit/auth"
-	cmdr "github.com/centretown/sketchit/deputy"
 	"github.com/golang/glog"
 	"golang.org/x/net/context"
 )
-
-var flags *cmdr.Flags
 
 func init() {
 }
@@ -44,16 +41,16 @@ func main() {
 		return
 	}
 
-	cmdr := cmdr.New(ctx, conn, client)
-	run(cmdr)
+	var responder = api.NewResponder(ctx, conn, client)
+	run(responder)
 }
 
-func run(deputy *cmdr.Deputy) {
-	deputy.Build()
+func run(responder *api.Responder) {
+	responder.Build()
 	eof := false
 	reader := bufio.NewReader(os.Stdin)
 	for !eof {
-		fmt.Print(deputy.Prompt())
+		fmt.Print(".")
 		// Read the keyboard input.
 		input, err := reader.ReadString('\n')
 		if err != nil {
@@ -67,17 +64,17 @@ func run(deputy *cmdr.Deputy) {
 			eof = true
 		}
 
-		command, flagValues, args, err := deputy.Parse(input)
 		s := ""
+		runner, err := responder.Parse(input)
 		if err == nil {
-			s, err = command.Run(flagValues, args...)
-			if err == cmdr.ErrExit {
+			s, err = runner.Run()
+			if err == api.ErrExit {
 				return
 			}
 		}
 
 		if err != nil {
-			if err != cmdr.ErrEmpty {
+			if err != api.ErrEmpty {
 				fmt.Println(err)
 			}
 		} else if len(s) > 0 {

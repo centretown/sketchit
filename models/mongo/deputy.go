@@ -7,7 +7,7 @@ import (
 )
 
 var deputySchema = bson.M{
-	"title":       "Deputy",
+	"title":       "Deputies",
 	"bsonType":    "object",
 	"description": "The deputy performs tasks. Tasks are job items with an outcome. A task is identifed by a command issued to the deputy. The task, location and presentation features are identified. A matching skill is found perform the task. The outcome is relayed to the issuer.",
 	// "required": []string{

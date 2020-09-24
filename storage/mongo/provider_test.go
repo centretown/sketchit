@@ -44,7 +44,18 @@ func TestMongoGetDeputy(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetDeputy: %v", err)
 	}
-	t.Log(deputy)
+	t.Log(showDeputy(deputy))
+}
+
+func showDeputy(deputy *api.Deputy) (s string) {
+	s += fmt.Sprintln(deputy.Label, deputy.Version)
+	for _, f := range deputy.Skills {
+		s += fmt.Sprintln(f.Task, f.Alternates)
+	}
+	for _, f := range deputy.Features {
+		s += fmt.Sprintln(f.Flag, f.Label)
+	}
+	return
 }
 
 func TestMongoListCollection(t *testing.T) {
