@@ -15,9 +15,10 @@ var sketchSchema = bson.M{
 		"label",
 		"device",
 		"purpose",
-		"setup",
-		"loop",
+		// "setup",
+		// "loop",
 	},
+	// "uniqueItems": true,
 	"properties": bson.M{
 		"toolkit": bson.M{
 			"title":       "Toolkit",
@@ -60,8 +61,8 @@ type indexTrait struct {
 }
 
 var sketchTrait = &indexTrait{
+	pathName:   "sketchIndex",
 	pathUnique: true,
-	pathName:   "pathIndex",
 }
 
 var sketchIndeces = []mongo.IndexModel{

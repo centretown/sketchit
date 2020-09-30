@@ -132,6 +132,9 @@ func build(dbURI, dbName, deputyName, deputyVersion string, deputyOnly, deputyCr
 	res = collection.FindOneAndReplace(ctx, filter, deputy)
 	err = res.Err()
 	glog.Warning(err)
+	if err == mongo.ErrNoDocuments {
+		err = nil
+	}
 	return
 }
 

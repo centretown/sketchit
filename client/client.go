@@ -46,11 +46,10 @@ func main() {
 }
 
 func run(responder *api.Responder) {
-	responder.Build()
 	eof := false
 	reader := bufio.NewReader(os.Stdin)
 	for !eof {
-		fmt.Print(".")
+		fmt.Print(responder.Prompt())
 		// Read the keyboard input.
 		input, err := reader.ReadString('\n')
 		if err != nil {

@@ -9,41 +9,37 @@ import public "deputy.proto";
 message Sketch {
     // The toolkit or skillset required to run
     // this sketch core (Nano,Uno), esp32 ()
-    string toolkit = 6;
+    string toolkit = 1;
     // The label unique to this toolkit
     // eg: "blink"
-    string label = 1;
+    string label = 2;
     // The device activated by this sketch
     // eg: "/home-iot/devices/esp32-01"
-    string device = 2;
+    string device = 3;
     // The purpose or description of the actions take by this sketch
     // eg: "Blink at prescribed intervals"
-    string purpose = 3;
+    string purpose = 4;
     // The setup stage defines the actions to take once
     // before entering the sketch loop
-    repeated Action setup = 4;
+    repeated Action setup = 5;
     // The loop defines the actions that repeats forever
-    repeated Action loop = 5;
+    repeated Action loop = 6;
 }
 
-enum ActionType {
-    delay = 0;
-    mode = 1;
-    pin = 2;
+enum Operation {
+    nop = 0;
+    delay = 1;
+    mode = 2;
+    pin = 3;
+    hall = 4;
 }
 
 // Action defines a processing step or instruction
 message Action {
-    // The sequence defines the order of steps
-    int32 sequence = 1;
     // The type identifies the type of command to run
-    ActionType type = 2;
-    // command defines one of a menu of commands to take
-    oneof operation {
-        DelayOperation delay = 10;
-        ModeOperation mode = 11;
-        PinOperation pin = 12;
-    }
+    Operation operation = 1;
+    // arguments
+    repeated int32 arguments = 2;
 }
 
 // DelayOperation defines the data to carry out this action
@@ -52,14 +48,27 @@ message DelayOperation {
     int32 duration = 1;
 }
 
+// HallOperation defines the data to carry out this action
+message HallOperation {
+    // The duration of the delay in milliseconds
+    int32 measurement = 1;
+}
+
 enum Signal {
-    analog = 0;
-    digital = 1;
+    nosignal = 0;
+    analog = 1;
+    digital = 2;
 }
 
 enum Mode {
-    input = 0;
-    output = 1;
+    nomode = 0;
+    input = 1;
+    output = 2;
+}
+
+enum Digital {
+    low = 0;
+    high = 1;
 }
 
 // ModeOperation defines how a pin is acted on.

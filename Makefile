@@ -13,67 +13,67 @@ all: api server client models
  
 # generate sketchit services
 api/sketchit.pb.go: protos/sketchit.proto
-	# generate sketchit GRPC services and protocol buffers
+	# sketchit GRPC services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     sketchit.proto 
 	
-	# generate GRPC Gateway reverse proxy for REST interface
+	# sketchit GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src sketchit.proto
 
-	# generate Swagger Open API doc for REST interface
+	# sketchit Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api sketchit.proto
 
 # generate sketch 
 api/sketch.pb.go: protos/sketch.proto
-	# generate sketch GRPC services and protocol buffers
+	# sketch GRPC services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     sketch.proto 
 
-	# generate GRPC Gateway reverse proxy for REST interface
+	# sketch GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src sketch.proto
 
-	# generate Swagger Open API doc for REST interface
+	# sketch Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api sketch.proto
 
 # generate device
 api/device.pb.go: protos/device.proto
-	# generate device GRPC services and protocol buffers
+	# device GRPC services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     device.proto 
 
-	# generate GRPC Gateway reverse proxy for REST interface
+	# device GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src device.proto
 
-	# generate Swagger Open API doc for REST interface
+	# device Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api device.proto
 
 # generate collection
 api/collection.pb.go: protos/collection.proto
-	# generate collection GRPC services and protocol buffers
+	# collection GRPC services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     collection.proto 
 
-	# generate GRPC Gateway reverse proxy for REST interface
+	# collection GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src collection.proto
 
-	# generate Swagger Open API doc for REST interface
+	# collection Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api collection.proto
 
 # generate deputy
 api/deputy.pb.go: protos/deputy.proto
-	# generate GRPC deputy services and protocol buffers
+	# deputy GRPC services and protocol buffers
 	@protoc -I $(GOSOURCE)/protos \
         --go_out=plugins=grpc:$(GOPATH)/src\
     deputy.proto 
 
-	# generate GRPC Gateway reverse proxy for REST interface
+	# deputy GRPC Gateway reverse proxy for REST interface
 	@protoc -I protos --grpc-gateway_out=logtostderr=true:${GOPATH}/src deputy.proto
 
-	# generate Swagger Open API doc for REST interface
+	# deputy Swagger Open API doc for REST interface
 	@protoc -I protos --swagger_out=logtostderr=true:$(GOSOURCE)/api deputy.proto
 
 test: ## Run unit tests

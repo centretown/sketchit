@@ -6,20 +6,22 @@ var actionSchema = bson.M{
 	"title":       "Action",
 	"bsonType":    "object",
 	"description": "the action taken on the device",
-	"required":    []string{"sequence", "type"},
-	"uniqueItems": true,
 	"properties": bson.M{
-		"sequence": bson.M{
-			"title":       "Sequence",
-			"bsonType":    "number",
-			"description": "the action sequence number",
-		},
-		"type": bson.M{
-			"title":       "Type",
-			"bsonType":    "string",
+		"operation": bson.M{
+			"title":       "Operation",
+			"bsonType":    "int",
 			"description": "the operation type",
 		},
-		"operation": operationSchema,
+		"arguments": bson.M{
+			"title":       "Arguments",
+			"bsonType":    "array",
+			"description": "zero or more arguments",
+			"items": bson.M{
+				"title":       "Argument",
+				"bsonType":    "int",
+				"description": "argument value",
+			},
+		},
 	},
 }
 
@@ -27,7 +29,7 @@ var operationSchema = bson.M{
 	"title":       "Operation",
 	"bsonType":    "object",
 	"description": "the operations available on this device",
-	"oneOf": bson.A{
+	"anyOf": []bson.M{
 		delayOperation,
 		modeOperation,
 		pinOperation,
@@ -96,23 +98,23 @@ var modeDef = bson.M{
 
 var valueDef = bson.M{
 	"title":       "Value",
-	"bsonType":    "number",
+	"bsonType":    "int",
 	"description": "the value to read or write",
 }
 
 var durationDef = bson.M{
 	"title":       "Duration",
-	"bsonType":    "number",
+	"bsonType":    "int",
 	"description": "the duration in milli-seconds",
 }
 
 var pinIDDef = bson.M{
 	"title":       "Id",
-	"bsonType":    "number",
+	"bsonType":    "int",
 	"description": "the id number of the pin as defined by this device",
 }
 var measurementDef = bson.M{
 	"title":       "Measurement",
-	"bsonType":    "number",
+	"bsonType":    "int",
 	"description": "the measurement read",
 }

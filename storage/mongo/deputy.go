@@ -6,22 +6,29 @@ import (
 
 	"github.com/centretown/sketchit/api"
 	"github.com/centretown/sketchit/info"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 // GetDeputy implements api.StorageProvider.GetDeputy
 func (mdp *MongoStorageProvider) GetDeputy(ctx context.Context, name string) (deputy *api.Deputy, err error) {
-	filter := bson.D{{Key: "label", Value: name}}
 	deputy = &api.Deputy{}
-	res := mdp.Collections[deputyCollectionName].FindOne(ctx, filter)
+
+	collector, ok := mdp.Collectors[deputiesName]
+	if !ok {
+		err = info.Inform(err, ErrCollection, fmt.Sprintf("List %v", deputiesName))
+		return
+	}
+
+	filter := collector.Filter(name)
+	// filter := bson.D{}
+	res := collector.Collection.FindOne(ctx, filter)
 	if res == nil {
-		err = info.Inform(err, ErrDecode, fmt.Sprintf("GetDeputy FindOne: %v", "nil response"))
+		err = info.Inform(err, ErrFind, fmt.Sprintf("GetDeputy FindOne nil response: %v", name))
 		return
 	}
 
 	err = res.Err()
 	if err != nil {
-		err = info.Inform(err, ErrDecode, fmt.Sprintf("GetDeputy FindOne: %v", name))
+		err = info.Inform(err, ErrFind, fmt.Sprintf("GetDeputy FindOne: %v", name))
 		return
 	}
 

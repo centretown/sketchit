@@ -19,51 +19,54 @@ type ModelFax struct {
 }
 
 // Full projection
-func (sch *Model) Full() (out interface{}) {
-	fax := sch.Summary().(*ModelFax)
-	fax.Title = sch.Title
-	fax.UniqueItems = sch.UniqueItems
-	fax.Required = sch.Required
+func (mod *Model) Full() (out interface{}) {
+	fax := mod.Summary().(*ModelFax)
+	fax.Title = mod.Title
+	fax.UniqueItems = mod.UniqueItems
+	fax.Required = mod.Required
 	out = fax
 	return
 }
 
 // Summary -
-func (sch *Model) Summary() (out interface{}) {
-	fax := sch.Brief().(*ModelFax)
-	fax.Description = sch.Description
-	fax.Options = sch.Options
+func (mod *Model) Summary() (out interface{}) {
+	fax := mod.Brief().(*ModelFax)
+	fax.Description = mod.Description
+	fax.Options = mod.Options
 	out = fax
 	return
 }
 
 // Brief -
-func (sch *Model) Brief() (out interface{}) {
+func (mod *Model) Brief() (out interface{}) {
 	fax := &ModelFax{}
 	// always include links
-	fax.Items = sch.Items
-	fax.OneOf = sch.OneOf
-	fax.Properties = sch.Properties
+	fax.Items = mod.Items
+	fax.OneOf = mod.OneOf
+	fax.Properties = mod.Properties
 
-	fax.Name = sch.Label
-	fax.Type = sch.Type
+	fax.Name = mod.Label
+	fax.Type = mod.Type
 	out = fax
 	return
 }
 
 // Present Presenter interface contract
-func (sch *Model) Present(presentation *Presentation) (s string) {
+func (mod *Model) Present(presentation *Presentation) (s string) {
 
-	var f = func(tsch *Model, t Traveler) {
-		t.Push(tsch)
-		Marshal(tsch, presentation)
-		t.Pop()
+	var marshal = func(model *Model, traveler Traveler) {
+		traveler.Push(model)
+		b, err := Marshal(model, presentation)
+		if err == nil {
+			s += string(b)
+		}
+		traveler.Pop()
 	}
 
-	var km = KeyMaker{
+	var routeMaker = &RouteMaker{
 		stack: make([]string, 0, KeyStackDepth),
 	}
 
-	sch.Travel(&km, f)
+	mod.Travel(routeMaker, marshal)
 	return
 }

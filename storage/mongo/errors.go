@@ -10,6 +10,7 @@ var (
 	ErrFind            = errors.New("failed to find")
 	ErrCreate          = errors.New("failed to create")
 	ErrDecode          = errors.New("failed to decode")
+	ErrDecodeAny       = errors.New("failed to decode any")
 	ErrNoMatch         = errors.New("No records matched")
 	ErrNotEnough       = errors.New("Not enough arguments")
 	ErrCollectionNames = errors.New("failed to get collection names")

@@ -2,6 +2,7 @@ package api
 
 // BuildSkillset map
 func (dep *Deputy) BuildSkillset() {
+	dep.Skillset = make(map[int32]*Skill, len(dep.Skills))
 	for _, skill := range dep.Skills {
 		dep.Skillset[int32(skill.Task)] = skill
 	}
@@ -9,6 +10,7 @@ func (dep *Deputy) BuildSkillset() {
 
 // BuildGallery map
 func (dep *Deputy) BuildGallery() {
+	dep.Gallery = make(map[int32]*Feature, len(dep.Skills))
 	for _, feature := range dep.Features {
 		dep.Gallery[int32(feature.Flag)] = feature
 	}
@@ -24,7 +26,7 @@ func (dep *Deputy) BuildDictionary() {
 		t.Pop()
 	}
 
-	var keyMaker = KeyMaker{
+	var keyMaker = RouteMaker{
 		stack: make([]string, 0, KeyStackDepth),
 	}
 

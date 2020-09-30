@@ -10,28 +10,30 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 // "mongodb://testing:test@localhost:27017/?authSource=sketchit-test"
 
 // MongoStorageProvider implements the StorageProvider interface
 type MongoStorageProvider struct {
-	client      *mongo.Client
-	Name        string
-	URI         string
-	Collections map[string]*mongo.Collection
+	client     *mongo.Client
+	Name       string
+	URI        string
+	Collectors map[string]*Collector
 }
 
-var deviceCollectionName = "devices"
-var sketchCollectionName = "sketches"
-var deputyCollectionName = "deputies"
+const (
+	devicesName  = "devices"
+	sketchesName = "sketches"
+	deputiesName = "deputies"
+)
 
 // MongoStorageProviderNew creates and returns an instance of MongoStorageProvider
 func MongoStorageProviderNew(uri, databaseName, authSource string) (mdp *MongoStorageProvider, err error) {
 	mdp = &MongoStorageProvider{}
 	mdp.Name = databaseName
 	mdp.URI = uri
-	mdp.Collections = make(map[string]*mongo.Collection)
 	mdp.client, err = mongo.NewClient(options.Client().ApplyURI(uri).SetAuth(options.Credential{
 		AuthSource: authSource, Username: "testing", Password: "test"}))
 	if err != nil {
@@ -46,13 +48,31 @@ func MongoStorageProviderNew(uri, databaseName, authSource string) (mdp *MongoSt
 	}
 
 	// map supported collections
-	mdp.Collections[deviceCollectionName] = mdp.client.Database(mdp.Name).Collection(deviceCollectionName)
-	mdp.Collections[sketchCollectionName] = mdp.client.Database(mdp.Name).Collection(sketchCollectionName)
-	mdp.Collections[deputyCollectionName] = mdp.client.Database(mdp.Name).Collection(deputyCollectionName)
+	mdp.Collectors = make(map[string]*Collector)
+
+	mdp.Collectors[devicesName] = &Collector{
+		Collection: mdp.client.Database(mdp.Name).Collection(devicesName),
+		NewItem:    func() protoreflect.ProtoMessage { return &api.Device{} },
+		Filter: func(parent string) bson.D {
+			return makeFilter(parent, "sector", "label")
+		},
+	}
+	mdp.Collectors[sketchesName] = &Collector{
+		Collection: mdp.client.Database(mdp.Name).Collection(sketchesName),
+		NewItem:    func() protoreflect.ProtoMessage { return &api.Sketch{} },
+		Filter: func(parent string) bson.D {
+			return makeFilter(parent, "toolkit", "label")
+		},
+	}
+	mdp.Collectors[deputiesName] = &Collector{
+		Collection: mdp.client.Database(mdp.Name).Collection(deputiesName),
+		NewItem:    func() protoreflect.ProtoMessage { return &api.Deputy{} },
+		Filter: func(name string) (filter bson.D) {
+			return bson.D{{Key: "label", Value: name}}
+		},
+	}
 	return
 }
-
-type result struct{}
 
 // ListCollections list the collections in the current database
 func (mdp *MongoStorageProvider) ListCollections(ctx context.Context, name string) (collections []*api.Collection, err error) {
@@ -64,26 +84,21 @@ func (mdp *MongoStorageProvider) ListCollections(ctx context.Context, name strin
 		err = info.Inform(err, ErrCollectionNames, "ListCollections")
 		return
 	}
-	// var colls = &MongoCollection{}
-	// err = cursor.All(ctx, colls)
-	// if err != nil {
-	// err = info.Inform(err, ErrCollectionNames, "ListCollections")
-	// return
-	// }
+
 	for cursor.Next(ctx) {
 		c := &MongoCollection{}
 		cursor.Decode(c)
 		collections = append(collections, c.MongoCollectionNew())
-		//
-		// fmt.Printf("Name: %s, Type: %s\n", coll.Name, coll.Type)
-		// sch := c.Options.Validator.JSONSchema
-		// level := indent(0)
-		// showMongoSchema(sch, c.Name, &level)
-		// showSchema(coll.Model, &level)
-
 	}
-	// glog.Infof("ListCollections %+v", res)
-	//names = []string{deviceCollectionName, sketchCollectionName}
+	return
+}
+
+func (mdp *MongoStorageProvider) getCollector(parent string) (collector *Collector, ok bool) {
+	tokens, length := splitParent(parent)
+	if length < CollectionName+1 {
+		return
+	}
+	collector, ok = mdp.Collectors[tokens[CollectionName]]
 	return
 }
 
@@ -93,9 +108,22 @@ func (mdp *MongoStorageProvider) Authenticate(user, pass, name string, patch *ap
 	return
 }
 
-func splitTokens(source string) (l int, tokens []string) {
-	source = strings.TrimRight(source, "/")
-	tokens = strings.Split(source, "/")
-	l = len(tokens)
+// SplitParent -
+func splitParent(parent string) (tokens []string, length int) {
+	sep := "/"
+	parent = strings.TrimRight(parent, sep)
+	tokens = strings.Split(parent, sep)
+	length = len(tokens)
+	return
+}
+
+func makeFilter(parent, parentName, labelName string) (filter bson.D) {
+	tokens, l := splitParent(parent)
+	if l > 1 {
+		filter = bson.D{{Key: parentName, Value: tokens[1]}}
+		if l > 3 {
+			filter = append(filter, bson.E{Key: labelName, Value: tokens[3]})
+		}
+	}
 	return
 }

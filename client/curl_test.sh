@@ -10,7 +10,7 @@ curl -H "login:testing" -H "password:test" -X GET  'http://dragon:7778/v1/sector
 echo ""
 echo "Create 02"
 curl -H "login:testing" -H "password:test" -X POST -d \
-    '{"sector":"cottage","label":"esp32-02","model":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
+    '{"sector":"cottage","label":"esp32-02","toolkit":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
     'http://dragon:7778/v1/sectors/cottage/devices'
 echo ""
 echo "Get 02"
@@ -18,7 +18,7 @@ curl -H "login:testing" -H "password:test" -X GET 'http://dragon:7778/v1/sectors
 echo ""
 echo "Update 02"
 curl -H "login:testing" -H "password:test" -X PATCH -d \
-    '{"sector":"cottage","label":"esp32-02","model":"WHOLE WEED BREAD","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
+    '{"sector":"cottage","label":"esp32-02","toolkit":"WHOLE WEED BREAD","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
     'http://dragon:7778/v1/sectors/cottage/devices/esp32-02'
 echo ""
 echo "Get 02"
@@ -32,15 +32,15 @@ echo ""
 echo "Create test data"
 echo "Create 02"
 curl -H "login:testing" -H "password:test" -X POST -d \
-    '{"sector":"cottage","label":"esp32-02","model":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
+    '{"sector":"cottage","label":"esp32-02","toolkit":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
     'http://dragon:7778/v1/sectors/cottage/devices'
 
 echo "Create 03"
 curl -H "login:testing" -H "password:test" -X POST -d \
-    '{"sector":"cottage","label":"esp32-03","model":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
+    '{"sector":"cottage","label":"esp32-03","toolkit":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
     'http://dragon:7778/v1/sectors/cottage/devices'
 
 echo "Create 04"
 curl -H "login:testing" -H "password:test" -X POST -d \
-    '{"sector":"cottage","label":"esp32-04","model":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
+    '{"sector":"cottage","label":"esp32-04","toolkit":"ESP32","pins":[{"id":2,"label":"LED","purpose":"activity indicator"},{"id":5,"label":"TX","purpose":"soft serial transmitter"},{"id":6,"label":"RX","purpose":"soft serial receiver"}],"ip":"192.168.1.202:8080","port":"esp32-02"}' \
     'http://dragon:7778/v1/sectors/cottage/devices'

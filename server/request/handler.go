@@ -3,25 +3,20 @@ package request
 import (
 	"github.com/centretown/sketchit/api"
 	"github.com/golang/glog"
+	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/net/context"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 // StorageProvider -
 type StorageProvider interface {
-	CreateDevice(ctx context.Context, parent string, device *api.Device) (*api.Device, error)
-	GetDevice(ctx context.Context, name string) (*api.Device, error)
-	ListDevices(ctx context.Context, parent string) ([]*api.Device, error)
-	UpdateDevice(ctx context.Context, parent string, device *api.Device) (*api.Device, error)
-	DeleteDevice(ctx context.Context, name string) error
-
-	CreateSketch(ctx context.Context, parent string, Sketch *api.Sketch) (*api.Sketch, error)
-	GetSketch(ctx context.Context, name string) (*api.Sketch, error)
-	ListSketches(ctx context.Context, parent string) ([]*api.Sketch, error)
-	UpdateSketch(ctx context.Context, parent string, device *api.Sketch) (*api.Sketch, error)
-	DeleteSketch(ctx context.Context, name string) error
-
 	ListCollections(ctx context.Context, name string) ([]*api.Collection, error)
 	GetDeputy(ctx context.Context, name string) (*api.Deputy, error)
+	List(ctx context.Context, parent string) ([]*anypb.Any, error)
+	Create(ctx context.Context, parent string, newAny *anypb.Any) (item *anypb.Any, err error)
+	Get(ctx context.Context, name string) (item *anypb.Any, err error)
+	Update(ctx context.Context, name string, patch *anypb.Any) (item *anypb.Any, err error)
+	Delete(ctx context.Context, name string) (err error)
 }
 
 // Handler implements grpc DevicesServer interface
@@ -58,4 +53,45 @@ func (h *Handler) GetDeputy(ctx context.Context,
 	glog.Infof("GET message name=%s", req.Name)
 	Deputy, err = h.store.GetDeputy(ctx, req.Name)
 	return
+}
+
+// List -
+func (h *Handler) List(ctx context.Context,
+	req *api.ListRequest) (response *api.ListResponse, err error) {
+	// var devices []*api.Device
+	glog.Infof("LIST message %s", req.Parent)
+	items, err := h.store.List(ctx, req.Parent)
+	response = &api.ListResponse{
+		Items: items,
+	}
+	return
+}
+
+// Get -
+func (h *Handler) Get(ctx context.Context, req *api.GetRequest) (item *anypb.Any, err error) {
+	glog.Infof("GET message name=%s", req.Name)
+	item, err = h.store.Get(ctx, req.Name)
+	return
+}
+
+// Create -
+func (h *Handler) Create(ctx context.Context, req *api.CreateRequest) (item *anypb.Any, err error) {
+	glog.Infof("CREATE message parent=%s", req.Parent)
+	item, err = h.store.Create(ctx, req.Parent, req.Item)
+	return
+}
+
+// Update -
+func (h *Handler) Update(ctx context.Context, req *api.UpdateRequest) (item *anypb.Any, err error) {
+	glog.Infof("UPDATE message name=%s", req.Name)
+	item, err = h.store.Update(ctx, req.Name, req.Item)
+	return
+}
+
+// Delete -
+func (h *Handler) Delete(ctx context.Context,
+	req *api.DeleteRequest) (*empty.Empty, error) {
+	glog.Infof("DELETE message %s", req.Name)
+	err := h.store.Delete(ctx, req.Name)
+	return &empty.Empty{}, err
 }

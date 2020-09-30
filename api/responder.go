@@ -18,7 +18,9 @@ type Responder struct {
 	client       SketchitClient
 	deputy       *Deputy
 	presentation *Presentation
+	suffix       string
 	runners      []*TaskRunner
+	route        []string
 }
 
 var defaultPresentation = &Presentation{
@@ -37,12 +39,22 @@ func NewResponder(ctx context.Context,
 		client:       client,
 		conn:         conn,
 		presentation: defaultPresentation,
+		suffix:       " - ",
 	}
+	responder.build()
+	return
+}
+
+// Prompt returns the prompt string
+func (resp *Responder) Prompt() (p string) {
+	dot := "."
+	dotDir := strings.Join(resp.route, dot)
+	p += dot + dotDir + resp.suffix
 	return
 }
 
 // Build the responder
-func (resp *Responder) Build() {
+func (resp *Responder) build() {
 	var err error
 	dRequest := &GetDeputyRequest{Name: "Andy"}
 	resp.deputy, err = resp.client.GetDeputy(resp.ctx, dRequest)
@@ -79,6 +91,7 @@ var (
 
 // Parse -
 func (resp *Responder) Parse(input string) (runner *Runner, err error) {
+	runner = &Runner{}
 	s := strings.TrimSpace(input)
 	if len(s) < 1 {
 		err = ErrEmpty
@@ -98,7 +111,7 @@ func (resp *Responder) Parse(input string) (runner *Runner, err error) {
 		err = info.Inform(err, ErrSkillNotFound, verb)
 		return
 	}
-	runner.presentation, runner.route, err = resp.parseFlags(args)
+	runner.presentation, runner.steps, err = resp.parseFlags(args)
 	if err != nil {
 		return
 	}
@@ -109,9 +122,9 @@ func (resp *Responder) Parse(input string) (runner *Runner, err error) {
 // parseFlags scans input arguments for presentation flags
 // returns presentation
 // errors are flagged for invalid flags or values
-func (resp *Responder) parseFlags(input []string) (presentation *Presentation, route []string, err error) {
+func (resp *Responder) parseFlags(input []string) (presentation *Presentation, steps []string, err error) {
 	// assume no flags all routes
-	route = make([]string, 0, len(input))
+	steps = make([]string, 0, len(input))
 	presentation = &Presentation{
 		Format:     resp.presentation.Format,
 		Projection: resp.presentation.Projection,
@@ -127,7 +140,7 @@ func (resp *Responder) parseFlags(input []string) (presentation *Presentation, r
 	for _, token := range input {
 		if !strings.HasPrefix(token, prefix) {
 			// not a flag add to route
-			route = append(route, token)
+			steps = append(steps, token)
 			continue
 		}
 

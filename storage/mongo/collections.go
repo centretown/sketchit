@@ -7,70 +7,13 @@ import (
 	"github.com/centretown/sketchit/api"
 )
 
-// MongoSchema -
-type MongoSchema struct {
-	Title       string                 `bson:"title"`
-	BsonType    string                 `bson:"bsonType"`
-	Description string                 `bson:"description"`
-	Required    []string               `bson:"required"`
-	Enum        []string               `bson:"enum"`
-	OneOf       []MongoSchema          `bson:"oneOf"`
-	UniqueItems bool                   `bson:"uniqueItems"`
-	Properties  map[string]MongoSchema `bson:"properties"`
-	Items       *MongoSchema           `bson:"items"`
-}
-
-// MakeSchema -
-func (sch *MongoSchema) makeSchema(name string) (schema *api.Model) {
-	schema = &api.Model{
-		Label:       strings.ToLower(sch.Title),
-		Title:       sch.Title,
-		Type:        sch.BsonType,
-		Description: sch.Description,
-		UniqueItems: sch.UniqueItems,
-		Required:    sch.Required,
-		Options:     sch.Enum,
-	}
-
-	if sch.Items != nil {
-		schema.Items = sch.Items.makeSchema("items")
-	}
-
-	if len(sch.OneOf) > 0 {
-		schema.OneOf = make([]*api.Model, 0, len(sch.OneOf))
-		for i, s := range sch.OneOf {
-			schema.OneOf = append(schema.OneOf,
-				s.makeSchema(fmt.Sprintf("option-%0d", i+1)))
-		}
-	}
-
-	if len(sch.Properties) > 0 {
-		schema.Properties = make([]*api.Model, len(sch.Required), len(sch.Properties))
-		for key, property := range sch.Properties {
-			vacant := true
-			for i, required := range sch.Required {
-				if key == required {
-					schema.Properties[i] = property.makeSchema(key)
-					vacant = false
-					break
-				}
-			}
-			if vacant {
-				schema.Properties = append(schema.Properties, property.makeSchema(key))
-			}
-		}
-	}
-
-	return
-}
-
 // MongoCollection -
 type MongoCollection struct {
 	Name    string `bson:"name"`
 	Type    string `bson:"type"`
 	Options struct {
 		Validator struct {
-			JSONSchema MongoSchema `bson:"$jsonSchema"`
+			JSONSchema Schema `bson:"$jsonSchema"`
 		} `bson:"validator"`
 	} `bson:"options"`
 	Info struct {
@@ -94,6 +37,63 @@ func (coll *MongoCollection) MongoCollectionNew() (collection *api.Collection) {
 		ReadOnly: coll.Info.ReadOnly,
 	}
 	sch := coll.Options.Validator.JSONSchema
-	collection.Model = sch.makeSchema(coll.Name)
+	collection.Model = sch.makeModel(coll.Name)
+	return
+}
+
+// Schema -
+type Schema struct {
+	Title       string            `bson:"title"`
+	BsonType    string            `bson:"bsonType"`
+	Description string            `bson:"description"`
+	Required    []string          `bson:"required"`
+	Enum        []string          `bson:"enum"`
+	OneOf       []Schema          `bson:"oneOf"`
+	UniqueItems bool              `bson:"uniqueItems"`
+	Properties  map[string]Schema `bson:"properties"`
+	Items       *Schema           `bson:"items"`
+}
+
+// makeModel converts MongoSchema to api.Model
+func (sch *Schema) makeModel(name string) (model *api.Model) {
+	model = &api.Model{
+		Label:       strings.ToLower(sch.Title),
+		Title:       sch.Title,
+		Type:        sch.BsonType,
+		Description: sch.Description,
+		UniqueItems: sch.UniqueItems,
+		Required:    sch.Required,
+		Options:     sch.Enum,
+	}
+
+	if sch.Items != nil {
+		model.Items = sch.Items.makeModel("items")
+	}
+
+	if len(sch.OneOf) > 0 {
+		model.OneOf = make([]*api.Model, 0, len(sch.OneOf))
+		for i, s := range sch.OneOf {
+			model.OneOf = append(model.OneOf,
+				s.makeModel(fmt.Sprintf("option-%0d", i+1)))
+		}
+	}
+
+	if len(sch.Properties) > 0 {
+		model.Properties = make([]*api.Model, len(sch.Required), len(sch.Properties))
+		for key, property := range sch.Properties {
+			vacant := true
+			for i, required := range sch.Required {
+				if key == required {
+					model.Properties[i] = property.makeModel(key)
+					vacant = false
+					break
+				}
+			}
+			if vacant {
+				model.Properties = append(model.Properties, property.makeModel(key))
+			}
+		}
+	}
+
 	return
 }

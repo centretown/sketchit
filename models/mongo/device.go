@@ -10,7 +10,8 @@ var deviceSchema = bson.M{
 	"title":       "Devices",
 	"bsonType":    "object",
 	"description": "controller devices",
-	"required":    []string{"sector", "label", "model"},
+	"required":    []string{"sector", "label", "toolkit"},
+	// "uniqueItems": true,
 	"properties": bson.M{
 		"sector": bson.M{
 			"title":       "Sector",
@@ -22,10 +23,10 @@ var deviceSchema = bson.M{
 			"bsonType":    "string",
 			"description": "the label assigned is unique in the sector",
 		},
-		"model": bson.M{
-			"title":       "Model",
+		"toolkit": bson.M{
+			"title":       "Toolkit",
 			"bsonType":    "string",
-			"description": "the device model type",
+			"description": "the toolkit to use",
 		},
 		"pins": pinSchema,
 	},
@@ -49,7 +50,7 @@ var deviceIndeces = []mongo.IndexModel{
 	},
 	{
 		Keys: bson.M{
-			"model": 1,
+			"toolkit": 1,
 		},
 	},
 }
@@ -62,10 +63,14 @@ var pinSchema = bson.M{
 		"title":       "Pin",
 		"bsonType":    "object",
 		"description": "the pin as defined by its purpose",
-		"required":    []string{"id", "label", "purpose"},
+		"required":    []string{"pin", "label", "purpose"},
 		"uniqueItems": true,
 		"properties": bson.M{
-			"id": pinIDDef,
+			"pin": bson.M{
+				"title":       "Pin Number",
+				"bsonType":    "int",
+				"description": "the pin number as defined by",
+			},
 			"label": bson.M{
 				"title":       "Label",
 				"bsonType":    "string",

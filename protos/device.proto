@@ -11,13 +11,13 @@ message Device {
     string sector = 6;
     // The unique label identifies the device within a sector
     string label = 1;
-    // The model name
-    string model = 2;
+    // The toolkit name
+    string toolkit = 2;
     // Identifies a pin on a micro controller device
     message Pin {
         // The pin number as designated by the device
         // eg: 2 for Pin #2
-        int32 id = 1;
+        int32 pin = 1;
         // The label assigned to this pin
         // eg: "Internal-LED"
         string label = 2;

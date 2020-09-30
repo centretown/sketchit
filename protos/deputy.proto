@@ -64,7 +64,6 @@ enum Task {
     save = 4;
     remove = 5;
     hello = 6;
-    TASK_LEN = 7;
 }
 
 // Summary description of model
