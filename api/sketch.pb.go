@@ -231,7 +231,7 @@ type Sketch struct {
 	unknownFields protoimpl.UnknownFields
 
 	// The toolkit or skillset required to run
-	// this sketch core (Nano,Uno), esp32 ()
+	// this sketch core (Nano, Uno, esp32)
 	Toolkit string `protobuf:"bytes,1,opt,name=toolkit,proto3" json:"toolkit,omitempty"`
 	// The label unique to this toolkit
 	// eg: "blink"

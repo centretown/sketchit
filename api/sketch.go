@@ -2,7 +2,7 @@ package api
 
 // SketchFax -
 type SketchFax struct {
-	Model   string    `yaml:"model,omitempty" json:"model,omitempty"`
+	Toolkit string    `yaml:"toolkit,omitempty" json:"toolkit,omitempty"`
 	Label   string    `yaml:"label,omitempty" json:"label,omitempty"`
 	Device  string    `yaml:"device,omitempty" json:"device,omitempty"`
 	Purpose string    `yaml:"purpose,omitempty" json:"purpose,omitempty"`
@@ -13,7 +13,7 @@ type SketchFax struct {
 // MarshalYAML yaml Marshaler interface contract
 func (skch *Sketch) MarshalYAML() (out interface{}, err error) {
 	yml := &SketchFax{}
-	yml.Model = skch.Toolkit
+	yml.Toolkit = skch.Toolkit
 	yml.Label = skch.Label
 	yml.Device = skch.Device
 	yml.Purpose = skch.Purpose

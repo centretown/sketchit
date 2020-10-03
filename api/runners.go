@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/centretown/sketchit/info"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 // Runner is returned when a command request has been successfully parsed
@@ -48,12 +49,13 @@ func (resp *Responder) buildRunners() {
 	}
 	resp.runners[Task_list] = &TaskRunner{
 		run: func(pr *Presentation, steps ...string) (s string, err error) {
-			arg := "/"
-			if len(steps) > 0 {
-				arg = steps[0]
+			route := buildRoute(resp.route, steps...)
+			accessor, err := NewAccessor(route...)
+			if err != nil {
+				err = info.Inform(err, ErrList, steps)
+				return
 			}
-			parent := fmt.Sprintf("sectors/%s/devices", arg)
-			request := &ListRequest{Parent: parent}
+			request := &ListRequest{Parent: accessor.Parent}
 			response, err := resp.client.List(resp.ctx, request)
 			if err != nil {
 				err = info.Inform(err, ErrList, steps)
@@ -63,10 +65,16 @@ func (resp *Responder) buildRunners() {
 				fmt.Printf("Nothing to list for %v\n", steps)
 				return
 			}
-			// b, err := Marshal(response.Devices, pr)
-			// if err == nil {
-			// 	s = string(b)
-			// }
+
+			items := make([]protoreflect.ProtoMessage, len(response.Items))
+			for i, any := range response.Items {
+				items[i] = accessor.MakeItem()
+				any.UnmarshalTo(items[i])
+			}
+			b, err := Marshal(items, pr)
+			if err == nil {
+				s = string(b)
+			}
 			return
 		},
 	}

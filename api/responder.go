@@ -21,6 +21,7 @@ type Responder struct {
 	suffix       string
 	runners      []*TaskRunner
 	route        []string
+	accessors    map[string]*Accessor
 }
 
 var defaultPresentation = &Presentation{
@@ -50,6 +51,15 @@ func (resp *Responder) Prompt() (p string) {
 	dot := "."
 	dotDir := strings.Join(resp.route, dot)
 	p += dot + dotDir + resp.suffix
+	return
+}
+
+func (resp *Responder) getAccessor(route ...string) (accessor *Accessor) {
+	if len(route) < 1 {
+		return
+	}
+	key := route[0]
+	accessor = resp.accessors[key]
 	return
 }
 
@@ -87,9 +97,12 @@ var (
 	ErrConfirmNotFound    = errors.New("auto confirm value undefined")
 	ErrExit               = errors.New("exit")
 	ErrFeatureNotFound    = errors.New("feature not found")
+	ErrNoRoute            = errors.New("no route")
+	ErrNoAccessor         = errors.New("no accessor found")
 )
 
-// Parse -
+// Parse the input to identify the task, presentation flags and routing
+// steps. Return a runner or an error explaining our limitations.
 func (resp *Responder) Parse(input string) (runner *Runner, err error) {
 	runner = &Runner{}
 	s := strings.TrimSpace(input)
@@ -111,7 +124,7 @@ func (resp *Responder) Parse(input string) (runner *Runner, err error) {
 		err = info.Inform(err, ErrSkillNotFound, verb)
 		return
 	}
-	runner.presentation, runner.steps, err = resp.parseFlags(args)
+	runner.presentation, runner.steps, err = resp.scan(args)
 	if err != nil {
 		return
 	}
@@ -119,10 +132,16 @@ func (resp *Responder) Parse(input string) (runner *Runner, err error) {
 	return
 }
 
-// parseFlags scans input arguments for presentation flags
-// returns presentation
-// errors are flagged for invalid flags or values
-func (resp *Responder) parseFlags(input []string) (presentation *Presentation, steps []string, err error) {
+// Scans input arguments for presentation flags.
+// Returns presentation values and the routing
+// steps that remain.
+// Errors are generated when unknown flags or values
+// are encountered.
+func (resp *Responder) scan(input []string) (
+	presentation *Presentation,
+	steps []string,
+	err error) {
+
 	// assume no flags all routes
 	steps = make([]string, 0, len(input))
 	presentation = &Presentation{
@@ -180,7 +199,7 @@ func (resp *Responder) parseFlags(input []string) (presentation *Presentation, s
 	return
 }
 
-func getKeys(m map[string]int32) (keys []string) {
+func buildPresentationKeys(m map[string]int32) (keys []string) {
 	keys = make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
@@ -192,7 +211,8 @@ func (resp *Responder) parseFormat(value string) (format Format, err error) {
 	f, ok := Format_value[value]
 	if !ok {
 		err = info.Inform(err, ErrFormatNotFound,
-			fmt.Sprintf(":%v expecting %v", value, getKeys(Format_value)))
+			fmt.Sprintf(":%v expecting %v", value,
+				buildPresentationKeys(Format_value)))
 		return
 	}
 	format = Format(f)
@@ -203,7 +223,8 @@ func (resp *Responder) parseConfirm(value string) (confirm Auto, err error) {
 	a, ok := Auto_value[value]
 	if !ok {
 		err = info.Inform(err, ErrConfirmNotFound,
-			fmt.Sprintf(":%v expecting %v", value, getKeys(Auto_value)))
+			fmt.Sprintf(":%v expecting %v", value,
+				buildPresentationKeys(Auto_value)))
 		return
 	}
 	confirm = Auto(a)
@@ -216,7 +237,8 @@ func (resp *Responder) parseProjection(value string) (projections []Projection, 
 		p, ok := Projection_value[token]
 		if !ok {
 			err = info.Inform(err, ErrProjectionNotFound,
-				fmt.Sprintf(":%v expecting %v", value, getKeys(Projection_value)))
+				fmt.Sprintf(":%v expecting %v", value,
+					buildPresentationKeys(Projection_value)))
 			return
 		}
 		projections = append(projections, Projection(p))

@@ -8,7 +8,7 @@ import public "deputy.proto";
 // Sketch defines how a device is programmed
 message Sketch {
     // The toolkit or skillset required to run
-    // this sketch core (Nano,Uno), esp32 ()
+    // this sketch core (Nano, Uno, esp32)
     string toolkit = 1;
     // The label unique to this toolkit
     // eg: "blink"

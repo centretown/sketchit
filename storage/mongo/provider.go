@@ -118,12 +118,19 @@ func splitParent(parent string) (tokens []string, length int) {
 }
 
 func makeFilter(parent, parentName, labelName string) (filter bson.D) {
-	tokens, l := splitParent(parent)
-	if l > 1 {
-		filter = bson.D{{Key: parentName, Value: tokens[1]}}
-		if l > 3 {
-			filter = append(filter, bson.E{Key: labelName, Value: tokens[3]})
+	filter = bson.D{}
+	tokens, length := splitParent(parent)
+	for i, token := range tokens {
+		if token == "*" {
+			length = i
+			break
 		}
+	}
+	if length > 1 {
+		filter = bson.D{{Key: parentName, Value: tokens[1]}}
+	}
+	if length > 3 {
+		filter = append(filter, bson.E{Key: labelName, Value: tokens[3]})
 	}
 	return
 }

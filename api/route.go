@@ -29,12 +29,18 @@ var routeSeparator = "."
 // Steps may be single labels separated by spaces or periods.
 // Leading periods are back steps. Each following label is a
 // step forward.
-func buildRoute(routeIn []string, steps ...string) (route []string) {
+func buildRoute(routeIn []string, stepsIn ...string) (route []string) {
 	route = make([]string, len(routeIn))
 	copy(route, routeIn)
-	if len(steps) < 1 {
+	if len(stepsIn) < 1 {
 		// copy existing route and return it if no new steps
 		return
+	}
+
+	// copy and replace /'s with .'s
+	steps := make([]string, len(stepsIn))
+	for i := range steps {
+		steps[i] = strings.Replace(stepsIn[i], "/", routeSeparator, -1)
 	}
 
 	leadStep := steps[0]

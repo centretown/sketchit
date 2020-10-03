@@ -196,6 +196,18 @@ func TestDevices(t *testing.T) {
 		t.Log("LIST", dev)
 	}
 
+	parent = "sectors/*/devices"
+	list, err = mdp.List(ctx, parent)
+	if err != nil {
+		t.Fatalf("TestDevices list wildcard: %v", err)
+	}
+
+	for _, any := range list {
+		dev := &api.Device{}
+		any.UnmarshalTo(dev)
+		t.Log("LIST WILDCARD", dev)
+	}
+
 	// get
 	item, err := mdp.Get(ctx, name)
 	if err != nil {
@@ -260,6 +272,7 @@ func TestSketches(t *testing.T) {
 	t.Log("CREATE", any)
 
 	// list
+	parent = "toolkits/ESP32/sketches"
 	list, err := mdp.List(ctx, parent)
 	if err != nil {
 		t.Fatalf("TestSketches list: %v", err)
@@ -269,6 +282,19 @@ func TestSketches(t *testing.T) {
 		sketch := &api.Sketch{}
 		any.UnmarshalTo(sketch)
 		t.Log("LIST", sketch)
+	}
+
+	// list wildcard
+	parent = "toolkits/*/sketches"
+	list, err = mdp.List(ctx, parent)
+	if err != nil {
+		t.Fatalf("TestSketches wildcard list: %v", err)
+	}
+
+	for _, any := range list {
+		sketch := &api.Sketch{}
+		any.UnmarshalTo(sketch)
+		t.Log("LIST WILDCARD", sketch)
 	}
 
 	// get
@@ -307,7 +333,7 @@ func TestSketches(t *testing.T) {
 }
 
 var newSketch = &api.Sketch{
-	Toolkit: "ESP32",
+	Toolkit: "NANO",
 	Label:   "blink02",
 	Purpose: "Blinks led at regular intervals",
 	Device:  "sectors/home/devices/esp32-04",
